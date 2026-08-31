@@ -17,6 +17,7 @@
     "build": "tsc -p tsconfig.build.json",
     "generate": "tsx scripts/generate.ts",
     "smoke": "tsx scripts/smoke.ts",
+    "workbench": "tsx scripts/workbench.ts",
     "test": "vitest run",
     "test:live": "cross-env STEAM_LIVE=1 vitest run test/live",
     "typecheck": "tsc --noEmit"

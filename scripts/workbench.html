@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>steamwand workbench</title>
+<style>
+  :root { --bg:#101418; --panel:#171d24; --line:#2a3441; --fg:#cdd6e0; --dim:#7d8b9a; --acc:#5fb4a2; --warn:#d4a054; --bad:#d46a6a; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:13px/1.5 "Cascadia Code","Consolas",monospace; }
+  header { padding:10px 16px; border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:baseline; }
+  header h1 { font-size:14px; margin:0; color:var(--acc); font-weight:600; }
+  #status { color:var(--dim); }
+  main { display:grid; grid-template-columns: 340px 1fr; gap:0; height:calc(100vh - 42px); }
+  #left { border-right:1px solid var(--line); overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:14px; }
+  #right { display:flex; flex-direction:column; overflow:hidden; }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:10px; }
+  section h2 { margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--dim); }
+  label { display:block; color:var(--dim); margin-top:6px; }
+  input, select, textarea, button { font:inherit; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:4px; padding:4px 6px; width:100%; }
+  textarea { resize:vertical; }
+  button { cursor:pointer; width:auto; padding:4px 12px; margin-top:8px; }
+  button:hover { border-color:var(--acc); }
+  button.danger { color:var(--bad); }
+  button.danger:hover { border-color:var(--bad); }
+  .row { display:flex; gap:8px; }
+  .row > * { flex:1; }
+  #result { flex:0 0 auto; max-height:38%; overflow:auto; margin:12px; }
+  #result pre { margin:0; white-space:pre-wrap; word-break:break-all; }
+  #logwrap { flex:1; overflow:auto; margin:0 12px 12px; }
+  #log div { border-bottom:1px solid var(--line); padding:2px 0; word-break:break-all; }
+  .k-error { color:var(--bad); } .k-workshop { color:var(--acc); } .k-progress { color:var(--warn); }
+  .k-callback { color:#9d8fd4; } .k-session { color:var(--dim); }
+  .time { color:var(--dim); margin-right:8px; }
+</style>
+</head>
+<body>
+<header><h1>steamwand workbench</h1><span id="status">checking…</span></header>
+<main>
+  <div id="left">
+    <section>
+      <h2>Session</h2>
+      <div class="row">
+        <input id="appId" value="480" title="app id">
+        <button onclick="doInit()">init</button>
+        <button onclick="api('/api/close').then(refresh)">close</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Workshop</h2>
+      <label>file id</label><input id="w-fileId" placeholder="e.g. 3786319531">
+      <div class="row">
+        <button onclick="ws('createItem')">create item</button>
+        <button onclick="ws('getUserItems')">my items</button>
+      </div>
+      <label>language (query)</label><input id="w-lang" placeholder="german">
+      <button onclick="ws('getItem')">get item</button>
+      <label>title</label><input id="u-title">
+      <label>description</label><textarea id="u-description" rows="2"></textarea>
+      <label>update language</label><input id="u-language" placeholder="empty = default text">
+      <label>content folder</label><input id="u-contentPath">
+      <label>preview image</label><input id="u-previewPath">
+      <label>tags (comma separated)</label><input id="u-tags">
+      <label>visibility</label>
+      <select id="u-visibility">
+        <option value="">(unchanged)</option>
+        <option value="2">private</option>
+        <option value="3">unlisted</option>
+        <option value="1">friends only</option>
+        <option value="0">public</option>
+      </select>
+      <label>change note</label><input id="u-changeNote">
+      <button onclick="ws('submitUpdate')">submit update</button>
+      <button class="danger" onclick="if(confirm('Permanently delete item '+v('w-fileId')+'?')) ws('deleteItem')">delete item</button>
+    </section>
+
+    <section>
+      <h2>Await call result</h2>
+      <label>call handle (from a raw call)</label><input id="cr-call">
+      <label>decode as struct</label><input id="cr-struct" placeholder="CreateItemResult_t">
+      <button onclick="api('/api/awaitResult',{call:v('cr-call'),struct:v('cr-struct')||undefined}).then(show)">await</button>
+    </section>
+
+    <section>
+      <h2>Watch callback</h2>
+      <input id="cb-name" placeholder="ItemInstalled_t">
+      <button onclick="api('/api/watch',{callback:v('cb-name')}).then(show)">watch</button>
+    </section>
+  </div>
+
+  <div id="right">
+    <section id="raw" style="margin:12px 12px 0">
+      <h2>Raw call</h2>
+      <div class="row">
+        <select id="r-iface" onchange="fillMethods()"></select>
+        <select id="r-method"></select>
+      </div>
+      <label>args as JSON array — "123n" = bigint, {"buf":260} = out-buffer, ["a","b"] = string array struct</label>
+      <div class="row">
+        <input id="r-args" value="[]">
+        <button onclick="rawCall()">call</button>
+      </div>
+    </section>
+    <section id="result"><h2>Last result</h2><pre id="resultText">–</pre></section>
+    <div id="logwrap"><div id="log"></div></div>
+  </div>
+</main>
+<script>
+const v = id => document.getElementById(id).value.trim();
+async function api(url, body) {
+  const r = await fetch(url, { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(body||{}) });
+  const j = await r.json();
+  if (j && j.error) show(j);
+  return j;
+}
+function show(x) { document.getElementById('resultText').textContent = JSON.stringify(x, null, 2); }
+async function doInit() { show(await api('/api/init', { appId: v('appId') })); refresh(); loadIfaces(); }
+async function ws(op) {
+  const update = op === 'submitUpdate' ? {
+    title: v('u-title'), description: v('u-description'), language: v('u-language'),
+    contentPath: v('u-contentPath'), previewPath: v('u-previewPath'), tags: v('u-tags'),
+    visibility: v('u-visibility') || undefined, changeNote: v('u-changeNote'),
+  } : undefined;
+  show(await api('/api/workshop', { op, fileId: v('w-fileId') || undefined, language: v('w-lang'), update, appId: v('appId') }));
+}
+let ifaces = {};
+async function loadIfaces() {
+  ifaces = await api('/api/interfaces');
+  const sel = document.getElementById('r-iface');
+  sel.innerHTML = Object.keys(ifaces).sort().map(n => `<option>${n}</option>`).join('');
+  sel.value = 'ISteamUGC';
+  fillMethods();
+}
+function fillMethods() {
+  const m = ifaces[v('r-iface')] || [];
+  document.getElementById('r-method').innerHTML = m.map(x => `<option>${x}</option>`).join('');
+}
+async function rawCall() {
+  let args;
+  try { args = JSON.parse(v('r-args') || '[]'); } catch (e) { return show({ error: 'args is not valid JSON: ' + e.message }); }
+  show(await api('/api/call', { iface: v('r-iface'), method: v('r-method'), args }));
+}
+async function refresh() {
+  try {
+    const s = await api('/api/status');
+    document.getElementById('status').textContent = s.initialized ? `initialized · appId ${s.appId}` : 'not initialized';
+    document.getElementById('log').innerHTML = s.log.map(l =>
+      `<div class="k-${l.kind}"><span class="time">${l.time}</span>[${l.kind}] ${l.text.replace(/</g,'&lt;')}</div>`).join('');
+  } catch { document.getElementById('status').textContent = 'server unreachable'; }
+}
+setInterval(refresh, 1000);
+refresh(); loadIfaces();
+</script>
+</body>
+</html>
