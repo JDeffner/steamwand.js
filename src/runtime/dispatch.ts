@@ -83,7 +83,18 @@ export class SteamDispatch {
     }
     return new Promise((resolve, reject) => {
       this.pending.set(call, { resolve, reject });
+      this.updateRef();
     });
+  }
+
+  /**
+   * The pump must not keep an idle process alive, but a pending Steam call
+   * must: ref the interval while calls are in flight, unref when drained.
+   */
+  private updateRef(): void {
+    if (!this.timer) return;
+    if (this.pending.size > 0) this.timer.ref();
+    else this.timer.unref();
   }
 
   /** Await a call result and decode it with the given layout. */
@@ -136,6 +147,7 @@ export class SteamDispatch {
     const pending = this.pending.get(call);
     if (!pending) return; // not ours (or already handled)
     this.pending.delete(call);
+    this.updateRef();
 
     const out = Buffer.alloc(Math.max(size, 1));
     const failed = Buffer.alloc(1);
