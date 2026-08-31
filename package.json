@@ -1,0 +1,48 @@
+{
+  "name": "@jdeffner/steamwand",
+  "version": "0.1.0",
+  "description": "TypeScript bindings for the Steamworks SDK, generated from steam_api.json over the flat C API via koffi FFI. No native compilation.",
+  "license": "MIT",
+  "author": "Joel Deffner",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "runtime",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "generate": "tsx scripts/generate.ts",
+    "test": "vitest run",
+    "test:live": "cross-env STEAM_LIVE=1 vitest run test/live",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "koffi": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "cross-env": "^7.0.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JDeffner/SteamWand.js.git"
+  },
+  "keywords": [
+    "steam",
+    "steamworks",
+    "workshop",
+    "ffi",
+    "koffi",
+    "typescript"
+  ]
+}

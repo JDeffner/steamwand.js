@@ -1,0 +1,7 @@
+# Licensed Steamworks SDK content: never commit (regeneration needs a local copy)
+sdk/
+steamworks_sdk_*.zip
+
+node_modules/
+dist/
+*.log
