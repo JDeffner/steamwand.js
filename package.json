@@ -1,5 +1,5 @@
 {
-  "name": "@jdeffner/steamwand",
+  "name": "steamwand.js",
   "version": "0.1.0",
   "description": "TypeScript bindings for the Steamworks SDK, generated from steam_api.json over the flat C API via koffi FFI. No native compilation.",
   "license": "MIT",

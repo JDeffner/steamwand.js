@@ -6,8 +6,6 @@ description of the flat C API, and called through [koffi](https://koffi.dev)
 FFI. When a new SDK ships, you regenerate; when you need a function nobody
 wrapped yet, it is already there.
 
-Working name. It may change.
-
 ## Why another Steamworks binding
 
 Every existing Node binding makes you compile someone else's native code to
@@ -22,7 +20,7 @@ layer, and the whole flat API surface: 25 interfaces, about 1000 functions,
 ## Install
 
 ```
-pnpm add @jdeffner/steamwand
+pnpm add steamwand.js
 ```
 
 Node 18+. Windows x64, Linux x64, and macOS are wired up; the Steam client
@@ -31,7 +29,7 @@ must be running. The `steam_api` redistributables ship in the package.
 ## Use
 
 ```ts
-import { init } from '@jdeffner/steamwand';
+import { init } from 'steamwand.js';
 
 const steam = init({ appId: 480 });
 
