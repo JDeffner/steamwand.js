@@ -38,13 +38,13 @@ export class ISteamParties {
    * `bool GetBeaconDetails(PartyBeaconID_t ulBeaconID, CSteamID *pSteamIDBeaconOwner, SteamPartyBeaconLocation_t *pLocation, char *pchMetadata, int cchMetadata)`
    *
    * Flat symbol: `SteamAPI_ISteamParties_GetBeaconDetails`
-   * @param ulBeaconID `PartyBeaconID_t`, 64-bit: bigint or number.
+   * @param ulBeaconID `PartyBeaconID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pSteamIDBeaconOwner Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
    * @param pLocation Buffer you allocate for `SteamPartyBeaconLocation_t *`: `Buffer.alloc(layoutOf('SteamPartyBeaconLocation_t').size)`.
    * @param pchMetadata Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @see https://partner.steamgames.com/doc/api/ISteamParties#GetBeaconDetails
    */
-  GetBeaconDetails(ulBeaconID: bigint | number, pSteamIDBeaconOwner: Buffer | null, pLocation: Buffer | null, pchMetadata: Buffer | null, cchMetadata: number): boolean {
+  GetBeaconDetails(ulBeaconID: bigint, pSteamIDBeaconOwner: Buffer | null, pLocation: Buffer | null, pchMetadata: Buffer | null, cchMetadata: number): boolean {
     return this.nat.func('SteamAPI_ISteamParties_GetBeaconDetails', 'bool', ['void *', 'uint64', 'void *', 'void *', 'void *', 'int32'])(this.ptr, ulBeaconID, pSteamIDBeaconOwner, pLocation, pchMetadata, cchMetadata) as boolean;
   }
 
@@ -53,10 +53,10 @@ export class ISteamParties {
    *
    * Flat symbol: `SteamAPI_ISteamParties_JoinParty`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<JoinPartyCallback_t>(handle, layoutOf('JoinPartyCallback_t'))`.
-   * @param ulBeaconID `PartyBeaconID_t`, 64-bit: bigint or number.
+   * @param ulBeaconID `PartyBeaconID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamParties#JoinParty
    */
-  JoinParty(ulBeaconID: bigint | number): bigint {
+  JoinParty(ulBeaconID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamParties_JoinParty', 'uint64', ['void *', 'uint64'])(this.ptr, ulBeaconID) as number | bigint);
   }
 
@@ -98,11 +98,11 @@ export class ISteamParties {
    * `void OnReservationCompleted(PartyBeaconID_t ulBeacon, CSteamID steamIDUser)`
    *
    * Flat symbol: `SteamAPI_ISteamParties_OnReservationCompleted`
-   * @param ulBeacon `PartyBeaconID_t`, 64-bit: bigint or number.
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param ulBeacon `PartyBeaconID_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamParties#OnReservationCompleted
    */
-  OnReservationCompleted(ulBeacon: bigint | number, steamIDUser: bigint | number): void {
+  OnReservationCompleted(ulBeacon: bigint, steamIDUser: bigint): void {
     this.nat.func('SteamAPI_ISteamParties_OnReservationCompleted', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, ulBeacon, steamIDUser);
   }
 
@@ -110,11 +110,11 @@ export class ISteamParties {
    * `void CancelReservation(PartyBeaconID_t ulBeacon, CSteamID steamIDUser)`
    *
    * Flat symbol: `SteamAPI_ISteamParties_CancelReservation`
-   * @param ulBeacon `PartyBeaconID_t`, 64-bit: bigint or number.
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param ulBeacon `PartyBeaconID_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamParties#CancelReservation
    */
-  CancelReservation(ulBeacon: bigint | number, steamIDUser: bigint | number): void {
+  CancelReservation(ulBeacon: bigint, steamIDUser: bigint): void {
     this.nat.func('SteamAPI_ISteamParties_CancelReservation', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, ulBeacon, steamIDUser);
   }
 
@@ -123,10 +123,10 @@ export class ISteamParties {
    *
    * Flat symbol: `SteamAPI_ISteamParties_ChangeNumOpenSlots`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<ChangeNumOpenSlotsCallback_t>(handle, layoutOf('ChangeNumOpenSlotsCallback_t'))`.
-   * @param ulBeacon `PartyBeaconID_t`, 64-bit: bigint or number.
+   * @param ulBeacon `PartyBeaconID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamParties#ChangeNumOpenSlots
    */
-  ChangeNumOpenSlots(ulBeacon: bigint | number, unOpenSlots: number): bigint {
+  ChangeNumOpenSlots(ulBeacon: bigint, unOpenSlots: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamParties_ChangeNumOpenSlots', 'uint64', ['void *', 'uint64', 'uint32'])(this.ptr, ulBeacon, unOpenSlots) as number | bigint);
   }
 
@@ -134,10 +134,10 @@ export class ISteamParties {
    * `bool DestroyBeacon(PartyBeaconID_t ulBeacon)`
    *
    * Flat symbol: `SteamAPI_ISteamParties_DestroyBeacon`
-   * @param ulBeacon `PartyBeaconID_t`, 64-bit: bigint or number.
+   * @param ulBeacon `PartyBeaconID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamParties#DestroyBeacon
    */
-  DestroyBeacon(ulBeacon: bigint | number): boolean {
+  DestroyBeacon(ulBeacon: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamParties_DestroyBeacon', 'bool', ['void *', 'uint64'])(this.ptr, ulBeacon) as boolean;
   }
 }

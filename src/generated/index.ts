@@ -30,3 +30,5 @@ export { ISteamRemotePlay } from './interfaces/ISteamRemotePlay';
 export { ISteamNetworkingMessages } from './interfaces/ISteamNetworkingMessages';
 export { ISteamNetworkingSockets } from './interfaces/ISteamNetworkingSockets';
 export { ISteamNetworkingUtils } from './interfaces/ISteamNetworkingUtils';
+export { SteamInterfaces } from './accessors';
+export * from './async';

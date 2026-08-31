@@ -174,10 +174,10 @@ export class ISteamUserStats {
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_RequestUserStats`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<UserStatsReceived_t>(handle, layoutOf('UserStatsReceived_t'))`.
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#RequestUserStats
    */
-  RequestUserStats(steamIDUser: bigint | number): bigint {
+  RequestUserStats(steamIDUser: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_RequestUserStats', 'uint64', ['void *', 'uint64'])(this.ptr, steamIDUser) as number | bigint);
   }
 
@@ -185,11 +185,11 @@ export class ISteamUserStats {
    * `bool GetUserStat(CSteamID steamIDUser, const char *pchName, int32 *pData)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_GetUserStatInt32`
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pData Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat
    */
-  GetUserStatInt32(steamIDUser: bigint | number, pchName: string, pData: Buffer | null): boolean {
+  GetUserStatInt32(steamIDUser: bigint, pchName: string, pData: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetUserStatInt32', 'bool', ['void *', 'uint64', 'str', 'void *'])(this.ptr, steamIDUser, pchName, pData) as boolean;
   }
 
@@ -197,11 +197,11 @@ export class ISteamUserStats {
    * `bool GetUserStat(CSteamID steamIDUser, const char *pchName, float *pData)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_GetUserStatFloat`
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pData Buffer you allocate for `float *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat
    */
-  GetUserStatFloat(steamIDUser: bigint | number, pchName: string, pData: Buffer | null): boolean {
+  GetUserStatFloat(steamIDUser: bigint, pchName: string, pData: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetUserStatFloat', 'bool', ['void *', 'uint64', 'str', 'void *'])(this.ptr, steamIDUser, pchName, pData) as boolean;
   }
 
@@ -209,11 +209,11 @@ export class ISteamUserStats {
    * `bool GetUserAchievement(CSteamID steamIDUser, const char *pchName, bool *pbAchieved)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_GetUserAchievement`
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pbAchieved Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievement
    */
-  GetUserAchievement(steamIDUser: bigint | number, pchName: string, pbAchieved: Buffer | null): boolean {
+  GetUserAchievement(steamIDUser: bigint, pchName: string, pbAchieved: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetUserAchievement', 'bool', ['void *', 'uint64', 'str', 'void *'])(this.ptr, steamIDUser, pchName, pbAchieved) as boolean;
   }
 
@@ -221,12 +221,12 @@ export class ISteamUserStats {
    * `bool GetUserAchievementAndUnlockTime(CSteamID steamIDUser, const char *pchName, bool *pbAchieved, uint32 *punUnlockTime)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_GetUserAchievementAndUnlockTime`
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pbAchieved Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
    * @param punUnlockTime Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievementAndUnlockTime
    */
-  GetUserAchievementAndUnlockTime(steamIDUser: bigint | number, pchName: string, pbAchieved: Buffer | null, punUnlockTime: Buffer | null): boolean {
+  GetUserAchievementAndUnlockTime(steamIDUser: bigint, pchName: string, pbAchieved: Buffer | null, punUnlockTime: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetUserAchievementAndUnlockTime', 'bool', ['void *', 'uint64', 'str', 'void *', 'void *'])(this.ptr, steamIDUser, pchName, pbAchieved, punUnlockTime) as boolean;
   }
 
@@ -268,10 +268,10 @@ export class ISteamUserStats {
    * `const char * GetLeaderboardName(SteamLeaderboard_t hSteamLeaderboard)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_GetLeaderboardName`
-   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardName
    */
-  GetLeaderboardName(hSteamLeaderboard: bigint | number): string {
+  GetLeaderboardName(hSteamLeaderboard: bigint): string {
     return this.nat.func('SteamAPI_ISteamUserStats_GetLeaderboardName', 'str', ['void *', 'uint64'])(this.ptr, hSteamLeaderboard) as string;
   }
 
@@ -279,10 +279,10 @@ export class ISteamUserStats {
    * `int GetLeaderboardEntryCount(SteamLeaderboard_t hSteamLeaderboard)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_GetLeaderboardEntryCount`
-   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardEntryCount
    */
-  GetLeaderboardEntryCount(hSteamLeaderboard: bigint | number): number {
+  GetLeaderboardEntryCount(hSteamLeaderboard: bigint): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetLeaderboardEntryCount', 'int32', ['void *', 'uint64'])(this.ptr, hSteamLeaderboard) as number;
   }
 
@@ -290,10 +290,10 @@ export class ISteamUserStats {
    * `ELeaderboardSortMethod GetLeaderboardSortMethod(SteamLeaderboard_t hSteamLeaderboard)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_GetLeaderboardSortMethod`
-   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardSortMethod
    */
-  GetLeaderboardSortMethod(hSteamLeaderboard: bigint | number): number {
+  GetLeaderboardSortMethod(hSteamLeaderboard: bigint): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetLeaderboardSortMethod', 'int32', ['void *', 'uint64'])(this.ptr, hSteamLeaderboard) as number;
   }
 
@@ -301,10 +301,10 @@ export class ISteamUserStats {
    * `ELeaderboardDisplayType GetLeaderboardDisplayType(SteamLeaderboard_t hSteamLeaderboard)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_GetLeaderboardDisplayType`
-   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardDisplayType
    */
-  GetLeaderboardDisplayType(hSteamLeaderboard: bigint | number): number {
+  GetLeaderboardDisplayType(hSteamLeaderboard: bigint): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetLeaderboardDisplayType', 'int32', ['void *', 'uint64'])(this.ptr, hSteamLeaderboard) as number;
   }
 
@@ -313,11 +313,11 @@ export class ISteamUserStats {
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_DownloadLeaderboardEntries`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardScoresDownloaded_t>(handle, layoutOf('LeaderboardScoresDownloaded_t'))`.
-   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eLeaderboardDataRequest enum `ELeaderboardDataRequest`; values on `flat.ELeaderboardDataRequest`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntries
    */
-  DownloadLeaderboardEntries(hSteamLeaderboard: bigint | number, eLeaderboardDataRequest: number, nRangeStart: number, nRangeEnd: number): bigint {
+  DownloadLeaderboardEntries(hSteamLeaderboard: bigint, eLeaderboardDataRequest: number, nRangeStart: number, nRangeEnd: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_DownloadLeaderboardEntries', 'uint64', ['void *', 'uint64', 'int32', 'int32', 'int32'])(this.ptr, hSteamLeaderboard, eLeaderboardDataRequest, nRangeStart, nRangeEnd) as number | bigint);
   }
 
@@ -326,11 +326,11 @@ export class ISteamUserStats {
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardScoresDownloaded_t>(handle, layoutOf('LeaderboardScoresDownloaded_t'))`.
-   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param prgUsers Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntriesForUsers
    */
-  DownloadLeaderboardEntriesForUsers(hSteamLeaderboard: bigint | number, prgUsers: Buffer | null, cUsers: number): bigint {
+  DownloadLeaderboardEntriesForUsers(hSteamLeaderboard: bigint, prgUsers: Buffer | null, cUsers: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers', 'uint64', ['void *', 'uint64', 'void *', 'int32'])(this.ptr, hSteamLeaderboard, prgUsers, cUsers) as number | bigint);
   }
 
@@ -338,12 +338,12 @@ export class ISteamUserStats {
    * `bool GetDownloadedLeaderboardEntry(SteamLeaderboardEntries_t hSteamLeaderboardEntries, int index, LeaderboardEntry_t *pLeaderboardEntry, int32 *pDetails, int cDetailsMax)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_GetDownloadedLeaderboardEntry`
-   * @param hSteamLeaderboardEntries `SteamLeaderboardEntries_t`, 64-bit: bigint or number.
+   * @param hSteamLeaderboardEntries `SteamLeaderboardEntries_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pLeaderboardEntry Buffer you allocate for `LeaderboardEntry_t *`: `Buffer.alloc(layoutOf('LeaderboardEntry_t').size)`.
    * @param pDetails Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetDownloadedLeaderboardEntry
    */
-  GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries: bigint | number, index: number, pLeaderboardEntry: Buffer | null, pDetails: Buffer | null, cDetailsMax: number): boolean {
+  GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries: bigint, index: number, pLeaderboardEntry: Buffer | null, pDetails: Buffer | null, cDetailsMax: number): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetDownloadedLeaderboardEntry', 'bool', ['void *', 'uint64', 'int32', 'void *', 'void *', 'int32'])(this.ptr, hSteamLeaderboardEntries, index, pLeaderboardEntry, pDetails, cDetailsMax) as boolean;
   }
 
@@ -352,12 +352,12 @@ export class ISteamUserStats {
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_UploadLeaderboardScore`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardScoreUploaded_t>(handle, layoutOf('LeaderboardScoreUploaded_t'))`.
-   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eLeaderboardUploadScoreMethod enum `ELeaderboardUploadScoreMethod`; values on `flat.ELeaderboardUploadScoreMethod`.
    * @param pScoreDetails Buffer you allocate for `const int32 *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#UploadLeaderboardScore
    */
-  UploadLeaderboardScore(hSteamLeaderboard: bigint | number, eLeaderboardUploadScoreMethod: number, nScore: number, pScoreDetails: Buffer | null, cScoreDetailsCount: number): bigint {
+  UploadLeaderboardScore(hSteamLeaderboard: bigint, eLeaderboardUploadScoreMethod: number, nScore: number, pScoreDetails: Buffer | null, cScoreDetailsCount: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_UploadLeaderboardScore', 'uint64', ['void *', 'uint64', 'int32', 'int32', 'void *', 'int32'])(this.ptr, hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, pScoreDetails, cScoreDetailsCount) as number | bigint);
   }
 
@@ -366,11 +366,11 @@ export class ISteamUserStats {
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_AttachLeaderboardUGC`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardUGCSet_t>(handle, layoutOf('LeaderboardUGCSet_t'))`.
-   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
-   * @param hUGC `UGCHandle_t`, 64-bit: bigint or number.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param hUGC `UGCHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#AttachLeaderboardUGC
    */
-  AttachLeaderboardUGC(hSteamLeaderboard: bigint | number, hUGC: bigint | number): bigint {
+  AttachLeaderboardUGC(hSteamLeaderboard: bigint, hUGC: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_AttachLeaderboardUGC', 'uint64', ['void *', 'uint64', 'uint64'])(this.ptr, hSteamLeaderboard, hUGC) as number | bigint);
   }
 

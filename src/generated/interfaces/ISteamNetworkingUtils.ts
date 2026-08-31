@@ -280,12 +280,12 @@ export class ISteamNetworkingUtils {
    * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetConfigValue`
    * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
    * @param eScopeType enum `ESteamNetworkingConfigScope`; values on `flat.ESteamNetworkingConfigScope`.
-   * @param scopeObj `intptr_t`, 64-bit: bigint or number.
+   * @param scopeObj `intptr_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eDataType enum `ESteamNetworkingConfigDataType`; values on `flat.ESteamNetworkingConfigDataType`.
    * @param pArg Buffer you allocate for `const void *`.
    * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetConfigValue
    */
-  SetConfigValue(eValue: number, eScopeType: number, scopeObj: bigint | number, eDataType: number, pArg: Buffer | null): boolean {
+  SetConfigValue(eValue: number, eScopeType: number, scopeObj: bigint, eDataType: number, pArg: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetConfigValue', 'bool', ['void *', 'int32', 'int32', 'int64', 'int32', 'void *'])(this.ptr, eValue, eScopeType, scopeObj, eDataType, pArg) as boolean;
   }
 
@@ -295,10 +295,10 @@ export class ISteamNetworkingUtils {
    * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetConfigValueStruct`
    * @param opt Buffer you allocate for `const SteamNetworkingConfigValue_t &`: `Buffer.alloc(layoutOf('SteamNetworkingConfigValue_t').size)`.
    * @param eScopeType enum `ESteamNetworkingConfigScope`; values on `flat.ESteamNetworkingConfigScope`.
-   * @param scopeObj `intptr_t`, 64-bit: bigint or number.
+   * @param scopeObj `intptr_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetConfigValueStruct
    */
-  SetConfigValueStruct(opt: Buffer | null, eScopeType: number, scopeObj: bigint | number): boolean {
+  SetConfigValueStruct(opt: Buffer | null, eScopeType: number, scopeObj: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetConfigValueStruct', 'bool', ['void *', 'void *', 'int32', 'int64'])(this.ptr, opt, eScopeType, scopeObj) as boolean;
   }
 
@@ -308,13 +308,13 @@ export class ISteamNetworkingUtils {
    * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetConfigValue`
    * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
    * @param eScopeType enum `ESteamNetworkingConfigScope`; values on `flat.ESteamNetworkingConfigScope`.
-   * @param scopeObj `intptr_t`, 64-bit: bigint or number.
+   * @param scopeObj `intptr_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pOutDataType Buffer you allocate for `ESteamNetworkingConfigDataType *`: `Buffer.alloc(4)` per element.
    * @param pResult Buffer you allocate for `void *`.
    * @param cbResult Buffer you allocate for `size_t *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetConfigValue
    */
-  GetConfigValue(eValue: number, eScopeType: number, scopeObj: bigint | number, pOutDataType: Buffer | null, pResult: Buffer | null, cbResult: Buffer | null): number {
+  GetConfigValue(eValue: number, eScopeType: number, scopeObj: bigint, pOutDataType: Buffer | null, pResult: Buffer | null, cbResult: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetConfigValue', 'int32', ['void *', 'int32', 'int32', 'int64', 'void *', 'void *', 'void *'])(this.ptr, eValue, eScopeType, scopeObj, pOutDataType, pResult, cbResult) as number;
   }
 

@@ -122,11 +122,11 @@ export class ISteamUtils {
    * `bool IsAPICallCompleted(SteamAPICall_t hSteamAPICall, bool *pbFailed)`
    *
    * Flat symbol: `SteamAPI_ISteamUtils_IsAPICallCompleted`
-   * @param hSteamAPICall `SteamAPICall_t`, 64-bit: bigint or number.
+   * @param hSteamAPICall `SteamAPICall_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pbFailed Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUtils#IsAPICallCompleted
    */
-  IsAPICallCompleted(hSteamAPICall: bigint | number, pbFailed: Buffer | null): boolean {
+  IsAPICallCompleted(hSteamAPICall: bigint, pbFailed: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_IsAPICallCompleted', 'bool', ['void *', 'uint64', 'void *'])(this.ptr, hSteamAPICall, pbFailed) as boolean;
   }
 
@@ -134,10 +134,10 @@ export class ISteamUtils {
    * `ESteamAPICallFailure GetAPICallFailureReason(SteamAPICall_t hSteamAPICall)`
    *
    * Flat symbol: `SteamAPI_ISteamUtils_GetAPICallFailureReason`
-   * @param hSteamAPICall `SteamAPICall_t`, 64-bit: bigint or number.
+   * @param hSteamAPICall `SteamAPICall_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallFailureReason
    */
-  GetAPICallFailureReason(hSteamAPICall: bigint | number): number {
+  GetAPICallFailureReason(hSteamAPICall: bigint): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetAPICallFailureReason', 'int32', ['void *', 'uint64'])(this.ptr, hSteamAPICall) as number;
   }
 
@@ -145,12 +145,12 @@ export class ISteamUtils {
    * `bool GetAPICallResult(SteamAPICall_t hSteamAPICall, void *pCallback, int cubCallback, int iCallbackExpected, bool *pbFailed)`
    *
    * Flat symbol: `SteamAPI_ISteamUtils_GetAPICallResult`
-   * @param hSteamAPICall `SteamAPICall_t`, 64-bit: bigint or number.
+   * @param hSteamAPICall `SteamAPICall_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pCallback Buffer you allocate for `void *`.
    * @param pbFailed Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallResult
    */
-  GetAPICallResult(hSteamAPICall: bigint | number, pCallback: Buffer | null, cubCallback: number, iCallbackExpected: number, pbFailed: Buffer | null): boolean {
+  GetAPICallResult(hSteamAPICall: bigint, pCallback: Buffer | null, cubCallback: number, iCallbackExpected: number, pbFailed: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_GetAPICallResult', 'bool', ['void *', 'uint64', 'void *', 'int32', 'int32', 'void *'])(this.ptr, hSteamAPICall, pCallback, cubCallback, iCallbackExpected, pbFailed) as boolean;
   }
 
@@ -323,11 +323,11 @@ export class ISteamUtils {
    *
    * Flat symbol: `SteamAPI_ISteamUtils_FilterText`
    * @param eContext enum `ETextFilteringContext`; values on `flat.ETextFilteringContext`.
-   * @param sourceSteamID `CSteamID`, 64-bit: bigint or number.
+   * @param sourceSteamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pchOutFilteredText Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @see https://partner.steamgames.com/doc/api/ISteamUtils#FilterText
    */
-  FilterText(eContext: number, sourceSteamID: bigint | number, pchInputMessage: string, pchOutFilteredText: Buffer | null, nByteSizeOutFilteredText: number): number {
+  FilterText(eContext: number, sourceSteamID: bigint, pchInputMessage: string, pchOutFilteredText: Buffer | null, nByteSizeOutFilteredText: number): number {
     return this.nat.func('SteamAPI_ISteamUtils_FilterText', 'int32', ['void *', 'int32', 'uint64', 'str', 'void *', 'uint32'])(this.ptr, eContext, sourceSteamID, pchInputMessage, pchOutFilteredText, nByteSizeOutFilteredText) as number;
   }
 

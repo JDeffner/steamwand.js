@@ -140,10 +140,10 @@ export class ISteamRemotePlay {
    * `bool BSendRemotePlayTogetherInvite(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamRemotePlay_BSendRemotePlayTogetherInvite`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#BSendRemotePlayTogetherInvite
    */
-  BSendRemotePlayTogetherInvite(steamIDFriend: bigint | number): boolean {
+  BSendRemotePlayTogetherInvite(steamIDFriend: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamRemotePlay_BSendRemotePlayTogetherInvite', 'bool', ['void *', 'uint64'])(this.ptr, steamIDFriend) as boolean;
   }
 

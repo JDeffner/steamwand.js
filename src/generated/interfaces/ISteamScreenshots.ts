@@ -69,10 +69,10 @@ export class ISteamScreenshots {
    * `bool TagUser(ScreenshotHandle hScreenshot, CSteamID steamID)`
    *
    * Flat symbol: `SteamAPI_ISteamScreenshots_TagUser`
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#TagUser
    */
-  TagUser(hScreenshot: number, steamID: bigint | number): boolean {
+  TagUser(hScreenshot: number, steamID: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamScreenshots_TagUser', 'bool', ['void *', 'uint32', 'uint64'])(this.ptr, hScreenshot, steamID) as boolean;
   }
 
@@ -80,10 +80,10 @@ export class ISteamScreenshots {
    * `bool TagPublishedFile(ScreenshotHandle hScreenshot, PublishedFileId_t unPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamScreenshots_TagPublishedFile`
-   * @param unPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param unPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#TagPublishedFile
    */
-  TagPublishedFile(hScreenshot: number, unPublishedFileID: bigint | number): boolean {
+  TagPublishedFile(hScreenshot: number, unPublishedFileID: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamScreenshots_TagPublishedFile', 'bool', ['void *', 'uint32', 'uint64'])(this.ptr, hScreenshot, unPublishedFileID) as boolean;
   }
 

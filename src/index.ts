@@ -2,13 +2,9 @@ import { SteamNative } from './runtime/native';
 import { SteamDispatch } from './runtime/dispatch';
 import { decodeStruct, type StructLayout } from './runtime/struct';
 import { ESteamAPIInitResult } from './generated/enums';
-import { callbacksById } from './generated/callbacks';
-import { ISteamApps } from './generated/interfaces/ISteamApps';
-import { ISteamFriends } from './generated/interfaces/ISteamFriends';
-import { ISteamUGC } from './generated/interfaces/ISteamUGC';
-import { ISteamUser } from './generated/interfaces/ISteamUser';
-import { ISteamUserStats } from './generated/interfaces/ISteamUserStats';
-import { ISteamUtils } from './generated/interfaces/ISteamUtils';
+import { callbacksById, type SteamCallbackMap } from './generated/callbacks';
+import { SteamInterfaces } from './generated/accessors';
+import { SteamAsync } from './generated/async';
 import { SteamInitError } from './api/errors';
 import { Workshop } from './api/workshop';
 
@@ -46,12 +42,11 @@ export interface InitOptions {
  *
  * @see init
  */
-export class Steam {
-  /** The loaded library and the core flat exports. */
-  readonly native: SteamNative;
+export class Steam extends SteamInterfaces {
   /** The running manual-dispatch pump. Use it to await raw call handles. */
   readonly dispatch: SteamDispatch;
-  private readonly cache = new Map<string, unknown>();
+  private workshopHelper: Workshop | undefined;
+  private asyncCalls: SteamAsync | undefined;
   private closed = false;
 
   /**
@@ -67,46 +62,8 @@ export class Steam {
     dispatch: SteamDispatch,
     readonly appId: number,
   ) {
-    this.native = native;
+    super(native);
     this.dispatch = dispatch;
-  }
-
-  /** Returns the cached interface instance for `ctor`, creating it on first use. */
-  private iface<T>(ctor: new (nat: SteamNative) => T): T {
-    let v = this.cache.get(ctor.name) as T | undefined;
-    if (!v) {
-      v = new ctor(this.native);
-      this.cache.set(ctor.name, v);
-    }
-    return v;
-  }
-
-  /** ISteamUser: the logged in account, its Steam id, and auth tickets. */
-  get user(): ISteamUser {
-    return this.iface(ISteamUser);
-  }
-  /** ISteamFriends: friend list, personas, avatars, and overlay calls. */
-  get friends(): ISteamFriends {
-    return this.iface(ISteamFriends);
-  }
-  /** ISteamUtils: app state, language, images, and API call bookkeeping. */
-  get utils(): ISteamUtils {
-    return this.iface(ISteamUtils);
-  }
-  /** ISteamApps: ownership, install state, DLC, and beta branch. */
-  get apps(): ISteamApps {
-    return this.iface(ISteamApps);
-  }
-  /** ISteamUserStats: stats, achievements, and leaderboards. */
-  get userStats(): ISteamUserStats {
-    return this.iface(ISteamUserStats);
-  }
-  /**
-   * ISteamUGC: the raw workshop interface. Prefer {@link Steam.workshop} for
-   * the common tasks.
-   */
-  get ugc(): ISteamUGC {
-    return this.iface(ISteamUGC);
   }
 
   /**
@@ -116,12 +73,31 @@ export class Steam {
    * @see Workshop
    */
   get workshop(): Workshop {
-    let v = this.cache.get('workshop') as Workshop | undefined;
-    if (!v) {
-      v = new Workshop(this.ugc, this.dispatch, this.appId);
-      this.cache.set('workshop', v);
-    }
-    return v;
+    if (!this.workshopHelper) this.workshopHelper = new Workshop(this.ugc, this.dispatch, this.appId);
+    return this.workshopHelper;
+  }
+
+  /**
+   * Every flat call that returns a `SteamAPICall_t`, as a promise that resolves
+   * with the decoded result struct, grouped by interface.
+   *
+   * This is the generated layer, so it resolves with whatever Steam returns: a
+   * non-OK `EResult` inside the struct is not an error here.
+   *
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const r = await steam.async.userStats.FindLeaderboard('Quickest Win');
+   * console.log(r.m_bLeaderboardFound, r.m_hSteamLeaderboard);
+   * steam.close();
+   * ```
+   * @see SteamDispatch.callResultStruct
+   */
+  get async(): SteamAsync {
+    if (!this.asyncCalls) this.asyncCalls = new SteamAsync(this, this.dispatch);
+    return this.asyncCalls;
   }
 
   /**
@@ -153,28 +129,31 @@ export class Steam {
    * This is for broadcast callbacks only. The result of an async call is not
    * one, await it through `steam.dispatch` instead.
    *
-   * @param callbackName - Struct name exactly as in the SDK, for example `ItemInstalled_t`.
+   * @param callbackName - Struct name exactly as in the SDK, for example `ItemInstalled_t`. Checked against {@link flat.SteamCallbackMap} at compile time.
    * @param listener - Runs on every such callback, inside a pump frame. 64-bit fields are `bigint`.
-   * @typeParam T - Generated struct interface for the callback.
+   * @typeParam K - The callback name, which decides the listener's argument type.
    * @returns Unsubscribe function. Calling it more than once is harmless.
    * @throws Error if no generated callback carries that name.
    * @example
    * ```ts
-   * import { init, flat } from 'steamwand.js';
+   * import { init } from 'steamwand.js';
    *
    * const steam = init({ appId: 480 });
-   * const off = steam.on<flat.ItemInstalled_t>('ItemInstalled_t', (e) => {
+   * const off = steam.on('ItemInstalled_t', (e) => {
    *   console.log('installed', e.m_nPublishedFileId); // bigint
    * });
    * // later: off();
    * ```
    * @see SteamDispatch.on
    */
-  on<T>(callbackName: string, listener: (data: T) => void): () => void {
+  on<K extends keyof SteamCallbackMap & string>(
+    callbackName: K,
+    listener: (data: SteamCallbackMap[K]) => void,
+  ): () => void {
     const def = Object.values(callbacksById).find((c) => c.name === callbackName);
     if (!def) throw new Error(`steamwand: unknown callback struct '${callbackName}'`);
     const layout: StructLayout = process.platform === 'win32' ? def.win64 : def.posix;
-    return this.dispatch.on(def.id, (buf) => listener(decodeStruct<T>(buf, layout)));
+    return this.dispatch.on(def.id, (buf) => listener(decodeStruct<SteamCallbackMap[K]>(buf, layout)));
   }
 
   /**
@@ -245,6 +224,52 @@ export function init(opts: InitOptions = {}): Steam {
   return new Steam(native, dispatch, appId);
 }
 
+/**
+ * Relaunches the app through Steam when it was started some other way, for
+ * example straight from the executable.
+ *
+ * Call this before {@link init}, at the very top of the process. When it
+ * returns true, Steam is starting your app again, so exit immediately and let
+ * that copy take over. It always returns false when a `steam_appid.txt` sits
+ * next to the executable, which is why that file only belongs in development.
+ *
+ * @param appId - App id to relaunch under.
+ * @param libPath - Override the bundled steam_api redistributable.
+ * @defaultValue the bundled library for this platform
+ * @returns True if Steam is relaunching the app, so this process must exit.
+ * @throws Error if the library cannot be loaded from `libPath`.
+ * @example
+ * ```ts
+ * import { restartAppIfNecessary, init } from 'steamwand.js';
+ *
+ * if (restartAppIfNecessary(480)) process.exit(0);
+ * const steam = init({ appId: 480 });
+ * ```
+ * @see init
+ */
+export function restartAppIfNecessary(appId: number, libPath?: string): boolean {
+  const native = new SteamNative(libPath);
+  return native.func('SteamAPI_RestartAppIfNecessary', 'bool', ['uint32'])(appId) as boolean;
+}
+
+/**
+ * Returns whether a Steam client is running on this machine.
+ *
+ * Call this before {@link init} to tell "Steam is not running" apart from the
+ * other init failures. It loads the library but does not start the Steam API,
+ * so it is safe to call on its own.
+ *
+ * @param libPath - Override the bundled steam_api redistributable.
+ * @defaultValue the bundled library for this platform
+ * @returns True if a Steam client is running.
+ * @throws Error if the library cannot be loaded from `libPath`.
+ * @see init
+ */
+export function isSteamRunning(libPath?: string): boolean {
+  const native = new SteamNative(libPath);
+  return native.func('SteamAPI_IsSteamRunning', 'bool', [])() as boolean;
+}
+
 /** The loaded library and the core flat exports. Usually reached as `steam.native`. */
 export { SteamNative } from './runtime/native';
 /** The manual dispatch pump and its call error. Usually reached as `steam.dispatch`. */
@@ -254,6 +279,9 @@ export { decodeStruct } from './runtime/struct';
 export type { StructLayout, FieldLayout, FieldType } from './runtime/struct';
 /** Wraps a string array for a flat parameter of type `SteamParamStringArray_t *`. */
 export { stringArray } from './runtime/types';
+/** Typed out-parameter buffers for the flat API: `out.bool()`, `out.uint64()`, ... */
+export { out } from './runtime/out';
+export type { OutParam } from './runtime/out';
 /** The two error classes this package throws, plus the EResult namer. */
 export { SteamInitError, SteamResultError, eResultName } from './api/errors';
 /** Task level workshop helper. Usually reached as `steam.workshop`. */

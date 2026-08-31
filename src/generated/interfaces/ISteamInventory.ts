@@ -62,10 +62,10 @@ export class ISteamInventory {
    * `bool CheckResultSteamID(SteamInventoryResult_t resultHandle, CSteamID steamIDExpected)`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_CheckResultSteamID`
-   * @param steamIDExpected `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDExpected `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#CheckResultSteamID
    */
-  CheckResultSteamID(resultHandle: number, steamIDExpected: bigint | number): boolean {
+  CheckResultSteamID(resultHandle: number, steamIDExpected: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_CheckResultSteamID', 'bool', ['void *', 'int32', 'uint64'])(this.ptr, resultHandle, steamIDExpected) as boolean;
   }
 
@@ -178,10 +178,10 @@ export class ISteamInventory {
    *
    * Flat symbol: `SteamAPI_ISteamInventory_ConsumeItem`
    * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
-   * @param itemConsume `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @param itemConsume `SteamItemInstanceID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#ConsumeItem
    */
-  ConsumeItem(pResultHandle: Buffer | null, itemConsume: bigint | number, unQuantity: number): boolean {
+  ConsumeItem(pResultHandle: Buffer | null, itemConsume: bigint, unQuantity: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_ConsumeItem', 'bool', ['void *', 'void *', 'uint64', 'uint32'])(this.ptr, pResultHandle, itemConsume, unQuantity) as boolean;
   }
 
@@ -205,11 +205,11 @@ export class ISteamInventory {
    *
    * Flat symbol: `SteamAPI_ISteamInventory_TransferItemQuantity`
    * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
-   * @param itemIdSource `SteamItemInstanceID_t`, 64-bit: bigint or number.
-   * @param itemIdDest `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @param itemIdSource `SteamItemInstanceID_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param itemIdDest `SteamItemInstanceID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#TransferItemQuantity
    */
-  TransferItemQuantity(pResultHandle: Buffer | null, itemIdSource: bigint | number, unQuantity: number, itemIdDest: bigint | number): boolean {
+  TransferItemQuantity(pResultHandle: Buffer | null, itemIdSource: bigint, unQuantity: number, itemIdDest: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_TransferItemQuantity', 'bool', ['void *', 'void *', 'uint64', 'uint32', 'uint64'])(this.ptr, pResultHandle, itemIdSource, unQuantity, itemIdDest) as boolean;
   }
 
@@ -239,14 +239,14 @@ export class ISteamInventory {
    *
    * Flat symbol: `SteamAPI_ISteamInventory_TradeItems`
    * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
-   * @param steamIDTradePartner `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDTradePartner `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pArrayGive Buffer you allocate for `const SteamItemInstanceID_t *`: `Buffer.alloc(8)` per element.
    * @param pArrayGiveQuantity Buffer you allocate for `const uint32 *`: `Buffer.alloc(4)` per element.
    * @param pArrayGet Buffer you allocate for `const SteamItemInstanceID_t *`: `Buffer.alloc(8)` per element.
    * @param pArrayGetQuantity Buffer you allocate for `const uint32 *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#TradeItems
    */
-  TradeItems(pResultHandle: Buffer | null, steamIDTradePartner: bigint | number, pArrayGive: Buffer | null, pArrayGiveQuantity: Buffer | null, nArrayGiveLength: number, pArrayGet: Buffer | null, pArrayGetQuantity: Buffer | null, nArrayGetLength: number): boolean {
+  TradeItems(pResultHandle: Buffer | null, steamIDTradePartner: bigint, pArrayGive: Buffer | null, pArrayGiveQuantity: Buffer | null, nArrayGiveLength: number, pArrayGet: Buffer | null, pArrayGetQuantity: Buffer | null, nArrayGetLength: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_TradeItems', 'bool', ['void *', 'void *', 'uint64', 'void *', 'void *', 'uint32', 'void *', 'void *', 'uint32'])(this.ptr, pResultHandle, steamIDTradePartner, pArrayGive, pArrayGiveQuantity, nArrayGiveLength, pArrayGet, pArrayGetQuantity, nArrayGetLength) as boolean;
   }
 
@@ -289,10 +289,10 @@ export class ISteamInventory {
    *
    * Flat symbol: `SteamAPI_ISteamInventory_RequestEligiblePromoItemDefinitionsIDs`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamInventoryEligiblePromoItemDefIDs_t>(handle, layoutOf('SteamInventoryEligiblePromoItemDefIDs_t'))`.
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#RequestEligiblePromoItemDefinitionsIDs
    */
-  RequestEligiblePromoItemDefinitionsIDs(steamID: bigint | number): bigint {
+  RequestEligiblePromoItemDefinitionsIDs(steamID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInventory_RequestEligiblePromoItemDefinitionsIDs', 'uint64', ['void *', 'uint64'])(this.ptr, steamID) as number | bigint);
   }
 
@@ -300,12 +300,12 @@ export class ISteamInventory {
    * `bool GetEligiblePromoItemDefinitionIDs(CSteamID steamID, SteamItemDef_t *pItemDefIDs, uint32 *punItemDefIDsArraySize)`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_GetEligiblePromoItemDefinitionIDs`
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pItemDefIDs Buffer you allocate for `SteamItemDef_t *`: `Buffer.alloc(4)` per element.
    * @param punItemDefIDsArraySize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetEligiblePromoItemDefinitionIDs
    */
-  GetEligiblePromoItemDefinitionIDs(steamID: bigint | number, pItemDefIDs: Buffer | null, punItemDefIDsArraySize: Buffer | null): boolean {
+  GetEligiblePromoItemDefinitionIDs(steamID: bigint, pItemDefIDs: Buffer | null, punItemDefIDsArraySize: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GetEligiblePromoItemDefinitionIDs', 'bool', ['void *', 'uint64', 'void *', 'void *'])(this.ptr, steamID, pItemDefIDs, punItemDefIDsArraySize) as boolean;
   }
 
@@ -382,11 +382,11 @@ export class ISteamInventory {
    * `bool RemoveProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, const char *pchPropertyName)`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_RemoveProperty`
-   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
-   * @param nItemID `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param nItemID `SteamItemInstanceID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#RemoveProperty
    */
-  RemoveProperty(handle: bigint | number, nItemID: bigint | number, pchPropertyName: string): boolean {
+  RemoveProperty(handle: bigint, nItemID: bigint, pchPropertyName: string): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_RemoveProperty', 'bool', ['void *', 'uint64', 'uint64', 'str'])(this.ptr, handle, nItemID, pchPropertyName) as boolean;
   }
 
@@ -394,11 +394,11 @@ export class ISteamInventory {
    * `bool SetProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, const char *pchPropertyName, const char *pchPropertyValue)`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_SetPropertyString`
-   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
-   * @param nItemID `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param nItemID `SteamItemInstanceID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
    */
-  SetPropertyString(handle: bigint | number, nItemID: bigint | number, pchPropertyName: string, pchPropertyValue: string): boolean {
+  SetPropertyString(handle: bigint, nItemID: bigint, pchPropertyName: string, pchPropertyValue: string): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SetPropertyString', 'bool', ['void *', 'uint64', 'uint64', 'str', 'str'])(this.ptr, handle, nItemID, pchPropertyName, pchPropertyValue) as boolean;
   }
 
@@ -406,11 +406,11 @@ export class ISteamInventory {
    * `bool SetProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, const char *pchPropertyName, bool bValue)`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_SetPropertyBool`
-   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
-   * @param nItemID `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param nItemID `SteamItemInstanceID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
    */
-  SetPropertyBool(handle: bigint | number, nItemID: bigint | number, pchPropertyName: string, bValue: boolean): boolean {
+  SetPropertyBool(handle: bigint, nItemID: bigint, pchPropertyName: string, bValue: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SetPropertyBool', 'bool', ['void *', 'uint64', 'uint64', 'str', 'bool'])(this.ptr, handle, nItemID, pchPropertyName, bValue) as boolean;
   }
 
@@ -418,12 +418,12 @@ export class ISteamInventory {
    * `bool SetProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, const char *pchPropertyName, int64 nValue)`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_SetPropertyInt64`
-   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
-   * @param nItemID `SteamItemInstanceID_t`, 64-bit: bigint or number.
-   * @param nValue `int64`, 64-bit: bigint or number.
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param nItemID `SteamItemInstanceID_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param nValue `int64`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
    */
-  SetPropertyInt64(handle: bigint | number, nItemID: bigint | number, pchPropertyName: string, nValue: bigint | number): boolean {
+  SetPropertyInt64(handle: bigint, nItemID: bigint, pchPropertyName: string, nValue: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SetPropertyInt64', 'bool', ['void *', 'uint64', 'uint64', 'str', 'int64'])(this.ptr, handle, nItemID, pchPropertyName, nValue) as boolean;
   }
 
@@ -431,11 +431,11 @@ export class ISteamInventory {
    * `bool SetProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, const char *pchPropertyName, float flValue)`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_SetPropertyFloat`
-   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
-   * @param nItemID `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param nItemID `SteamItemInstanceID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
    */
-  SetPropertyFloat(handle: bigint | number, nItemID: bigint | number, pchPropertyName: string, flValue: number): boolean {
+  SetPropertyFloat(handle: bigint, nItemID: bigint, pchPropertyName: string, flValue: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SetPropertyFloat', 'bool', ['void *', 'uint64', 'uint64', 'str', 'float'])(this.ptr, handle, nItemID, pchPropertyName, flValue) as boolean;
   }
 
@@ -443,11 +443,11 @@ export class ISteamInventory {
    * `bool SubmitUpdateProperties(SteamInventoryUpdateHandle_t handle, SteamInventoryResult_t *pResultHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_SubmitUpdateProperties`
-   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#SubmitUpdateProperties
    */
-  SubmitUpdateProperties(handle: bigint | number, pResultHandle: Buffer | null): boolean {
+  SubmitUpdateProperties(handle: bigint, pResultHandle: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SubmitUpdateProperties', 'bool', ['void *', 'uint64', 'void *'])(this.ptr, handle, pResultHandle) as boolean;
   }
 

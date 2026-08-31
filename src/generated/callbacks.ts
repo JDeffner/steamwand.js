@@ -2,6 +2,199 @@
 /* eslint-disable */
 
 import type { StructLayout } from '../runtime/struct';
+import type {
+  SteamServersConnected_t,
+  SteamServerConnectFailure_t,
+  SteamServersDisconnected_t,
+  ClientGameServerDeny_t,
+  IPCFailure_t,
+  LicensesUpdated_t,
+  ValidateAuthTicketResponse_t,
+  MicroTxnAuthorizationResponse_t,
+  EncryptedAppTicketResponse_t,
+  GetAuthSessionTicketResponse_t,
+  GameWebCallback_t,
+  StoreAuthURLResponse_t,
+  MarketEligibilityResponse_t,
+  DurationControl_t,
+  GetTicketForWebApiResponse_t,
+  PersonaStateChange_t,
+  GameOverlayActivated_t,
+  GameServerChangeRequested_t,
+  GameLobbyJoinRequested_t,
+  AvatarImageLoaded_t,
+  ClanOfficerListResponse_t,
+  FriendRichPresenceUpdate_t,
+  GameRichPresenceJoinRequested_t,
+  GameConnectedClanChatMsg_t,
+  GameConnectedChatJoin_t,
+  GameConnectedChatLeave_t,
+  DownloadClanActivityCountsResult_t,
+  JoinClanChatRoomCompletionResult_t,
+  GameConnectedFriendChatMsg_t,
+  FriendsGetFollowerCount_t,
+  FriendsIsFollowing_t,
+  FriendsEnumerateFollowingList_t,
+  UnreadChatMessagesChanged_t,
+  OverlayBrowserProtocolNavigation_t,
+  EquippedProfileItemsChanged_t,
+  EquippedProfileItems_t,
+  IPCountry_t,
+  LowBatteryPower_t,
+  SteamAPICallCompleted_t,
+  SteamShutdown_t,
+  CheckFileSignature_t,
+  GamepadTextInputDismissed_t,
+  AppResumingFromSuspend_t,
+  FloatingGamepadTextInputDismissed_t,
+  FilterTextDictionaryChanged_t,
+  FavoritesListChanged_t,
+  LobbyInvite_t,
+  LobbyEnter_t,
+  LobbyDataUpdate_t,
+  LobbyChatUpdate_t,
+  LobbyChatMsg_t,
+  LobbyGameCreated_t,
+  LobbyMatchList_t,
+  LobbyKicked_t,
+  LobbyCreated_t,
+  FavoritesListAccountsUpdated_t,
+  JoinPartyCallback_t,
+  CreateBeaconCallback_t,
+  ReservationNotificationCallback_t,
+  ChangeNumOpenSlotsCallback_t,
+  AvailableBeaconLocationsUpdated_t,
+  ActiveBeaconsUpdated_t,
+  RemoteStorageFileShareResult_t,
+  RemoteStoragePublishFileResult_t,
+  RemoteStorageDeletePublishedFileResult_t,
+  RemoteStorageEnumerateUserPublishedFilesResult_t,
+  RemoteStorageSubscribePublishedFileResult_t,
+  RemoteStorageEnumerateUserSubscribedFilesResult_t,
+  RemoteStorageUnsubscribePublishedFileResult_t,
+  RemoteStorageUpdatePublishedFileResult_t,
+  RemoteStorageDownloadUGCResult_t,
+  RemoteStorageGetPublishedFileDetailsResult_t,
+  RemoteStorageEnumerateWorkshopFilesResult_t,
+  RemoteStorageGetPublishedItemVoteDetailsResult_t,
+  RemoteStoragePublishedFileSubscribed_t,
+  RemoteStoragePublishedFileUnsubscribed_t,
+  RemoteStoragePublishedFileDeleted_t,
+  RemoteStorageUpdateUserPublishedItemVoteResult_t,
+  RemoteStorageUserVoteDetails_t,
+  RemoteStorageEnumerateUserSharedWorkshopFilesResult_t,
+  RemoteStorageSetUserPublishedFileActionResult_t,
+  RemoteStorageEnumeratePublishedFilesByUserActionResult_t,
+  RemoteStoragePublishFileProgress_t,
+  RemoteStoragePublishedFileUpdated_t,
+  RemoteStorageFileWriteAsyncComplete_t,
+  RemoteStorageFileReadAsyncComplete_t,
+  RemoteStorageLocalFileChange_t,
+  UserStatsReceived_t,
+  UserStatsStored_t,
+  UserAchievementStored_t,
+  LeaderboardFindResult_t,
+  LeaderboardScoresDownloaded_t,
+  LeaderboardScoreUploaded_t,
+  NumberOfCurrentPlayers_t,
+  UserStatsUnloaded_t,
+  UserAchievementIconFetched_t,
+  GlobalAchievementPercentagesReady_t,
+  LeaderboardUGCSet_t,
+  GlobalStatsReceived_t,
+  DlcInstalled_t,
+  NewUrlLaunchParameters_t,
+  AppProofOfPurchaseKeyResponse_t,
+  FileDetailsResult_t,
+  TimedTrialStatus_t,
+  P2PSessionRequest_t,
+  P2PSessionConnectFail_t,
+  SocketStatusCallback_t,
+  ScreenshotReady_t,
+  ScreenshotRequested_t,
+  PlaybackStatusHasChanged_t,
+  VolumeHasChanged_t,
+  HTTPRequestCompleted_t,
+  HTTPRequestHeadersReceived_t,
+  HTTPRequestDataReceived_t,
+  SteamInputDeviceConnected_t,
+  SteamInputDeviceDisconnected_t,
+  SteamInputConfigurationLoaded_t,
+  SteamInputGamepadSlotChange_t,
+  SteamUGCQueryCompleted_t,
+  SteamUGCRequestUGCDetailsResult_t,
+  CreateItemResult_t,
+  SubmitItemUpdateResult_t,
+  ItemInstalled_t,
+  DownloadItemResult_t,
+  UserFavoriteItemsListChanged_t,
+  SetUserItemVoteResult_t,
+  GetUserItemVoteResult_t,
+  StartPlaytimeTrackingResult_t,
+  StopPlaytimeTrackingResult_t,
+  AddUGCDependencyResult_t,
+  RemoveUGCDependencyResult_t,
+  AddAppDependencyResult_t,
+  RemoveAppDependencyResult_t,
+  GetAppDependenciesResult_t,
+  DeleteItemResult_t,
+  UserSubscribedItemsListChanged_t,
+  WorkshopEULAStatus_t,
+  HTML_BrowserReady_t,
+  HTML_NeedsPaint_t,
+  HTML_StartRequest_t,
+  HTML_CloseBrowser_t,
+  HTML_URLChanged_t,
+  HTML_FinishedRequest_t,
+  HTML_OpenLinkInNewTab_t,
+  HTML_ChangedTitle_t,
+  HTML_SearchResults_t,
+  HTML_CanGoBackAndForward_t,
+  HTML_HorizontalScroll_t,
+  HTML_VerticalScroll_t,
+  HTML_LinkAtPosition_t,
+  HTML_JSAlert_t,
+  HTML_JSConfirm_t,
+  HTML_FileOpenDialog_t,
+  HTML_NewWindow_t,
+  HTML_SetCursor_t,
+  HTML_StatusText_t,
+  HTML_ShowToolTip_t,
+  HTML_UpdateToolTip_t,
+  HTML_HideToolTip_t,
+  HTML_BrowserRestarted_t,
+  SteamInventoryResultReady_t,
+  SteamInventoryFullUpdate_t,
+  SteamInventoryDefinitionUpdate_t,
+  SteamInventoryEligiblePromoItemDefIDs_t,
+  SteamInventoryStartPurchaseResult_t,
+  SteamInventoryRequestPricesResult_t,
+  SteamTimelineGamePhaseRecordingExists_t,
+  SteamTimelineEventRecordingExists_t,
+  GetVideoURLResult_t,
+  GetOPFSettingsResult_t,
+  BroadcastUploadStart_t,
+  BroadcastUploadStop_t,
+  SteamParentalSettingsChanged_t,
+  SteamRemotePlaySessionConnected_t,
+  SteamRemotePlaySessionDisconnected_t,
+  SteamRemotePlayTogetherGuestInvite_t,
+  SteamRemotePlaySessionAvatarLoaded_t,
+  SteamNetAuthenticationStatus_t,
+  SteamRelayNetworkStatus_t,
+  GSClientApprove_t,
+  GSClientDeny_t,
+  GSClientKick_t,
+  GSClientAchievementStatus_t,
+  GSPolicyResponse_t,
+  GSGameplayStats_t,
+  GSClientGroupStatus_t,
+  GSReputation_t,
+  AssociateWithClanResult_t,
+  ComputeNewPlayerCompatibilityResult_t,
+  GSStatsReceived_t,
+  GSStatsStored_t,
+} from './structs';
 
 export interface CallbackDef { id: number; name: string; win64: StructLayout; posix: StructLayout }
 
@@ -583,3 +776,203 @@ export const callbackId = {
   /** `GSStatsStored_t` callback id. Subscribe with `steam.on('GSStatsStored_t', cb)`. */
   GSStatsStored_t: 1801,
 } as const;
+
+/**
+ * Every subscribable callback name, mapped to the struct its listener gets.
+ *
+ * `Steam.on` is keyed on this, so the callback name is checked at compile time
+ * and the listener argument is typed for you.
+ */
+export interface SteamCallbackMap {
+  SteamServersConnected_t: SteamServersConnected_t;
+  SteamServerConnectFailure_t: SteamServerConnectFailure_t;
+  SteamServersDisconnected_t: SteamServersDisconnected_t;
+  ClientGameServerDeny_t: ClientGameServerDeny_t;
+  IPCFailure_t: IPCFailure_t;
+  LicensesUpdated_t: LicensesUpdated_t;
+  ValidateAuthTicketResponse_t: ValidateAuthTicketResponse_t;
+  MicroTxnAuthorizationResponse_t: MicroTxnAuthorizationResponse_t;
+  EncryptedAppTicketResponse_t: EncryptedAppTicketResponse_t;
+  GetAuthSessionTicketResponse_t: GetAuthSessionTicketResponse_t;
+  GameWebCallback_t: GameWebCallback_t;
+  StoreAuthURLResponse_t: StoreAuthURLResponse_t;
+  MarketEligibilityResponse_t: MarketEligibilityResponse_t;
+  DurationControl_t: DurationControl_t;
+  GetTicketForWebApiResponse_t: GetTicketForWebApiResponse_t;
+  PersonaStateChange_t: PersonaStateChange_t;
+  GameOverlayActivated_t: GameOverlayActivated_t;
+  GameServerChangeRequested_t: GameServerChangeRequested_t;
+  GameLobbyJoinRequested_t: GameLobbyJoinRequested_t;
+  AvatarImageLoaded_t: AvatarImageLoaded_t;
+  ClanOfficerListResponse_t: ClanOfficerListResponse_t;
+  FriendRichPresenceUpdate_t: FriendRichPresenceUpdate_t;
+  GameRichPresenceJoinRequested_t: GameRichPresenceJoinRequested_t;
+  GameConnectedClanChatMsg_t: GameConnectedClanChatMsg_t;
+  GameConnectedChatJoin_t: GameConnectedChatJoin_t;
+  GameConnectedChatLeave_t: GameConnectedChatLeave_t;
+  DownloadClanActivityCountsResult_t: DownloadClanActivityCountsResult_t;
+  JoinClanChatRoomCompletionResult_t: JoinClanChatRoomCompletionResult_t;
+  GameConnectedFriendChatMsg_t: GameConnectedFriendChatMsg_t;
+  FriendsGetFollowerCount_t: FriendsGetFollowerCount_t;
+  FriendsIsFollowing_t: FriendsIsFollowing_t;
+  FriendsEnumerateFollowingList_t: FriendsEnumerateFollowingList_t;
+  UnreadChatMessagesChanged_t: UnreadChatMessagesChanged_t;
+  OverlayBrowserProtocolNavigation_t: OverlayBrowserProtocolNavigation_t;
+  EquippedProfileItemsChanged_t: EquippedProfileItemsChanged_t;
+  EquippedProfileItems_t: EquippedProfileItems_t;
+  IPCountry_t: IPCountry_t;
+  LowBatteryPower_t: LowBatteryPower_t;
+  SteamAPICallCompleted_t: SteamAPICallCompleted_t;
+  SteamShutdown_t: SteamShutdown_t;
+  CheckFileSignature_t: CheckFileSignature_t;
+  GamepadTextInputDismissed_t: GamepadTextInputDismissed_t;
+  AppResumingFromSuspend_t: AppResumingFromSuspend_t;
+  FloatingGamepadTextInputDismissed_t: FloatingGamepadTextInputDismissed_t;
+  FilterTextDictionaryChanged_t: FilterTextDictionaryChanged_t;
+  FavoritesListChanged_t: FavoritesListChanged_t;
+  LobbyInvite_t: LobbyInvite_t;
+  LobbyEnter_t: LobbyEnter_t;
+  LobbyDataUpdate_t: LobbyDataUpdate_t;
+  LobbyChatUpdate_t: LobbyChatUpdate_t;
+  LobbyChatMsg_t: LobbyChatMsg_t;
+  LobbyGameCreated_t: LobbyGameCreated_t;
+  LobbyMatchList_t: LobbyMatchList_t;
+  LobbyKicked_t: LobbyKicked_t;
+  LobbyCreated_t: LobbyCreated_t;
+  FavoritesListAccountsUpdated_t: FavoritesListAccountsUpdated_t;
+  JoinPartyCallback_t: JoinPartyCallback_t;
+  CreateBeaconCallback_t: CreateBeaconCallback_t;
+  ReservationNotificationCallback_t: ReservationNotificationCallback_t;
+  ChangeNumOpenSlotsCallback_t: ChangeNumOpenSlotsCallback_t;
+  AvailableBeaconLocationsUpdated_t: AvailableBeaconLocationsUpdated_t;
+  ActiveBeaconsUpdated_t: ActiveBeaconsUpdated_t;
+  RemoteStorageFileShareResult_t: RemoteStorageFileShareResult_t;
+  RemoteStoragePublishFileResult_t: RemoteStoragePublishFileResult_t;
+  RemoteStorageDeletePublishedFileResult_t: RemoteStorageDeletePublishedFileResult_t;
+  RemoteStorageEnumerateUserPublishedFilesResult_t: RemoteStorageEnumerateUserPublishedFilesResult_t;
+  RemoteStorageSubscribePublishedFileResult_t: RemoteStorageSubscribePublishedFileResult_t;
+  RemoteStorageEnumerateUserSubscribedFilesResult_t: RemoteStorageEnumerateUserSubscribedFilesResult_t;
+  RemoteStorageUnsubscribePublishedFileResult_t: RemoteStorageUnsubscribePublishedFileResult_t;
+  RemoteStorageUpdatePublishedFileResult_t: RemoteStorageUpdatePublishedFileResult_t;
+  RemoteStorageDownloadUGCResult_t: RemoteStorageDownloadUGCResult_t;
+  RemoteStorageGetPublishedFileDetailsResult_t: RemoteStorageGetPublishedFileDetailsResult_t;
+  RemoteStorageEnumerateWorkshopFilesResult_t: RemoteStorageEnumerateWorkshopFilesResult_t;
+  RemoteStorageGetPublishedItemVoteDetailsResult_t: RemoteStorageGetPublishedItemVoteDetailsResult_t;
+  RemoteStoragePublishedFileSubscribed_t: RemoteStoragePublishedFileSubscribed_t;
+  RemoteStoragePublishedFileUnsubscribed_t: RemoteStoragePublishedFileUnsubscribed_t;
+  RemoteStoragePublishedFileDeleted_t: RemoteStoragePublishedFileDeleted_t;
+  RemoteStorageUpdateUserPublishedItemVoteResult_t: RemoteStorageUpdateUserPublishedItemVoteResult_t;
+  RemoteStorageUserVoteDetails_t: RemoteStorageUserVoteDetails_t;
+  RemoteStorageEnumerateUserSharedWorkshopFilesResult_t: RemoteStorageEnumerateUserSharedWorkshopFilesResult_t;
+  RemoteStorageSetUserPublishedFileActionResult_t: RemoteStorageSetUserPublishedFileActionResult_t;
+  RemoteStorageEnumeratePublishedFilesByUserActionResult_t: RemoteStorageEnumeratePublishedFilesByUserActionResult_t;
+  RemoteStoragePublishFileProgress_t: RemoteStoragePublishFileProgress_t;
+  RemoteStoragePublishedFileUpdated_t: RemoteStoragePublishedFileUpdated_t;
+  RemoteStorageFileWriteAsyncComplete_t: RemoteStorageFileWriteAsyncComplete_t;
+  RemoteStorageFileReadAsyncComplete_t: RemoteStorageFileReadAsyncComplete_t;
+  RemoteStorageLocalFileChange_t: RemoteStorageLocalFileChange_t;
+  UserStatsReceived_t: UserStatsReceived_t;
+  UserStatsStored_t: UserStatsStored_t;
+  UserAchievementStored_t: UserAchievementStored_t;
+  LeaderboardFindResult_t: LeaderboardFindResult_t;
+  LeaderboardScoresDownloaded_t: LeaderboardScoresDownloaded_t;
+  LeaderboardScoreUploaded_t: LeaderboardScoreUploaded_t;
+  NumberOfCurrentPlayers_t: NumberOfCurrentPlayers_t;
+  UserStatsUnloaded_t: UserStatsUnloaded_t;
+  UserAchievementIconFetched_t: UserAchievementIconFetched_t;
+  GlobalAchievementPercentagesReady_t: GlobalAchievementPercentagesReady_t;
+  LeaderboardUGCSet_t: LeaderboardUGCSet_t;
+  GlobalStatsReceived_t: GlobalStatsReceived_t;
+  DlcInstalled_t: DlcInstalled_t;
+  NewUrlLaunchParameters_t: NewUrlLaunchParameters_t;
+  AppProofOfPurchaseKeyResponse_t: AppProofOfPurchaseKeyResponse_t;
+  FileDetailsResult_t: FileDetailsResult_t;
+  TimedTrialStatus_t: TimedTrialStatus_t;
+  P2PSessionRequest_t: P2PSessionRequest_t;
+  P2PSessionConnectFail_t: P2PSessionConnectFail_t;
+  SocketStatusCallback_t: SocketStatusCallback_t;
+  ScreenshotReady_t: ScreenshotReady_t;
+  ScreenshotRequested_t: ScreenshotRequested_t;
+  PlaybackStatusHasChanged_t: PlaybackStatusHasChanged_t;
+  VolumeHasChanged_t: VolumeHasChanged_t;
+  HTTPRequestCompleted_t: HTTPRequestCompleted_t;
+  HTTPRequestHeadersReceived_t: HTTPRequestHeadersReceived_t;
+  HTTPRequestDataReceived_t: HTTPRequestDataReceived_t;
+  SteamInputDeviceConnected_t: SteamInputDeviceConnected_t;
+  SteamInputDeviceDisconnected_t: SteamInputDeviceDisconnected_t;
+  SteamInputConfigurationLoaded_t: SteamInputConfigurationLoaded_t;
+  SteamInputGamepadSlotChange_t: SteamInputGamepadSlotChange_t;
+  SteamUGCQueryCompleted_t: SteamUGCQueryCompleted_t;
+  SteamUGCRequestUGCDetailsResult_t: SteamUGCRequestUGCDetailsResult_t;
+  CreateItemResult_t: CreateItemResult_t;
+  SubmitItemUpdateResult_t: SubmitItemUpdateResult_t;
+  ItemInstalled_t: ItemInstalled_t;
+  DownloadItemResult_t: DownloadItemResult_t;
+  UserFavoriteItemsListChanged_t: UserFavoriteItemsListChanged_t;
+  SetUserItemVoteResult_t: SetUserItemVoteResult_t;
+  GetUserItemVoteResult_t: GetUserItemVoteResult_t;
+  StartPlaytimeTrackingResult_t: StartPlaytimeTrackingResult_t;
+  StopPlaytimeTrackingResult_t: StopPlaytimeTrackingResult_t;
+  AddUGCDependencyResult_t: AddUGCDependencyResult_t;
+  RemoveUGCDependencyResult_t: RemoveUGCDependencyResult_t;
+  AddAppDependencyResult_t: AddAppDependencyResult_t;
+  RemoveAppDependencyResult_t: RemoveAppDependencyResult_t;
+  GetAppDependenciesResult_t: GetAppDependenciesResult_t;
+  DeleteItemResult_t: DeleteItemResult_t;
+  UserSubscribedItemsListChanged_t: UserSubscribedItemsListChanged_t;
+  WorkshopEULAStatus_t: WorkshopEULAStatus_t;
+  HTML_BrowserReady_t: HTML_BrowserReady_t;
+  HTML_NeedsPaint_t: HTML_NeedsPaint_t;
+  HTML_StartRequest_t: HTML_StartRequest_t;
+  HTML_CloseBrowser_t: HTML_CloseBrowser_t;
+  HTML_URLChanged_t: HTML_URLChanged_t;
+  HTML_FinishedRequest_t: HTML_FinishedRequest_t;
+  HTML_OpenLinkInNewTab_t: HTML_OpenLinkInNewTab_t;
+  HTML_ChangedTitle_t: HTML_ChangedTitle_t;
+  HTML_SearchResults_t: HTML_SearchResults_t;
+  HTML_CanGoBackAndForward_t: HTML_CanGoBackAndForward_t;
+  HTML_HorizontalScroll_t: HTML_HorizontalScroll_t;
+  HTML_VerticalScroll_t: HTML_VerticalScroll_t;
+  HTML_LinkAtPosition_t: HTML_LinkAtPosition_t;
+  HTML_JSAlert_t: HTML_JSAlert_t;
+  HTML_JSConfirm_t: HTML_JSConfirm_t;
+  HTML_FileOpenDialog_t: HTML_FileOpenDialog_t;
+  HTML_NewWindow_t: HTML_NewWindow_t;
+  HTML_SetCursor_t: HTML_SetCursor_t;
+  HTML_StatusText_t: HTML_StatusText_t;
+  HTML_ShowToolTip_t: HTML_ShowToolTip_t;
+  HTML_UpdateToolTip_t: HTML_UpdateToolTip_t;
+  HTML_HideToolTip_t: HTML_HideToolTip_t;
+  HTML_BrowserRestarted_t: HTML_BrowserRestarted_t;
+  SteamInventoryResultReady_t: SteamInventoryResultReady_t;
+  SteamInventoryFullUpdate_t: SteamInventoryFullUpdate_t;
+  SteamInventoryDefinitionUpdate_t: SteamInventoryDefinitionUpdate_t;
+  SteamInventoryEligiblePromoItemDefIDs_t: SteamInventoryEligiblePromoItemDefIDs_t;
+  SteamInventoryStartPurchaseResult_t: SteamInventoryStartPurchaseResult_t;
+  SteamInventoryRequestPricesResult_t: SteamInventoryRequestPricesResult_t;
+  SteamTimelineGamePhaseRecordingExists_t: SteamTimelineGamePhaseRecordingExists_t;
+  SteamTimelineEventRecordingExists_t: SteamTimelineEventRecordingExists_t;
+  GetVideoURLResult_t: GetVideoURLResult_t;
+  GetOPFSettingsResult_t: GetOPFSettingsResult_t;
+  BroadcastUploadStart_t: BroadcastUploadStart_t;
+  BroadcastUploadStop_t: BroadcastUploadStop_t;
+  SteamParentalSettingsChanged_t: SteamParentalSettingsChanged_t;
+  SteamRemotePlaySessionConnected_t: SteamRemotePlaySessionConnected_t;
+  SteamRemotePlaySessionDisconnected_t: SteamRemotePlaySessionDisconnected_t;
+  SteamRemotePlayTogetherGuestInvite_t: SteamRemotePlayTogetherGuestInvite_t;
+  SteamRemotePlaySessionAvatarLoaded_t: SteamRemotePlaySessionAvatarLoaded_t;
+  SteamNetAuthenticationStatus_t: SteamNetAuthenticationStatus_t;
+  SteamRelayNetworkStatus_t: SteamRelayNetworkStatus_t;
+  GSClientApprove_t: GSClientApprove_t;
+  GSClientDeny_t: GSClientDeny_t;
+  GSClientKick_t: GSClientKick_t;
+  GSClientAchievementStatus_t: GSClientAchievementStatus_t;
+  GSPolicyResponse_t: GSPolicyResponse_t;
+  GSGameplayStats_t: GSGameplayStats_t;
+  GSClientGroupStatus_t: GSClientGroupStatus_t;
+  GSReputation_t: GSReputation_t;
+  AssociateWithClanResult_t: AssociateWithClanResult_t;
+  ComputeNewPlayerCompatibilityResult_t: ComputeNewPlayerCompatibilityResult_t;
+  GSStatsReceived_t: GSStatsReceived_t;
+  GSStatsStored_t: GSStatsStored_t;
+}
