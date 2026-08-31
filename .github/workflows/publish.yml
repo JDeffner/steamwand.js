@@ -20,10 +20,12 @@ jobs:
           node-version: 22
           cache: pnpm
           registry-url: https://registry.npmjs.org
+      # npm 11.5+ is required for OIDC trusted publishing; Node 22 bundles npm 10.
+      - run: npm install -g npm@latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
-      - run: pnpm publish --access public --no-git-checks --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # Auth via the npm trusted publisher for this repo/workflow (no token);
+      # provenance is attached automatically once the repo is public.
+      - run: npm publish --access public
