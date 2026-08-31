@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamNetworkingUtils (accessor SteamAPI_SteamNetworkingUtils_SteamAPI_v004) */
+/**
+ * ISteamNetworkingUtils (accessor SteamAPI_SteamNetworkingUtils_SteamAPI_v004)
+ * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils
+ */
 export class ISteamNetworkingUtils {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,138 +14,387 @@ export class ISteamNetworkingUtils {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamNetworkingUtils_SteamAPI_v004 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `SteamNetworkingMessage_t * AllocateMessage(int cbAllocateBuffer)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_AllocateMessage`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#AllocateMessage
+   */
   AllocateMessage(cbAllocateBuffer: number): unknown {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_AllocateMessage', 'void *', ['void *', 'int32'])(this.ptr, cbAllocateBuffer) as unknown;
   }
 
+  /**
+   * `void InitRelayNetworkAccess()`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_InitRelayNetworkAccess`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#InitRelayNetworkAccess
+   */
   InitRelayNetworkAccess(): void {
     this.nat.func('SteamAPI_ISteamNetworkingUtils_InitRelayNetworkAccess', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `ESteamNetworkingAvailability GetRelayNetworkStatus(SteamRelayNetworkStatus_t *pDetails)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetRelayNetworkStatus`
+   * @param pDetails Buffer you allocate for `SteamRelayNetworkStatus_t *`: `Buffer.alloc(layoutOf('SteamRelayNetworkStatus_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetRelayNetworkStatus
+   */
   GetRelayNetworkStatus(pDetails: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetRelayNetworkStatus', 'int32', ['void *', 'void *'])(this.ptr, pDetails) as number;
   }
 
+  /**
+   * `float GetLocalPingLocation(SteamNetworkPingLocation_t &result)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetLocalPingLocation`
+   * @param result Buffer you allocate for `SteamNetworkPingLocation_t &`: `Buffer.alloc(layoutOf('SteamNetworkPingLocation_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetLocalPingLocation
+   */
   GetLocalPingLocation(result: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetLocalPingLocation', 'float', ['void *', 'void *'])(this.ptr, result) as number;
   }
 
+  /**
+   * `int EstimatePingTimeBetweenTwoLocations(const SteamNetworkPingLocation_t &location1, const SteamNetworkPingLocation_t &location2)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_EstimatePingTimeBetweenTwoLocations`
+   * @param location1 Buffer you allocate for `const SteamNetworkPingLocation_t &`: `Buffer.alloc(layoutOf('SteamNetworkPingLocation_t').size)`.
+   * @param location2 Buffer you allocate for `const SteamNetworkPingLocation_t &`: `Buffer.alloc(layoutOf('SteamNetworkPingLocation_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#EstimatePingTimeBetweenTwoLocations
+   */
   EstimatePingTimeBetweenTwoLocations(location1: Buffer | null, location2: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_EstimatePingTimeBetweenTwoLocations', 'int32', ['void *', 'void *', 'void *'])(this.ptr, location1, location2) as number;
   }
 
+  /**
+   * `int EstimatePingTimeFromLocalHost(const SteamNetworkPingLocation_t &remoteLocation)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_EstimatePingTimeFromLocalHost`
+   * @param remoteLocation Buffer you allocate for `const SteamNetworkPingLocation_t &`: `Buffer.alloc(layoutOf('SteamNetworkPingLocation_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#EstimatePingTimeFromLocalHost
+   */
   EstimatePingTimeFromLocalHost(remoteLocation: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_EstimatePingTimeFromLocalHost', 'int32', ['void *', 'void *'])(this.ptr, remoteLocation) as number;
   }
 
+  /**
+   * `void ConvertPingLocationToString(const SteamNetworkPingLocation_t &location, char *pszBuf, int cchBufSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_ConvertPingLocationToString`
+   * @param location Buffer you allocate for `const SteamNetworkPingLocation_t &`: `Buffer.alloc(layoutOf('SteamNetworkPingLocation_t').size)`.
+   * @param pszBuf Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#ConvertPingLocationToString
+   */
   ConvertPingLocationToString(location: Buffer | null, pszBuf: Buffer | null, cchBufSize: number): void {
     this.nat.func('SteamAPI_ISteamNetworkingUtils_ConvertPingLocationToString', 'void', ['void *', 'void *', 'void *', 'int32'])(this.ptr, location, pszBuf, cchBufSize);
   }
 
+  /**
+   * `bool ParsePingLocationString(const char *pszString, SteamNetworkPingLocation_t &result)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_ParsePingLocationString`
+   * @param result Buffer you allocate for `SteamNetworkPingLocation_t &`: `Buffer.alloc(layoutOf('SteamNetworkPingLocation_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#ParsePingLocationString
+   */
   ParsePingLocationString(pszString: string, result: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_ParsePingLocationString', 'bool', ['void *', 'str', 'void *'])(this.ptr, pszString, result) as boolean;
   }
 
+  /**
+   * `bool CheckPingDataUpToDate(float flMaxAgeSeconds)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_CheckPingDataUpToDate`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#CheckPingDataUpToDate
+   */
   CheckPingDataUpToDate(flMaxAgeSeconds: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_CheckPingDataUpToDate', 'bool', ['void *', 'float'])(this.ptr, flMaxAgeSeconds) as boolean;
   }
 
+  /**
+   * `int GetPingToDataCenter(SteamNetworkingPOPID popID, SteamNetworkingPOPID *pViaRelayPoP)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetPingToDataCenter`
+   * @param pViaRelayPoP Buffer you allocate for `SteamNetworkingPOPID *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetPingToDataCenter
+   */
   GetPingToDataCenter(popID: number, pViaRelayPoP: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetPingToDataCenter', 'int32', ['void *', 'uint32', 'void *'])(this.ptr, popID, pViaRelayPoP) as number;
   }
 
+  /**
+   * `int GetDirectPingToPOP(SteamNetworkingPOPID popID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetDirectPingToPOP`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetDirectPingToPOP
+   */
   GetDirectPingToPOP(popID: number): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetDirectPingToPOP', 'int32', ['void *', 'uint32'])(this.ptr, popID) as number;
   }
 
+  /**
+   * `int GetPOPCount()`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetPOPCount`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetPOPCount
+   */
   GetPOPCount(): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetPOPCount', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `int GetPOPList(SteamNetworkingPOPID *list, int nListSz)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetPOPList`
+   * @param list Buffer you allocate for `SteamNetworkingPOPID *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetPOPList
+   */
   GetPOPList(list: Buffer | null, nListSz: number): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetPOPList', 'int32', ['void *', 'void *', 'int32'])(this.ptr, list, nListSz) as number;
   }
 
+  /**
+   * `SteamNetworkingMicroseconds GetLocalTimestamp()`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetLocalTimestamp`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetLocalTimestamp
+   */
   GetLocalTimestamp(): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamNetworkingUtils_GetLocalTimestamp', 'int64', ['void *'])(this.ptr) as number | bigint);
   }
 
+  /**
+   * `bool IsFakeIPv4(uint32 nIPv4)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_IsFakeIPv4`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#IsFakeIPv4
+   */
   IsFakeIPv4(nIPv4: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_IsFakeIPv4', 'bool', ['void *', 'uint32'])(this.ptr, nIPv4) as boolean;
   }
 
+  /**
+   * `ESteamNetworkingFakeIPType GetIPv4FakeIPType(uint32 nIPv4)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetIPv4FakeIPType`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetIPv4FakeIPType
+   */
   GetIPv4FakeIPType(nIPv4: number): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetIPv4FakeIPType', 'int32', ['void *', 'uint32'])(this.ptr, nIPv4) as number;
   }
 
+  /**
+   * `EResult GetRealIdentityForFakeIP(const SteamNetworkingIPAddr &fakeIP, SteamNetworkingIdentity *pOutRealIdentity)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetRealIdentityForFakeIP`
+   * @param fakeIP Buffer you allocate for `const SteamNetworkingIPAddr &`.
+   * @param pOutRealIdentity Buffer you allocate for `SteamNetworkingIdentity *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetRealIdentityForFakeIP
+   */
   GetRealIdentityForFakeIP(fakeIP: Buffer | null, pOutRealIdentity: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetRealIdentityForFakeIP', 'int32', ['void *', 'void *', 'void *'])(this.ptr, fakeIP, pOutRealIdentity) as number;
   }
 
+  /**
+   * `bool SetGlobalConfigValueInt32(ESteamNetworkingConfigValue eValue, int32 val)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetGlobalConfigValueInt32`
+   * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetGlobalConfigValueInt32
+   */
   SetGlobalConfigValueInt32(eValue: number, val: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetGlobalConfigValueInt32', 'bool', ['void *', 'int32', 'int32'])(this.ptr, eValue, val) as boolean;
   }
 
+  /**
+   * `bool SetGlobalConfigValueFloat(ESteamNetworkingConfigValue eValue, float val)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetGlobalConfigValueFloat`
+   * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetGlobalConfigValueFloat
+   */
   SetGlobalConfigValueFloat(eValue: number, val: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetGlobalConfigValueFloat', 'bool', ['void *', 'int32', 'float'])(this.ptr, eValue, val) as boolean;
   }
 
+  /**
+   * `bool SetGlobalConfigValueString(ESteamNetworkingConfigValue eValue, const char *val)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetGlobalConfigValueString`
+   * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetGlobalConfigValueString
+   */
   SetGlobalConfigValueString(eValue: number, val: string): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetGlobalConfigValueString', 'bool', ['void *', 'int32', 'str'])(this.ptr, eValue, val) as boolean;
   }
 
+  /**
+   * `bool SetGlobalConfigValuePtr(ESteamNetworkingConfigValue eValue, void *val)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetGlobalConfigValuePtr`
+   * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @param val Buffer you allocate for `void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetGlobalConfigValuePtr
+   */
   SetGlobalConfigValuePtr(eValue: number, val: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetGlobalConfigValuePtr', 'bool', ['void *', 'int32', 'void *'])(this.ptr, eValue, val) as boolean;
   }
 
+  /**
+   * `bool SetConnectionConfigValueInt32(HSteamNetConnection hConn, ESteamNetworkingConfigValue eValue, int32 val)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetConnectionConfigValueInt32`
+   * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetConnectionConfigValueInt32
+   */
   SetConnectionConfigValueInt32(hConn: number, eValue: number, val: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetConnectionConfigValueInt32', 'bool', ['void *', 'uint32', 'int32', 'int32'])(this.ptr, hConn, eValue, val) as boolean;
   }
 
+  /**
+   * `bool SetConnectionConfigValueFloat(HSteamNetConnection hConn, ESteamNetworkingConfigValue eValue, float val)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetConnectionConfigValueFloat`
+   * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetConnectionConfigValueFloat
+   */
   SetConnectionConfigValueFloat(hConn: number, eValue: number, val: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetConnectionConfigValueFloat', 'bool', ['void *', 'uint32', 'int32', 'float'])(this.ptr, hConn, eValue, val) as boolean;
   }
 
+  /**
+   * `bool SetConnectionConfigValueString(HSteamNetConnection hConn, ESteamNetworkingConfigValue eValue, const char *val)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetConnectionConfigValueString`
+   * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetConnectionConfigValueString
+   */
   SetConnectionConfigValueString(hConn: number, eValue: number, val: string): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetConnectionConfigValueString', 'bool', ['void *', 'uint32', 'int32', 'str'])(this.ptr, hConn, eValue, val) as boolean;
   }
 
+  /**
+   * `bool SetConfigValue(ESteamNetworkingConfigValue eValue, ESteamNetworkingConfigScope eScopeType, intptr_t scopeObj, ESteamNetworkingConfigDataType eDataType, const void *pArg)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetConfigValue`
+   * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @param eScopeType enum `ESteamNetworkingConfigScope`; values on `flat.ESteamNetworkingConfigScope`.
+   * @param scopeObj `intptr_t`, 64-bit: bigint or number.
+   * @param eDataType enum `ESteamNetworkingConfigDataType`; values on `flat.ESteamNetworkingConfigDataType`.
+   * @param pArg Buffer you allocate for `const void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetConfigValue
+   */
   SetConfigValue(eValue: number, eScopeType: number, scopeObj: bigint | number, eDataType: number, pArg: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetConfigValue', 'bool', ['void *', 'int32', 'int32', 'int64', 'int32', 'void *'])(this.ptr, eValue, eScopeType, scopeObj, eDataType, pArg) as boolean;
   }
 
+  /**
+   * `bool SetConfigValueStruct(const SteamNetworkingConfigValue_t &opt, ESteamNetworkingConfigScope eScopeType, intptr_t scopeObj)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SetConfigValueStruct`
+   * @param opt Buffer you allocate for `const SteamNetworkingConfigValue_t &`: `Buffer.alloc(layoutOf('SteamNetworkingConfigValue_t').size)`.
+   * @param eScopeType enum `ESteamNetworkingConfigScope`; values on `flat.ESteamNetworkingConfigScope`.
+   * @param scopeObj `intptr_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SetConfigValueStruct
+   */
   SetConfigValueStruct(opt: Buffer | null, eScopeType: number, scopeObj: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SetConfigValueStruct', 'bool', ['void *', 'void *', 'int32', 'int64'])(this.ptr, opt, eScopeType, scopeObj) as boolean;
   }
 
+  /**
+   * `ESteamNetworkingGetConfigValueResult GetConfigValue(ESteamNetworkingConfigValue eValue, ESteamNetworkingConfigScope eScopeType, intptr_t scopeObj, ESteamNetworkingConfigDataType *pOutDataType, void *pResult, size_t *cbResult)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetConfigValue`
+   * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @param eScopeType enum `ESteamNetworkingConfigScope`; values on `flat.ESteamNetworkingConfigScope`.
+   * @param scopeObj `intptr_t`, 64-bit: bigint or number.
+   * @param pOutDataType Buffer you allocate for `ESteamNetworkingConfigDataType *`: `Buffer.alloc(4)` per element.
+   * @param pResult Buffer you allocate for `void *`.
+   * @param cbResult Buffer you allocate for `size_t *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetConfigValue
+   */
   GetConfigValue(eValue: number, eScopeType: number, scopeObj: bigint | number, pOutDataType: Buffer | null, pResult: Buffer | null, cbResult: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetConfigValue', 'int32', ['void *', 'int32', 'int32', 'int64', 'void *', 'void *', 'void *'])(this.ptr, eValue, eScopeType, scopeObj, pOutDataType, pResult, cbResult) as number;
   }
 
+  /**
+   * `const char * GetConfigValueInfo(ESteamNetworkingConfigValue eValue, ESteamNetworkingConfigDataType *pOutDataType, ESteamNetworkingConfigScope *pOutScope)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_GetConfigValueInfo`
+   * @param eValue enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @param pOutDataType Buffer you allocate for `ESteamNetworkingConfigDataType *`: `Buffer.alloc(4)` per element.
+   * @param pOutScope Buffer you allocate for `ESteamNetworkingConfigScope *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#GetConfigValueInfo
+   */
   GetConfigValueInfo(eValue: number, pOutDataType: Buffer | null, pOutScope: Buffer | null): string {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_GetConfigValueInfo', 'str', ['void *', 'int32', 'void *', 'void *'])(this.ptr, eValue, pOutDataType, pOutScope) as string;
   }
 
+  /**
+   * `ESteamNetworkingConfigValue IterateGenericEditableConfigValues(ESteamNetworkingConfigValue eCurrent, bool bEnumerateDevVars)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_IterateGenericEditableConfigValues`
+   * @param eCurrent enum `ESteamNetworkingConfigValue`; values on `flat.ESteamNetworkingConfigValue`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#IterateGenericEditableConfigValues
+   */
   IterateGenericEditableConfigValues(eCurrent: number, bEnumerateDevVars: boolean): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_IterateGenericEditableConfigValues', 'int32', ['void *', 'int32', 'bool'])(this.ptr, eCurrent, bEnumerateDevVars) as number;
   }
 
+  /**
+   * `void SteamNetworkingIPAddr_ToString(const SteamNetworkingIPAddr &addr, char *buf, uint32 cbBuf, bool bWithPort)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SteamNetworkingIPAddr_ToString`
+   * @param addr Buffer you allocate for `const SteamNetworkingIPAddr &`.
+   * @param buf Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SteamNetworkingIPAddr_ToString
+   */
   SteamNetworkingIPAddr_ToString(addr: Buffer | null, buf: Buffer | null, cbBuf: number, bWithPort: boolean): void {
     this.nat.func('SteamAPI_ISteamNetworkingUtils_SteamNetworkingIPAddr_ToString', 'void', ['void *', 'void *', 'void *', 'uint32', 'bool'])(this.ptr, addr, buf, cbBuf, bWithPort);
   }
 
+  /**
+   * `bool SteamNetworkingIPAddr_ParseString(SteamNetworkingIPAddr *pAddr, const char *pszStr)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SteamNetworkingIPAddr_ParseString`
+   * @param pAddr Buffer you allocate for `SteamNetworkingIPAddr *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SteamNetworkingIPAddr_ParseString
+   */
   SteamNetworkingIPAddr_ParseString(pAddr: Buffer | null, pszStr: string): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SteamNetworkingIPAddr_ParseString', 'bool', ['void *', 'void *', 'str'])(this.ptr, pAddr, pszStr) as boolean;
   }
 
+  /**
+   * `ESteamNetworkingFakeIPType SteamNetworkingIPAddr_GetFakeIPType(const SteamNetworkingIPAddr &addr)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SteamNetworkingIPAddr_GetFakeIPType`
+   * @param addr Buffer you allocate for `const SteamNetworkingIPAddr &`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SteamNetworkingIPAddr_GetFakeIPType
+   */
   SteamNetworkingIPAddr_GetFakeIPType(addr: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SteamNetworkingIPAddr_GetFakeIPType', 'int32', ['void *', 'void *'])(this.ptr, addr) as number;
   }
 
+  /**
+   * `void SteamNetworkingIdentity_ToString(const SteamNetworkingIdentity &identity, char *buf, uint32 cbBuf)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SteamNetworkingIdentity_ToString`
+   * @param identity Buffer you allocate for `const SteamNetworkingIdentity &`.
+   * @param buf Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SteamNetworkingIdentity_ToString
+   */
   SteamNetworkingIdentity_ToString(identity: Buffer | null, buf: Buffer | null, cbBuf: number): void {
     this.nat.func('SteamAPI_ISteamNetworkingUtils_SteamNetworkingIdentity_ToString', 'void', ['void *', 'void *', 'void *', 'uint32'])(this.ptr, identity, buf, cbBuf);
   }
 
+  /**
+   * `bool SteamNetworkingIdentity_ParseString(SteamNetworkingIdentity *pIdentity, const char *pszStr)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingUtils_SteamNetworkingIdentity_ParseString`
+   * @param pIdentity Buffer you allocate for `SteamNetworkingIdentity *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingUtils#SteamNetworkingIdentity_ParseString
+   */
   SteamNetworkingIdentity_ParseString(pIdentity: Buffer | null, pszStr: string): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingUtils_SteamNetworkingIdentity_ParseString', 'bool', ['void *', 'void *', 'str'])(this.ptr, pIdentity, pszStr) as boolean;
   }

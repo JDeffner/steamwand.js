@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamMusic (accessor SteamAPI_SteamMusic_v001) */
+/**
+ * ISteamMusic (accessor SteamAPI_SteamMusic_v001)
+ * @see https://partner.steamgames.com/doc/api/ISteamMusic
+ */
 export class ISteamMusic {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,38 +14,92 @@ export class ISteamMusic {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamMusic_v001 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `bool BIsEnabled()`
+   *
+   * Flat symbol: `SteamAPI_ISteamMusic_BIsEnabled`
+   * @see https://partner.steamgames.com/doc/api/ISteamMusic#BIsEnabled
+   */
   BIsEnabled(): boolean {
     return this.nat.func('SteamAPI_ISteamMusic_BIsEnabled', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BIsPlaying()`
+   *
+   * Flat symbol: `SteamAPI_ISteamMusic_BIsPlaying`
+   * @see https://partner.steamgames.com/doc/api/ISteamMusic#BIsPlaying
+   */
   BIsPlaying(): boolean {
     return this.nat.func('SteamAPI_ISteamMusic_BIsPlaying', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `AudioPlayback_Status GetPlaybackStatus()`
+   *
+   * Flat symbol: `SteamAPI_ISteamMusic_GetPlaybackStatus`
+   * @see https://partner.steamgames.com/doc/api/ISteamMusic#GetPlaybackStatus
+   */
   GetPlaybackStatus(): number {
     return this.nat.func('SteamAPI_ISteamMusic_GetPlaybackStatus', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `void Play()`
+   *
+   * Flat symbol: `SteamAPI_ISteamMusic_Play`
+   * @see https://partner.steamgames.com/doc/api/ISteamMusic#Play
+   */
   Play(): void {
     this.nat.func('SteamAPI_ISteamMusic_Play', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `void Pause()`
+   *
+   * Flat symbol: `SteamAPI_ISteamMusic_Pause`
+   * @see https://partner.steamgames.com/doc/api/ISteamMusic#Pause
+   */
   Pause(): void {
     this.nat.func('SteamAPI_ISteamMusic_Pause', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `void PlayPrevious()`
+   *
+   * Flat symbol: `SteamAPI_ISteamMusic_PlayPrevious`
+   * @see https://partner.steamgames.com/doc/api/ISteamMusic#PlayPrevious
+   */
   PlayPrevious(): void {
     this.nat.func('SteamAPI_ISteamMusic_PlayPrevious', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `void PlayNext()`
+   *
+   * Flat symbol: `SteamAPI_ISteamMusic_PlayNext`
+   * @see https://partner.steamgames.com/doc/api/ISteamMusic#PlayNext
+   */
   PlayNext(): void {
     this.nat.func('SteamAPI_ISteamMusic_PlayNext', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `void SetVolume(float flVolume)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMusic_SetVolume`
+   * @see https://partner.steamgames.com/doc/api/ISteamMusic#SetVolume
+   */
   SetVolume(flVolume: number): void {
     this.nat.func('SteamAPI_ISteamMusic_SetVolume', 'void', ['void *', 'float'])(this.ptr, flVolume);
   }
 
+  /**
+   * `float GetVolume()`
+   *
+   * Flat symbol: `SteamAPI_ISteamMusic_GetVolume`
+   * @see https://partner.steamgames.com/doc/api/ISteamMusic#GetVolume
+   */
   GetVolume(): number {
     return this.nat.func('SteamAPI_ISteamMusic_GetVolume', 'float', ['void *'])(this.ptr) as number;
   }

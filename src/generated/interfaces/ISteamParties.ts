@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamParties (accessor SteamAPI_SteamParties_v002) */
+/**
+ * ISteamParties (accessor SteamAPI_SteamParties_v002)
+ * @see https://partner.steamgames.com/doc/api/ISteamParties
+ */
 export class ISteamParties {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,49 +14,129 @@ export class ISteamParties {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamParties_v002 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `uint32 GetNumActiveBeacons()`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_GetNumActiveBeacons`
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#GetNumActiveBeacons
+   */
   GetNumActiveBeacons(): number {
     return this.nat.func('SteamAPI_ISteamParties_GetNumActiveBeacons', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `PartyBeaconID_t GetBeaconByIndex(uint32 unIndex)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_GetBeaconByIndex`
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#GetBeaconByIndex
+   */
   GetBeaconByIndex(unIndex: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamParties_GetBeaconByIndex', 'uint64', ['void *', 'uint32'])(this.ptr, unIndex) as number | bigint);
   }
 
+  /**
+   * `bool GetBeaconDetails(PartyBeaconID_t ulBeaconID, CSteamID *pSteamIDBeaconOwner, SteamPartyBeaconLocation_t *pLocation, char *pchMetadata, int cchMetadata)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_GetBeaconDetails`
+   * @param ulBeaconID `PartyBeaconID_t`, 64-bit: bigint or number.
+   * @param pSteamIDBeaconOwner Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
+   * @param pLocation Buffer you allocate for `SteamPartyBeaconLocation_t *`: `Buffer.alloc(layoutOf('SteamPartyBeaconLocation_t').size)`.
+   * @param pchMetadata Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#GetBeaconDetails
+   */
   GetBeaconDetails(ulBeaconID: bigint | number, pSteamIDBeaconOwner: Buffer | null, pLocation: Buffer | null, pchMetadata: Buffer | null, cchMetadata: number): boolean {
     return this.nat.func('SteamAPI_ISteamParties_GetBeaconDetails', 'bool', ['void *', 'uint64', 'void *', 'void *', 'void *', 'int32'])(this.ptr, ulBeaconID, pSteamIDBeaconOwner, pLocation, pchMetadata, cchMetadata) as boolean;
   }
 
-  /** Call result: JoinPartyCallback_t */
+  /**
+   * `SteamAPICall_t JoinParty(PartyBeaconID_t ulBeaconID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_JoinParty`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<JoinPartyCallback_t>(handle, layoutOf('JoinPartyCallback_t'))`.
+   * @param ulBeaconID `PartyBeaconID_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#JoinParty
+   */
   JoinParty(ulBeaconID: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamParties_JoinParty', 'uint64', ['void *', 'uint64'])(this.ptr, ulBeaconID) as number | bigint);
   }
 
+  /**
+   * `bool GetNumAvailableBeaconLocations(uint32 *puNumLocations)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_GetNumAvailableBeaconLocations`
+   * @param puNumLocations Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#GetNumAvailableBeaconLocations
+   */
   GetNumAvailableBeaconLocations(puNumLocations: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamParties_GetNumAvailableBeaconLocations', 'bool', ['void *', 'void *'])(this.ptr, puNumLocations) as boolean;
   }
 
+  /**
+   * `bool GetAvailableBeaconLocations(SteamPartyBeaconLocation_t *pLocationList, uint32 uMaxNumLocations)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_GetAvailableBeaconLocations`
+   * @param pLocationList Buffer you allocate for `SteamPartyBeaconLocation_t *`: `Buffer.alloc(layoutOf('SteamPartyBeaconLocation_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#GetAvailableBeaconLocations
+   */
   GetAvailableBeaconLocations(pLocationList: Buffer | null, uMaxNumLocations: number): boolean {
     return this.nat.func('SteamAPI_ISteamParties_GetAvailableBeaconLocations', 'bool', ['void *', 'void *', 'uint32'])(this.ptr, pLocationList, uMaxNumLocations) as boolean;
   }
 
-  /** Call result: CreateBeaconCallback_t */
+  /**
+   * `SteamAPICall_t CreateBeacon(uint32 unOpenSlots, SteamPartyBeaconLocation_t *pBeaconLocation, const char *pchConnectString, const char *pchMetadata)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_CreateBeacon`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<CreateBeaconCallback_t>(handle, layoutOf('CreateBeaconCallback_t'))`.
+   * @param pBeaconLocation Buffer you allocate for `SteamPartyBeaconLocation_t *`: `Buffer.alloc(layoutOf('SteamPartyBeaconLocation_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#CreateBeacon
+   */
   CreateBeacon(unOpenSlots: number, pBeaconLocation: Buffer | null, pchConnectString: string, pchMetadata: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamParties_CreateBeacon', 'uint64', ['void *', 'uint32', 'void *', 'str', 'str'])(this.ptr, unOpenSlots, pBeaconLocation, pchConnectString, pchMetadata) as number | bigint);
   }
 
+  /**
+   * `void OnReservationCompleted(PartyBeaconID_t ulBeacon, CSteamID steamIDUser)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_OnReservationCompleted`
+   * @param ulBeacon `PartyBeaconID_t`, 64-bit: bigint or number.
+   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#OnReservationCompleted
+   */
   OnReservationCompleted(ulBeacon: bigint | number, steamIDUser: bigint | number): void {
     this.nat.func('SteamAPI_ISteamParties_OnReservationCompleted', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, ulBeacon, steamIDUser);
   }
 
+  /**
+   * `void CancelReservation(PartyBeaconID_t ulBeacon, CSteamID steamIDUser)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_CancelReservation`
+   * @param ulBeacon `PartyBeaconID_t`, 64-bit: bigint or number.
+   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#CancelReservation
+   */
   CancelReservation(ulBeacon: bigint | number, steamIDUser: bigint | number): void {
     this.nat.func('SteamAPI_ISteamParties_CancelReservation', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, ulBeacon, steamIDUser);
   }
 
-  /** Call result: ChangeNumOpenSlotsCallback_t */
+  /**
+   * `SteamAPICall_t ChangeNumOpenSlots(PartyBeaconID_t ulBeacon, uint32 unOpenSlots)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_ChangeNumOpenSlots`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<ChangeNumOpenSlotsCallback_t>(handle, layoutOf('ChangeNumOpenSlotsCallback_t'))`.
+   * @param ulBeacon `PartyBeaconID_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#ChangeNumOpenSlots
+   */
   ChangeNumOpenSlots(ulBeacon: bigint | number, unOpenSlots: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamParties_ChangeNumOpenSlots', 'uint64', ['void *', 'uint64', 'uint32'])(this.ptr, ulBeacon, unOpenSlots) as number | bigint);
   }
 
+  /**
+   * `bool DestroyBeacon(PartyBeaconID_t ulBeacon)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParties_DestroyBeacon`
+   * @param ulBeacon `PartyBeaconID_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamParties#DestroyBeacon
+   */
   DestroyBeacon(ulBeacon: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamParties_DestroyBeacon', 'bool', ['void *', 'uint64'])(this.ptr, ulBeacon) as boolean;
   }

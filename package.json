@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
     "generate": "tsx scripts/generate.ts",
     "smoke": "tsx scripts/smoke.ts",
     "workbench": "tsx scripts/workbench.ts",
@@ -37,8 +38,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/JDeffner/steamwand.js.git"
+    "url": "git+https://github.com/JDeffner/steamwand.js.git"
   },
+  "bugs": {
+    "url": "https://github.com/JDeffner/steamwand.js/issues"
+  },
+  "homepage": "https://github.com/JDeffner/steamwand.js/wiki",
   "keywords": [
     "steam",
     "steamworks",

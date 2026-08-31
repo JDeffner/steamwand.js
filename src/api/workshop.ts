@@ -14,53 +14,102 @@ import type {
 import { EItemStatistic, EResult, EUGCMatchingUGCType, EUserUGCList, EUserUGCListSortOrder, EWorkshopFileType } from '../generated/enums';
 import { SteamResultError } from './errors';
 
+/**
+ * One workshop item update. Every field is optional; only the fields you set
+ * are sent, the rest keep their current value.
+ *
+ * @see Workshop.submitUpdate
+ */
 export interface WorkshopItemUpdate {
+  /** Item title, max 128 UTF-8 bytes. */
   title?: string;
+  /** Item description, max 8000 UTF-8 bytes. */
   description?: string;
   /** Steam API language code (`german`, `schinese`, ...): sets which language title/description apply to. */
   language?: string;
+  /** Change note for this revision. Omit for no change note. */
   changeNote?: string;
-  /** Absolute path to the content folder. */
+  /** Absolute path to the content folder. The whole folder is uploaded. */
   contentPath?: string;
-  /** Absolute path to the preview image. */
+  /** Absolute path to the preview image. Max 1 MB, PNG or JPG. */
   previewPath?: string;
+  /** Replaces the full tag list, so include the tags you want to keep. */
   tags?: string[];
   /** ERemoteStoragePublishedFileVisibility (0 public, 1 friends-only, 2 private, 3 unlisted). */
   visibility?: number;
 }
 
+/**
+ * Upload progress of a running `SubmitItemUpdate`.
+ *
+ * @see Workshop.submitUpdate
+ */
 export interface UpdateProgress {
   /** EItemUpdateStatus (0 invalid .. 5 committing changes). */
   status: number;
+  /** Bytes uploaded so far. 64-bit, so a `bigint`. */
   bytesProcessed: bigint;
+  /** Total bytes to upload, or `0n` before Steam knows the size. */
   bytesTotal: bigint;
 }
 
+/**
+ * One workshop item, decoded from `SteamUGCDetails_t` plus the per-item extras
+ * that need their own flat call (preview URL, statistics).
+ *
+ * @see Workshop.getItem
+ * @see Workshop.getUserItems
+ */
 export interface WorkshopItem {
+  /** PublishedFileId_t. 64-bit, so a `bigint`. */
   fileId: bigint;
+  /** Title in the requested language, or the default language. */
   title: string;
+  /** Description. Truncated unless the query set `longDescription`. */
   description: string;
+  /** EWorkshopFileType (0 community, 1 microtransaction, ...). */
   fileType: number;
+  /** App the item was created for. */
   creatorAppId: number;
+  /** App the item is consumed by. */
   consumerAppId: number;
+  /** Steam id of the owner. 64-bit, so a `bigint`. */
   ownerSteamId: bigint;
+  /** Creation time, Unix seconds. */
   timeCreated: number;
+  /** Last update time, Unix seconds. */
   timeUpdated: number;
+  /** ERemoteStoragePublishedFileVisibility (0 public, 1 friends-only, 2 private, 3 unlisted). */
   visibility: number;
+  /** True if Steam banned the item. */
   banned: boolean;
+  /** True if the item passed the app's acceptance check. */
   acceptedForUse: boolean;
+  /** Tags, split from Steam's comma-separated list. Empty if the item has none. */
   tags: string[];
+  /** True if Steam cut the tag list short, so `tags` is incomplete. */
   tagsTruncated: boolean;
+  /** File name, for items that are a single file. Empty for folder content. */
   fileName: string;
+  /** Size of the item content in bytes. */
   fileSize: number;
+  /** Size of the preview image in bytes. */
   previewFileSize: number;
+  /** Item URL, for items of a URL file type. Empty otherwise. */
   url: string;
+  /** Lifetime up votes. */
   votesUp: number;
+  /** Lifetime down votes. */
   votesDown: number;
+  /** Steam's computed score, 0 to 1. */
   score: number;
+  /** Number of child items, for collections. */
   numChildren: number;
+  /** Total size of all files in bytes. 64-bit, so a `bigint`. */
   totalFilesSize: bigint;
+  /** Preview image URL, or null if the item has no preview. */
   previewUrl: string | null;
+  /** Counters Steam returned for this item. A key is absent if Steam did not return it. */
   statistics: Partial<Record<WorkshopStatistic, bigint>>;
 }
 
@@ -75,8 +124,18 @@ const STATISTICS: Record<string, number> = {
   numPlaytimeSessions: EItemStatistic.k_EItemStatistic_NumPlaytimeSessions,
   numComments: EItemStatistic.k_EItemStatistic_NumComments,
 };
+/**
+ * Name of an item counter in `WorkshopItem.statistics`, for example
+ * `numSubscriptions` or `numUniqueFavorites`.
+ */
 export type WorkshopStatistic = keyof typeof STATISTICS & string;
 
+/**
+ * Options shared by every item query.
+ *
+ * @see Workshop.getItem
+ * @see Workshop.getUserItems
+ */
 export interface QueryOptions {
   /** Steam API language code for returned text (title/description). */
   language?: string;
@@ -84,27 +143,87 @@ export interface QueryOptions {
   longDescription?: boolean;
 }
 
+/**
+ * One page of query results.
+ *
+ * @see Workshop.getUserItems
+ */
 export interface UserItemsPage {
+  /** Items on this page, at most 50. Items Steam could not return are skipped. */
   items: WorkshopItem[];
+  /** Total matches across all pages, for computing the page count. */
   totalResults: number;
 }
 
+/**
+ * Throws unless the EResult is OK.
+ *
+ * @throws SteamResultError if `result` is not `k_EResultOK`.
+ */
 function ok(operation: string, result: number): void {
   if (result !== EResult.k_EResultOK) throw new SteamResultError(operation, result);
 }
 
+/**
+ * Throws unless a boolean flat method returned true.
+ *
+ * @throws Error if `returned` is false, which means an invalid handle or argument.
+ */
 function must(operation: string, returned: boolean): void {
   if (!returned) throw new Error(`steamwand: ${operation} returned false (invalid handle or argument?)`);
 }
 
+/**
+ * Task level wrapper over ISteamUGC: create, update, delete, and query
+ * workshop items.
+ *
+ * Every method awaits the underlying async call through the dispatch, and
+ * turns a non-OK `EResult` into a `SteamResultError`. Reach it as
+ * `steam.workshop`, which builds it with the app id from `init`.
+ *
+ * @see Steam.workshop
+ * @see SteamResultError
+ */
 export class Workshop {
+  /**
+   * @param ugc - The ISteamUGC interface.
+   * @param dispatch - Running pump that resolves the call results.
+   * @param appId - App id used when a method takes no explicit one.
+   */
   constructor(
     private readonly ugc: ISteamUGC,
     private readonly dispatch: SteamDispatch,
     private readonly appId: number,
   ) {}
 
-  /** Create a new (empty) workshop item. */
+  /**
+   * Creates a new, empty workshop item and returns its file id.
+   *
+   * The item has no title, no content, and no preview yet. Fill it in with
+   * `submitUpdate`. An item that is never updated stays invisible in the
+   * workshop.
+   *
+   * @param appId - App to create the item under.
+   * @defaultValue the app id passed to `init`
+   * @param fileType - EWorkshopFileType.
+   * @defaultValue `k_EWorkshopFileTypeCommunity`
+   * @returns The new `fileId` (64-bit, so a `bigint`), and `legalAgreementRequired`,
+   * which is true while the user has not accepted the workshop legal agreement. Steam
+   * hides the item until they do.
+   * @throws SteamResultError if Steam refused the call, for example with `k_EResultInsufficientPrivilege`.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const { fileId, legalAgreementRequired } = await steam.workshop.createItem();
+   * await steam.workshop.submitUpdate(fileId, { title: 'My map' });
+   * if (legalAgreementRequired) console.log('accept the workshop agreement in Steam');
+   * steam.close();
+   * ```
+   * @see submitUpdate
+   */
   async createItem(
     appId: number = this.appId,
     fileType: number = EWorkshopFileType.k_EWorkshopFileTypeCommunity,
@@ -119,6 +238,36 @@ export class Workshop {
    * Apply one item update (StartItemUpdate + setters + SubmitItemUpdate) and
    * wait for the result. With `language` set, title/description apply to that
    * language only (SetItemUpdateLanguage).
+   *
+   * Paths in `update` are checked before the native call, because the native
+   * layer aborts the whole process on a missing path instead of returning an
+   * error.
+   *
+   * @param fileId - Item to update. 64-bit, so a `bigint`.
+   * @param update - The fields to change. Unset fields keep their value.
+   * @param opts.appId - App the item belongs to.
+   * @defaultValue the app id passed to `init`
+   * @param opts.onProgress - Called on a timer while the upload runs, and never after the promise settles.
+   * @param opts.progressIntervalMs - Milliseconds between `onProgress` calls.
+   * @defaultValue 500
+   * @returns `legalAgreementRequired`, true while the user has not accepted the workshop legal agreement.
+   * @throws Error if `contentPath` or `previewPath` does not exist.
+   * @throws Error if a setter returns false, which means an invalid handle or argument.
+   * @throws SteamResultError if Steam refused the submit, for example with `k_EResultFileNotFound`.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * await steam.workshop.submitUpdate(123456789n, {
+   *   title: 'My map',
+   *   contentPath: 'C:/mods/my-map',
+   *   changeNote: 'first release',
+   * }, { onProgress: (p) => console.log(p.bytesProcessed, '/', p.bytesTotal) });
+   * steam.close();
+   * ```
+   * @see createItem
    */
   async submitUpdate(
     fileId: bigint,
@@ -172,14 +321,42 @@ export class Workshop {
     }
   }
 
-  /** Delete a workshop item permanently. */
+  /**
+   * Deletes a workshop item permanently.
+   *
+   * Only the owner of the item can do this, and it cannot be undone.
+   *
+   * @param fileId - Item to delete. 64-bit, so a `bigint`.
+   * @throws SteamResultError if Steam refused the call, for example with `k_EResultAccessDenied`.
+   * @throws SteamApiCallError if the call could not be completed.
+   */
   async deleteItem(fileId: bigint): Promise<void> {
     const call = this.ugc.DeleteItem(fileId);
     const r = await this.dispatch.callResultStruct<DeleteItemResult_t>(call, layoutOf('DeleteItemResult_t'));
     ok('DeleteItem', r.m_eResult);
   }
 
-  /** Fetch one item's details, or null if it does not exist. */
+  /**
+   * Fetches one item's details.
+   *
+   * Works for any public item, not only items of this app or this user.
+   *
+   * @param fileId - Item to fetch. 64-bit, so a `bigint`.
+   * @param opts - Language and description options for the query.
+   * @returns The item, or null if it does not exist or is not visible to this user.
+   * @throws SteamResultError if the query itself failed.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const item = await steam.workshop.getItem(123456789n, { longDescription: true });
+   * console.log(item?.title, item?.statistics.numSubscriptions);
+   * steam.close();
+   * ```
+   * @see getUserItems
+   */
   async getItem(fileId: bigint, opts: QueryOptions = {}): Promise<WorkshopItem | null> {
     const ids = Buffer.alloc(8);
     ids.writeBigUInt64LE(fileId, 0);
@@ -188,7 +365,36 @@ export class Workshop {
     return items[0] ?? null;
   }
 
-  /** One page (1-based) of a user's published items for this app. */
+  /**
+   * Fetches one page of a user's published items for this app.
+   *
+   * A page holds at most 50 items. Use `totalResults` from the first page to
+   * work out how many pages there are.
+   *
+   * @param page - 1-based page number. Steam rejects 0.
+   * @param accountId - 32-bit account id of the user, from `steam.accountId()`.
+   * @param opts.appId - App to list items for.
+   * @defaultValue the app id passed to `init`
+   * @param opts.listType - EUserUGCList.
+   * @defaultValue `k_EUserUGCList_Published`
+   * @param opts.matchingType - EUGCMatchingUGCType.
+   * @defaultValue `k_EUGCMatchingUGCType_Items`
+   * @param opts.sortOrder - EUserUGCListSortOrder.
+   * @defaultValue `k_EUserUGCListSortOrder_LastUpdatedDesc`
+   * @returns The page items and the total match count.
+   * @throws SteamResultError if the query failed.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const { items, totalResults } = await steam.workshop.getUserItems(1, steam.accountId());
+   * console.log(`${items.length} of ${totalResults}`, items.map((i) => i.title));
+   * steam.close();
+   * ```
+   * @see getItem
+   */
   async getUserItems(
     page: number,
     accountId: number,
@@ -212,6 +418,18 @@ export class Workshop {
     return this.runQuery(handle, opts);
   }
 
+  /**
+   * Applies the query options, sends the query, and decodes every result row.
+   *
+   * The handle is released in a `finally`, so a failed query leaks nothing.
+   * Rows Steam returns as `k_EResultFileNotFound`, or cannot return at all,
+   * are skipped, so `items.length` can be below the returned row count.
+   *
+   * @param handle - UGCQueryHandle_t from a `CreateQuery...Request` call.
+   * @param opts - Language and description options to apply before sending.
+   * @returns The decoded items and the total match count.
+   * @throws SteamResultError if the query completed with a non-OK EResult.
+   */
   private async runQuery(handle: bigint, opts: QueryOptions): Promise<UserItemsPage> {
     if (opts.language !== undefined) must('SetLanguage', this.ugc.SetLanguage(handle, opts.language));
     if (opts.longDescription) must('SetReturnLongDescription', this.ugc.SetReturnLongDescription(handle, true));
@@ -236,6 +454,18 @@ export class Workshop {
     }
   }
 
+  /**
+   * Builds one `WorkshopItem` from a decoded details struct.
+   *
+   * The preview URL and the statistics are not in `SteamUGCDetails_t`, so they
+   * are read with their own flat calls against the still-open query handle.
+   * That is why this runs before `ReleaseQueryUGCRequest`.
+   *
+   * @param handle - The open query handle.
+   * @param index - Row index inside the query result.
+   * @param d - The decoded `SteamUGCDetails_t` for that row.
+   * @returns The item. `previewUrl` is null and a statistic key is absent when Steam returned neither.
+   */
   private toItem(handle: bigint, index: number, d: SteamUGCDetails_t): WorkshopItem {
     const urlBuf = Buffer.alloc(256);
     const previewUrl = this.ugc.GetQueryUGCPreviewURL(handle, index, urlBuf, 256)

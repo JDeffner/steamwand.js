@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamHTTP (accessor SteamAPI_SteamHTTP_v003) */
+/**
+ * ISteamHTTP (accessor SteamAPI_SteamHTTP_v003)
+ * @see https://partner.steamgames.com/doc/api/ISteamHTTP
+ */
 export class ISteamHTTP {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,102 +14,264 @@ export class ISteamHTTP {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamHTTP_v003 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `HTTPRequestHandle CreateHTTPRequest(EHTTPMethod eHTTPRequestMethod, const char *pchAbsoluteURL)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_CreateHTTPRequest`
+   * @param eHTTPRequestMethod enum `EHTTPMethod`; values on `flat.EHTTPMethod`.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#CreateHTTPRequest
+   */
   CreateHTTPRequest(eHTTPRequestMethod: number, pchAbsoluteURL: string): number {
     return this.nat.func('SteamAPI_ISteamHTTP_CreateHTTPRequest', 'uint32', ['void *', 'int32', 'str'])(this.ptr, eHTTPRequestMethod, pchAbsoluteURL) as number;
   }
 
+  /**
+   * `bool SetHTTPRequestContextValue(HTTPRequestHandle hRequest, uint64 ulContextValue)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SetHTTPRequestContextValue`
+   * @param ulContextValue `uint64`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetHTTPRequestContextValue
+   */
   SetHTTPRequestContextValue(hRequest: number, ulContextValue: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetHTTPRequestContextValue', 'bool', ['void *', 'uint32', 'uint64'])(this.ptr, hRequest, ulContextValue) as boolean;
   }
 
+  /**
+   * `bool SetHTTPRequestNetworkActivityTimeout(HTTPRequestHandle hRequest, uint32 unTimeoutSeconds)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SetHTTPRequestNetworkActivityTimeout`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetHTTPRequestNetworkActivityTimeout
+   */
   SetHTTPRequestNetworkActivityTimeout(hRequest: number, unTimeoutSeconds: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetHTTPRequestNetworkActivityTimeout', 'bool', ['void *', 'uint32', 'uint32'])(this.ptr, hRequest, unTimeoutSeconds) as boolean;
   }
 
+  /**
+   * `bool SetHTTPRequestHeaderValue(HTTPRequestHandle hRequest, const char *pchHeaderName, const char *pchHeaderValue)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SetHTTPRequestHeaderValue`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetHTTPRequestHeaderValue
+   */
   SetHTTPRequestHeaderValue(hRequest: number, pchHeaderName: string, pchHeaderValue: string): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetHTTPRequestHeaderValue', 'bool', ['void *', 'uint32', 'str', 'str'])(this.ptr, hRequest, pchHeaderName, pchHeaderValue) as boolean;
   }
 
+  /**
+   * `bool SetHTTPRequestGetOrPostParameter(HTTPRequestHandle hRequest, const char *pchParamName, const char *pchParamValue)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SetHTTPRequestGetOrPostParameter`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetHTTPRequestGetOrPostParameter
+   */
   SetHTTPRequestGetOrPostParameter(hRequest: number, pchParamName: string, pchParamValue: string): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetHTTPRequestGetOrPostParameter', 'bool', ['void *', 'uint32', 'str', 'str'])(this.ptr, hRequest, pchParamName, pchParamValue) as boolean;
   }
 
+  /**
+   * `bool SendHTTPRequest(HTTPRequestHandle hRequest, SteamAPICall_t *pCallHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SendHTTPRequest`
+   * @param pCallHandle Buffer you allocate for `SteamAPICall_t *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SendHTTPRequest
+   */
   SendHTTPRequest(hRequest: number, pCallHandle: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SendHTTPRequest', 'bool', ['void *', 'uint32', 'void *'])(this.ptr, hRequest, pCallHandle) as boolean;
   }
 
+  /**
+   * `bool SendHTTPRequestAndStreamResponse(HTTPRequestHandle hRequest, SteamAPICall_t *pCallHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SendHTTPRequestAndStreamResponse`
+   * @param pCallHandle Buffer you allocate for `SteamAPICall_t *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SendHTTPRequestAndStreamResponse
+   */
   SendHTTPRequestAndStreamResponse(hRequest: number, pCallHandle: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SendHTTPRequestAndStreamResponse', 'bool', ['void *', 'uint32', 'void *'])(this.ptr, hRequest, pCallHandle) as boolean;
   }
 
+  /**
+   * `bool DeferHTTPRequest(HTTPRequestHandle hRequest)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_DeferHTTPRequest`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#DeferHTTPRequest
+   */
   DeferHTTPRequest(hRequest: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_DeferHTTPRequest', 'bool', ['void *', 'uint32'])(this.ptr, hRequest) as boolean;
   }
 
+  /**
+   * `bool PrioritizeHTTPRequest(HTTPRequestHandle hRequest)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_PrioritizeHTTPRequest`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#PrioritizeHTTPRequest
+   */
   PrioritizeHTTPRequest(hRequest: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_PrioritizeHTTPRequest', 'bool', ['void *', 'uint32'])(this.ptr, hRequest) as boolean;
   }
 
+  /**
+   * `bool GetHTTPResponseHeaderSize(HTTPRequestHandle hRequest, const char *pchHeaderName, uint32 *unResponseHeaderSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_GetHTTPResponseHeaderSize`
+   * @param unResponseHeaderSize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#GetHTTPResponseHeaderSize
+   */
   GetHTTPResponseHeaderSize(hRequest: number, pchHeaderName: string, unResponseHeaderSize: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_GetHTTPResponseHeaderSize', 'bool', ['void *', 'uint32', 'str', 'void *'])(this.ptr, hRequest, pchHeaderName, unResponseHeaderSize) as boolean;
   }
 
+  /**
+   * `bool GetHTTPResponseHeaderValue(HTTPRequestHandle hRequest, const char *pchHeaderName, uint8 *pHeaderValueBuffer, uint32 unBufferSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_GetHTTPResponseHeaderValue`
+   * @param pHeaderValueBuffer Buffer you allocate for `uint8 *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#GetHTTPResponseHeaderValue
+   */
   GetHTTPResponseHeaderValue(hRequest: number, pchHeaderName: string, pHeaderValueBuffer: Buffer | null, unBufferSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_GetHTTPResponseHeaderValue', 'bool', ['void *', 'uint32', 'str', 'void *', 'uint32'])(this.ptr, hRequest, pchHeaderName, pHeaderValueBuffer, unBufferSize) as boolean;
   }
 
+  /**
+   * `bool GetHTTPResponseBodySize(HTTPRequestHandle hRequest, uint32 *unBodySize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_GetHTTPResponseBodySize`
+   * @param unBodySize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#GetHTTPResponseBodySize
+   */
   GetHTTPResponseBodySize(hRequest: number, unBodySize: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_GetHTTPResponseBodySize', 'bool', ['void *', 'uint32', 'void *'])(this.ptr, hRequest, unBodySize) as boolean;
   }
 
+  /**
+   * `bool GetHTTPResponseBodyData(HTTPRequestHandle hRequest, uint8 *pBodyDataBuffer, uint32 unBufferSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_GetHTTPResponseBodyData`
+   * @param pBodyDataBuffer Buffer you allocate for `uint8 *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#GetHTTPResponseBodyData
+   */
   GetHTTPResponseBodyData(hRequest: number, pBodyDataBuffer: Buffer | null, unBufferSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_GetHTTPResponseBodyData', 'bool', ['void *', 'uint32', 'void *', 'uint32'])(this.ptr, hRequest, pBodyDataBuffer, unBufferSize) as boolean;
   }
 
+  /**
+   * `bool GetHTTPStreamingResponseBodyData(HTTPRequestHandle hRequest, uint32 cOffset, uint8 *pBodyDataBuffer, uint32 unBufferSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_GetHTTPStreamingResponseBodyData`
+   * @param pBodyDataBuffer Buffer you allocate for `uint8 *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#GetHTTPStreamingResponseBodyData
+   */
   GetHTTPStreamingResponseBodyData(hRequest: number, cOffset: number, pBodyDataBuffer: Buffer | null, unBufferSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_GetHTTPStreamingResponseBodyData', 'bool', ['void *', 'uint32', 'uint32', 'void *', 'uint32'])(this.ptr, hRequest, cOffset, pBodyDataBuffer, unBufferSize) as boolean;
   }
 
+  /**
+   * `bool ReleaseHTTPRequest(HTTPRequestHandle hRequest)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_ReleaseHTTPRequest`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#ReleaseHTTPRequest
+   */
   ReleaseHTTPRequest(hRequest: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_ReleaseHTTPRequest', 'bool', ['void *', 'uint32'])(this.ptr, hRequest) as boolean;
   }
 
+  /**
+   * `bool GetHTTPDownloadProgressPct(HTTPRequestHandle hRequest, float *pflPercentOut)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_GetHTTPDownloadProgressPct`
+   * @param pflPercentOut Buffer you allocate for `float *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#GetHTTPDownloadProgressPct
+   */
   GetHTTPDownloadProgressPct(hRequest: number, pflPercentOut: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_GetHTTPDownloadProgressPct', 'bool', ['void *', 'uint32', 'void *'])(this.ptr, hRequest, pflPercentOut) as boolean;
   }
 
+  /**
+   * `bool SetHTTPRequestRawPostBody(HTTPRequestHandle hRequest, const char *pchContentType, uint8 *pubBody, uint32 unBodyLen)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SetHTTPRequestRawPostBody`
+   * @param pubBody Buffer you allocate for `uint8 *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetHTTPRequestRawPostBody
+   */
   SetHTTPRequestRawPostBody(hRequest: number, pchContentType: string, pubBody: Buffer | null, unBodyLen: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetHTTPRequestRawPostBody', 'bool', ['void *', 'uint32', 'str', 'void *', 'uint32'])(this.ptr, hRequest, pchContentType, pubBody, unBodyLen) as boolean;
   }
 
+  /**
+   * `HTTPCookieContainerHandle CreateCookieContainer(bool bAllowResponsesToModify)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_CreateCookieContainer`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#CreateCookieContainer
+   */
   CreateCookieContainer(bAllowResponsesToModify: boolean): number {
     return this.nat.func('SteamAPI_ISteamHTTP_CreateCookieContainer', 'uint32', ['void *', 'bool'])(this.ptr, bAllowResponsesToModify) as number;
   }
 
+  /**
+   * `bool ReleaseCookieContainer(HTTPCookieContainerHandle hCookieContainer)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_ReleaseCookieContainer`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#ReleaseCookieContainer
+   */
   ReleaseCookieContainer(hCookieContainer: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_ReleaseCookieContainer', 'bool', ['void *', 'uint32'])(this.ptr, hCookieContainer) as boolean;
   }
 
+  /**
+   * `bool SetCookie(HTTPCookieContainerHandle hCookieContainer, const char *pchHost, const char *pchUrl, const char *pchCookie)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SetCookie`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetCookie
+   */
   SetCookie(hCookieContainer: number, pchHost: string, pchUrl: string, pchCookie: string): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetCookie', 'bool', ['void *', 'uint32', 'str', 'str', 'str'])(this.ptr, hCookieContainer, pchHost, pchUrl, pchCookie) as boolean;
   }
 
+  /**
+   * `bool SetHTTPRequestCookieContainer(HTTPRequestHandle hRequest, HTTPCookieContainerHandle hCookieContainer)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SetHTTPRequestCookieContainer`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetHTTPRequestCookieContainer
+   */
   SetHTTPRequestCookieContainer(hRequest: number, hCookieContainer: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetHTTPRequestCookieContainer', 'bool', ['void *', 'uint32', 'uint32'])(this.ptr, hRequest, hCookieContainer) as boolean;
   }
 
+  /**
+   * `bool SetHTTPRequestUserAgentInfo(HTTPRequestHandle hRequest, const char *pchUserAgentInfo)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SetHTTPRequestUserAgentInfo`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetHTTPRequestUserAgentInfo
+   */
   SetHTTPRequestUserAgentInfo(hRequest: number, pchUserAgentInfo: string): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetHTTPRequestUserAgentInfo', 'bool', ['void *', 'uint32', 'str'])(this.ptr, hRequest, pchUserAgentInfo) as boolean;
   }
 
+  /**
+   * `bool SetHTTPRequestRequiresVerifiedCertificate(HTTPRequestHandle hRequest, bool bRequireVerifiedCertificate)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SetHTTPRequestRequiresVerifiedCertificate`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetHTTPRequestRequiresVerifiedCertificate
+   */
   SetHTTPRequestRequiresVerifiedCertificate(hRequest: number, bRequireVerifiedCertificate: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetHTTPRequestRequiresVerifiedCertificate', 'bool', ['void *', 'uint32', 'bool'])(this.ptr, hRequest, bRequireVerifiedCertificate) as boolean;
   }
 
+  /**
+   * `bool SetHTTPRequestAbsoluteTimeoutMS(HTTPRequestHandle hRequest, uint32 unMilliseconds)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_SetHTTPRequestAbsoluteTimeoutMS`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetHTTPRequestAbsoluteTimeoutMS
+   */
   SetHTTPRequestAbsoluteTimeoutMS(hRequest: number, unMilliseconds: number): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetHTTPRequestAbsoluteTimeoutMS', 'bool', ['void *', 'uint32', 'uint32'])(this.ptr, hRequest, unMilliseconds) as boolean;
   }
 
+  /**
+   * `bool GetHTTPRequestWasTimedOut(HTTPRequestHandle hRequest, bool *pbWasTimedOut)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTTP_GetHTTPRequestWasTimedOut`
+   * @param pbWasTimedOut Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTTP#GetHTTPRequestWasTimedOut
+   */
   GetHTTPRequestWasTimedOut(hRequest: number, pbWasTimedOut: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_GetHTTPRequestWasTimedOut', 'bool', ['void *', 'uint32', 'void *'])(this.ptr, hRequest, pbWasTimedOut) as boolean;
   }

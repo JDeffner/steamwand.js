@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamApps (accessor SteamAPI_SteamApps_v009) */
+/**
+ * ISteamApps (accessor SteamAPI_SteamApps_v009)
+ * @see https://partner.steamgames.com/doc/api/ISteamApps
+ */
 export class ISteamApps {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,143 +14,372 @@ export class ISteamApps {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamApps_v009 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `bool BIsSubscribed()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BIsSubscribed`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribed
+   */
   BIsSubscribed(): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BIsSubscribed', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BIsLowViolence()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BIsLowViolence`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BIsLowViolence
+   */
   BIsLowViolence(): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BIsLowViolence', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BIsCybercafe()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BIsCybercafe`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BIsCybercafe
+   */
   BIsCybercafe(): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BIsCybercafe', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BIsVACBanned()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BIsVACBanned`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BIsVACBanned
+   */
   BIsVACBanned(): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BIsVACBanned', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `const char * GetCurrentGameLanguage()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetCurrentGameLanguage`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentGameLanguage
+   */
   GetCurrentGameLanguage(): string {
     return this.nat.func('SteamAPI_ISteamApps_GetCurrentGameLanguage', 'str', ['void *'])(this.ptr) as string;
   }
 
+  /**
+   * `const char * GetAvailableGameLanguages()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetAvailableGameLanguages`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetAvailableGameLanguages
+   */
   GetAvailableGameLanguages(): string {
     return this.nat.func('SteamAPI_ISteamApps_GetAvailableGameLanguages', 'str', ['void *'])(this.ptr) as string;
   }
 
+  /**
+   * `bool BIsSubscribedApp(AppId_t appID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BIsSubscribedApp`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedApp
+   */
   BIsSubscribedApp(appID: number): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BIsSubscribedApp', 'bool', ['void *', 'uint32'])(this.ptr, appID) as boolean;
   }
 
+  /**
+   * `bool BIsDlcInstalled(AppId_t appID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BIsDlcInstalled`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BIsDlcInstalled
+   */
   BIsDlcInstalled(appID: number): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BIsDlcInstalled', 'bool', ['void *', 'uint32'])(this.ptr, appID) as boolean;
   }
 
+  /**
+   * `uint32 GetEarliestPurchaseUnixTime(AppId_t nAppID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetEarliestPurchaseUnixTime`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetEarliestPurchaseUnixTime
+   */
   GetEarliestPurchaseUnixTime(nAppID: number): number {
     return this.nat.func('SteamAPI_ISteamApps_GetEarliestPurchaseUnixTime', 'uint32', ['void *', 'uint32'])(this.ptr, nAppID) as number;
   }
 
+  /**
+   * `bool BIsSubscribedFromFreeWeekend()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BIsSubscribedFromFreeWeekend`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedFromFreeWeekend
+   */
   BIsSubscribedFromFreeWeekend(): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BIsSubscribedFromFreeWeekend', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `int GetDLCCount()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetDLCCount`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetDLCCount
+   */
   GetDLCCount(): number {
     return this.nat.func('SteamAPI_ISteamApps_GetDLCCount', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `bool BGetDLCDataByIndex(int iDLC, AppId_t *pAppID, bool *pbAvailable, char *pchName, int cchNameBufferSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BGetDLCDataByIndex`
+   * @param pAppID Buffer you allocate for `AppId_t *`: `Buffer.alloc(4)` per element.
+   * @param pbAvailable Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
+   * @param pchName Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BGetDLCDataByIndex
+   */
   BGetDLCDataByIndex(iDLC: number, pAppID: Buffer | null, pbAvailable: Buffer | null, pchName: Buffer | null, cchNameBufferSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BGetDLCDataByIndex', 'bool', ['void *', 'int32', 'void *', 'void *', 'void *', 'int32'])(this.ptr, iDLC, pAppID, pbAvailable, pchName, cchNameBufferSize) as boolean;
   }
 
+  /**
+   * `void InstallDLC(AppId_t nAppID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_InstallDLC`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#InstallDLC
+   */
   InstallDLC(nAppID: number): void {
     this.nat.func('SteamAPI_ISteamApps_InstallDLC', 'void', ['void *', 'uint32'])(this.ptr, nAppID);
   }
 
+  /**
+   * `void UninstallDLC(AppId_t nAppID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_UninstallDLC`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#UninstallDLC
+   */
   UninstallDLC(nAppID: number): void {
     this.nat.func('SteamAPI_ISteamApps_UninstallDLC', 'void', ['void *', 'uint32'])(this.ptr, nAppID);
   }
 
+  /**
+   * `void RequestAppProofOfPurchaseKey(AppId_t nAppID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_RequestAppProofOfPurchaseKey`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#RequestAppProofOfPurchaseKey
+   */
   RequestAppProofOfPurchaseKey(nAppID: number): void {
     this.nat.func('SteamAPI_ISteamApps_RequestAppProofOfPurchaseKey', 'void', ['void *', 'uint32'])(this.ptr, nAppID);
   }
 
+  /**
+   * `bool GetCurrentBetaName(char *pchName, int cchNameBufferSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetCurrentBetaName`
+   * @param pchName Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentBetaName
+   */
   GetCurrentBetaName(pchName: Buffer | null, cchNameBufferSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamApps_GetCurrentBetaName', 'bool', ['void *', 'void *', 'int32'])(this.ptr, pchName, cchNameBufferSize) as boolean;
   }
 
+  /**
+   * `bool MarkContentCorrupt(bool bMissingFilesOnly)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_MarkContentCorrupt`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#MarkContentCorrupt
+   */
   MarkContentCorrupt(bMissingFilesOnly: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamApps_MarkContentCorrupt', 'bool', ['void *', 'bool'])(this.ptr, bMissingFilesOnly) as boolean;
   }
 
+  /**
+   * `uint32 GetInstalledDepots(AppId_t appID, DepotId_t *pvecDepots, uint32 cMaxDepots)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetInstalledDepots`
+   * @param pvecDepots Buffer you allocate for `DepotId_t *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetInstalledDepots
+   */
   GetInstalledDepots(appID: number, pvecDepots: Buffer | null, cMaxDepots: number): number {
     return this.nat.func('SteamAPI_ISteamApps_GetInstalledDepots', 'uint32', ['void *', 'uint32', 'void *', 'uint32'])(this.ptr, appID, pvecDepots, cMaxDepots) as number;
   }
 
+  /**
+   * `uint32 GetAppInstallDir(AppId_t appID, char *pchFolder, uint32 cchFolderBufferSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetAppInstallDir`
+   * @param pchFolder Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetAppInstallDir
+   */
   GetAppInstallDir(appID: number, pchFolder: Buffer | null, cchFolderBufferSize: number): number {
     return this.nat.func('SteamAPI_ISteamApps_GetAppInstallDir', 'uint32', ['void *', 'uint32', 'void *', 'uint32'])(this.ptr, appID, pchFolder, cchFolderBufferSize) as number;
   }
 
+  /**
+   * `bool BIsAppInstalled(AppId_t appID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BIsAppInstalled`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BIsAppInstalled
+   */
   BIsAppInstalled(appID: number): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BIsAppInstalled', 'bool', ['void *', 'uint32'])(this.ptr, appID) as boolean;
   }
 
+  /**
+   * `CSteamID GetAppOwner()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetAppOwner`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetAppOwner
+   */
   GetAppOwner(): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamApps_GetAppOwner', 'uint64', ['void *'])(this.ptr) as number | bigint);
   }
 
+  /**
+   * `const char * GetLaunchQueryParam(const char *pchKey)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetLaunchQueryParam`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetLaunchQueryParam
+   */
   GetLaunchQueryParam(pchKey: string): string {
     return this.nat.func('SteamAPI_ISteamApps_GetLaunchQueryParam', 'str', ['void *', 'str'])(this.ptr, pchKey) as string;
   }
 
+  /**
+   * `bool GetDlcDownloadProgress(AppId_t nAppID, uint64 *punBytesDownloaded, uint64 *punBytesTotal)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetDlcDownloadProgress`
+   * @param punBytesDownloaded Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
+   * @param punBytesTotal Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetDlcDownloadProgress
+   */
   GetDlcDownloadProgress(nAppID: number, punBytesDownloaded: Buffer | null, punBytesTotal: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamApps_GetDlcDownloadProgress', 'bool', ['void *', 'uint32', 'void *', 'void *'])(this.ptr, nAppID, punBytesDownloaded, punBytesTotal) as boolean;
   }
 
+  /**
+   * `int GetAppBuildId()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetAppBuildId`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetAppBuildId
+   */
   GetAppBuildId(): number {
     return this.nat.func('SteamAPI_ISteamApps_GetAppBuildId', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `void RequestAllProofOfPurchaseKeys()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_RequestAllProofOfPurchaseKeys`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#RequestAllProofOfPurchaseKeys
+   */
   RequestAllProofOfPurchaseKeys(): void {
     this.nat.func('SteamAPI_ISteamApps_RequestAllProofOfPurchaseKeys', 'void', ['void *'])(this.ptr);
   }
 
-  /** Call result: FileDetailsResult_t */
+  /**
+   * `SteamAPICall_t GetFileDetails(const char *pszFileName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetFileDetails`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<FileDetailsResult_t>(handle, layoutOf('FileDetailsResult_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetFileDetails
+   */
   GetFileDetails(pszFileName: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamApps_GetFileDetails', 'uint64', ['void *', 'str'])(this.ptr, pszFileName) as number | bigint);
   }
 
+  /**
+   * `int GetLaunchCommandLine(char *pszCommandLine, int cubCommandLine)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetLaunchCommandLine`
+   * @param pszCommandLine Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetLaunchCommandLine
+   */
   GetLaunchCommandLine(pszCommandLine: Buffer | null, cubCommandLine: number): number {
     return this.nat.func('SteamAPI_ISteamApps_GetLaunchCommandLine', 'int32', ['void *', 'void *', 'int32'])(this.ptr, pszCommandLine, cubCommandLine) as number;
   }
 
+  /**
+   * `bool BIsSubscribedFromFamilySharing()`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BIsSubscribedFromFamilySharing`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedFromFamilySharing
+   */
   BIsSubscribedFromFamilySharing(): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BIsSubscribedFromFamilySharing', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BIsTimedTrial(uint32 *punSecondsAllowed, uint32 *punSecondsPlayed)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_BIsTimedTrial`
+   * @param punSecondsAllowed Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @param punSecondsPlayed Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#BIsTimedTrial
+   */
   BIsTimedTrial(punSecondsAllowed: Buffer | null, punSecondsPlayed: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamApps_BIsTimedTrial', 'bool', ['void *', 'void *', 'void *'])(this.ptr, punSecondsAllowed, punSecondsPlayed) as boolean;
   }
 
+  /**
+   * `bool SetDlcContext(AppId_t nAppID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_SetDlcContext`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#SetDlcContext
+   */
   SetDlcContext(nAppID: number): boolean {
     return this.nat.func('SteamAPI_ISteamApps_SetDlcContext', 'bool', ['void *', 'uint32'])(this.ptr, nAppID) as boolean;
   }
 
+  /**
+   * `int GetNumBetas(int *pnAvailable, int *pnPrivate)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetNumBetas`
+   * @param pnAvailable Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
+   * @param pnPrivate Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetNumBetas
+   */
   GetNumBetas(pnAvailable: Buffer | null, pnPrivate: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamApps_GetNumBetas', 'int32', ['void *', 'void *', 'void *'])(this.ptr, pnAvailable, pnPrivate) as number;
   }
 
+  /**
+   * `bool GetBetaInfo(int iBetaIndex, uint32 *punFlags, uint32 *punBuildID, char *pchBetaName, int cchBetaName, char *pchDescription, int cchDescription, uint32 *punLastUpdated)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_GetBetaInfo`
+   * @param punFlags Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @param punBuildID Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @param pchBetaName Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @param pchDescription Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @param punLastUpdated Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#GetBetaInfo
+   */
   GetBetaInfo(iBetaIndex: number, punFlags: Buffer | null, punBuildID: Buffer | null, pchBetaName: Buffer | null, cchBetaName: number, pchDescription: Buffer | null, cchDescription: number, punLastUpdated: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamApps_GetBetaInfo', 'bool', ['void *', 'int32', 'void *', 'void *', 'void *', 'int32', 'void *', 'int32', 'void *'])(this.ptr, iBetaIndex, punFlags, punBuildID, pchBetaName, cchBetaName, pchDescription, cchDescription, punLastUpdated) as boolean;
   }
 
+  /**
+   * `bool SetActiveBeta(const char *pchBetaName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_SetActiveBeta`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#SetActiveBeta
+   */
   SetActiveBeta(pchBetaName: string): boolean {
     return this.nat.func('SteamAPI_ISteamApps_SetActiveBeta', 'bool', ['void *', 'str'])(this.ptr, pchBetaName) as boolean;
   }
 
+  /**
+   * `void SetGamePerformanceSetting(EGamePerformanceSetting setting)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_SetGamePerformanceSetting`
+   * @param setting enum `EGamePerformanceSetting`; values on `flat.EGamePerformanceSetting`.
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#SetGamePerformanceSetting
+   */
   SetGamePerformanceSetting(setting: number): void {
     this.nat.func('SteamAPI_ISteamApps_SetGamePerformanceSetting', 'void', ['void *', 'int32'])(this.ptr, setting);
   }
 
+  /**
+   * `void SetGameRenderResolution(uint32 unWidth, uint32 unHeight)`
+   *
+   * Flat symbol: `SteamAPI_ISteamApps_SetGameRenderResolution`
+   * @see https://partner.steamgames.com/doc/api/ISteamApps#SetGameRenderResolution
+   */
   SetGameRenderResolution(unWidth: number, unHeight: number): void {
     this.nat.func('SteamAPI_ISteamApps_SetGameRenderResolution', 'void', ['void *', 'uint32', 'uint32'])(this.ptr, unWidth, unHeight);
   }

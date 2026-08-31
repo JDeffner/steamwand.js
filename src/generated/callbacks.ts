@@ -200,195 +200,386 @@ export const callbacksById: Record<number, CallbackDef> = {
 };
 
 export const callbackId = {
+  /** `SteamServersConnected_t` callback id. Subscribe with `steam.on('SteamServersConnected_t', cb)`. */
   SteamServersConnected_t: 101,
+  /** `SteamServerConnectFailure_t` callback id. Subscribe with `steam.on('SteamServerConnectFailure_t', cb)`. */
   SteamServerConnectFailure_t: 102,
+  /** `SteamServersDisconnected_t` callback id. Subscribe with `steam.on('SteamServersDisconnected_t', cb)`. */
   SteamServersDisconnected_t: 103,
+  /** `ClientGameServerDeny_t` callback id. Subscribe with `steam.on('ClientGameServerDeny_t', cb)`. */
   ClientGameServerDeny_t: 113,
+  /** `IPCFailure_t` callback id. Subscribe with `steam.on('IPCFailure_t', cb)`. */
   IPCFailure_t: 117,
+  /** `LicensesUpdated_t` callback id. Subscribe with `steam.on('LicensesUpdated_t', cb)`. */
   LicensesUpdated_t: 125,
+  /** `ValidateAuthTicketResponse_t` callback id. Subscribe with `steam.on('ValidateAuthTicketResponse_t', cb)`. */
   ValidateAuthTicketResponse_t: 143,
+  /** `MicroTxnAuthorizationResponse_t` callback id. Subscribe with `steam.on('MicroTxnAuthorizationResponse_t', cb)`. */
   MicroTxnAuthorizationResponse_t: 152,
+  /** `EncryptedAppTicketResponse_t` callback id. Subscribe with `steam.on('EncryptedAppTicketResponse_t', cb)`. */
   EncryptedAppTicketResponse_t: 154,
+  /** `GetAuthSessionTicketResponse_t` callback id. Subscribe with `steam.on('GetAuthSessionTicketResponse_t', cb)`. */
   GetAuthSessionTicketResponse_t: 163,
+  /** `GameWebCallback_t` callback id. Subscribe with `steam.on('GameWebCallback_t', cb)`. */
   GameWebCallback_t: 164,
+  /** `StoreAuthURLResponse_t` callback id. Subscribe with `steam.on('StoreAuthURLResponse_t', cb)`. */
   StoreAuthURLResponse_t: 165,
+  /** `MarketEligibilityResponse_t` callback id. Subscribe with `steam.on('MarketEligibilityResponse_t', cb)`. */
   MarketEligibilityResponse_t: 166,
+  /** `DurationControl_t` callback id. Subscribe with `steam.on('DurationControl_t', cb)`. */
   DurationControl_t: 167,
+  /** `GetTicketForWebApiResponse_t` callback id. Subscribe with `steam.on('GetTicketForWebApiResponse_t', cb)`. */
   GetTicketForWebApiResponse_t: 168,
+  /** `PersonaStateChange_t` callback id. Subscribe with `steam.on('PersonaStateChange_t', cb)`. */
   PersonaStateChange_t: 304,
+  /** `GameOverlayActivated_t` callback id. Subscribe with `steam.on('GameOverlayActivated_t', cb)`. */
   GameOverlayActivated_t: 331,
+  /** `GameServerChangeRequested_t` callback id. Subscribe with `steam.on('GameServerChangeRequested_t', cb)`. */
   GameServerChangeRequested_t: 332,
+  /** `GameLobbyJoinRequested_t` callback id. Subscribe with `steam.on('GameLobbyJoinRequested_t', cb)`. */
   GameLobbyJoinRequested_t: 333,
+  /** `AvatarImageLoaded_t` callback id. Subscribe with `steam.on('AvatarImageLoaded_t', cb)`. */
   AvatarImageLoaded_t: 334,
+  /** `ClanOfficerListResponse_t` callback id. Subscribe with `steam.on('ClanOfficerListResponse_t', cb)`. */
   ClanOfficerListResponse_t: 335,
+  /** `FriendRichPresenceUpdate_t` callback id. Subscribe with `steam.on('FriendRichPresenceUpdate_t', cb)`. */
   FriendRichPresenceUpdate_t: 336,
+  /** `GameRichPresenceJoinRequested_t` callback id. Subscribe with `steam.on('GameRichPresenceJoinRequested_t', cb)`. */
   GameRichPresenceJoinRequested_t: 337,
+  /** `GameConnectedClanChatMsg_t` callback id. Subscribe with `steam.on('GameConnectedClanChatMsg_t', cb)`. */
   GameConnectedClanChatMsg_t: 338,
+  /** `GameConnectedChatJoin_t` callback id. Subscribe with `steam.on('GameConnectedChatJoin_t', cb)`. */
   GameConnectedChatJoin_t: 339,
+  /** `GameConnectedChatLeave_t` callback id. Subscribe with `steam.on('GameConnectedChatLeave_t', cb)`. */
   GameConnectedChatLeave_t: 340,
+  /** `DownloadClanActivityCountsResult_t` callback id. Subscribe with `steam.on('DownloadClanActivityCountsResult_t', cb)`. */
   DownloadClanActivityCountsResult_t: 341,
+  /** `JoinClanChatRoomCompletionResult_t` callback id. Subscribe with `steam.on('JoinClanChatRoomCompletionResult_t', cb)`. */
   JoinClanChatRoomCompletionResult_t: 342,
+  /** `GameConnectedFriendChatMsg_t` callback id. Subscribe with `steam.on('GameConnectedFriendChatMsg_t', cb)`. */
   GameConnectedFriendChatMsg_t: 343,
+  /** `FriendsGetFollowerCount_t` callback id. Subscribe with `steam.on('FriendsGetFollowerCount_t', cb)`. */
   FriendsGetFollowerCount_t: 344,
+  /** `FriendsIsFollowing_t` callback id. Subscribe with `steam.on('FriendsIsFollowing_t', cb)`. */
   FriendsIsFollowing_t: 345,
+  /** `FriendsEnumerateFollowingList_t` callback id. Subscribe with `steam.on('FriendsEnumerateFollowingList_t', cb)`. */
   FriendsEnumerateFollowingList_t: 346,
+  /** `UnreadChatMessagesChanged_t` callback id. Subscribe with `steam.on('UnreadChatMessagesChanged_t', cb)`. */
   UnreadChatMessagesChanged_t: 348,
+  /** `OverlayBrowserProtocolNavigation_t` callback id. Subscribe with `steam.on('OverlayBrowserProtocolNavigation_t', cb)`. */
   OverlayBrowserProtocolNavigation_t: 349,
+  /** `EquippedProfileItemsChanged_t` callback id. Subscribe with `steam.on('EquippedProfileItemsChanged_t', cb)`. */
   EquippedProfileItemsChanged_t: 350,
+  /** `EquippedProfileItems_t` callback id. Subscribe with `steam.on('EquippedProfileItems_t', cb)`. */
   EquippedProfileItems_t: 351,
+  /** `IPCountry_t` callback id. Subscribe with `steam.on('IPCountry_t', cb)`. */
   IPCountry_t: 701,
+  /** `LowBatteryPower_t` callback id. Subscribe with `steam.on('LowBatteryPower_t', cb)`. */
   LowBatteryPower_t: 702,
+  /** `SteamAPICallCompleted_t` callback id. Subscribe with `steam.on('SteamAPICallCompleted_t', cb)`. */
   SteamAPICallCompleted_t: 703,
+  /** `SteamShutdown_t` callback id. Subscribe with `steam.on('SteamShutdown_t', cb)`. */
   SteamShutdown_t: 704,
+  /** `CheckFileSignature_t` callback id. Subscribe with `steam.on('CheckFileSignature_t', cb)`. */
   CheckFileSignature_t: 705,
+  /** `GamepadTextInputDismissed_t` callback id. Subscribe with `steam.on('GamepadTextInputDismissed_t', cb)`. */
   GamepadTextInputDismissed_t: 714,
+  /** `AppResumingFromSuspend_t` callback id. Subscribe with `steam.on('AppResumingFromSuspend_t', cb)`. */
   AppResumingFromSuspend_t: 736,
+  /** `FloatingGamepadTextInputDismissed_t` callback id. Subscribe with `steam.on('FloatingGamepadTextInputDismissed_t', cb)`. */
   FloatingGamepadTextInputDismissed_t: 738,
+  /** `FilterTextDictionaryChanged_t` callback id. Subscribe with `steam.on('FilterTextDictionaryChanged_t', cb)`. */
   FilterTextDictionaryChanged_t: 739,
+  /** `FavoritesListChanged_t` callback id. Subscribe with `steam.on('FavoritesListChanged_t', cb)`. */
   FavoritesListChanged_t: 502,
+  /** `LobbyInvite_t` callback id. Subscribe with `steam.on('LobbyInvite_t', cb)`. */
   LobbyInvite_t: 503,
+  /** `LobbyEnter_t` callback id. Subscribe with `steam.on('LobbyEnter_t', cb)`. */
   LobbyEnter_t: 504,
+  /** `LobbyDataUpdate_t` callback id. Subscribe with `steam.on('LobbyDataUpdate_t', cb)`. */
   LobbyDataUpdate_t: 505,
+  /** `LobbyChatUpdate_t` callback id. Subscribe with `steam.on('LobbyChatUpdate_t', cb)`. */
   LobbyChatUpdate_t: 506,
+  /** `LobbyChatMsg_t` callback id. Subscribe with `steam.on('LobbyChatMsg_t', cb)`. */
   LobbyChatMsg_t: 507,
+  /** `LobbyGameCreated_t` callback id. Subscribe with `steam.on('LobbyGameCreated_t', cb)`. */
   LobbyGameCreated_t: 509,
+  /** `LobbyMatchList_t` callback id. Subscribe with `steam.on('LobbyMatchList_t', cb)`. */
   LobbyMatchList_t: 510,
+  /** `LobbyKicked_t` callback id. Subscribe with `steam.on('LobbyKicked_t', cb)`. */
   LobbyKicked_t: 512,
+  /** `LobbyCreated_t` callback id. Subscribe with `steam.on('LobbyCreated_t', cb)`. */
   LobbyCreated_t: 513,
+  /** `FavoritesListAccountsUpdated_t` callback id. Subscribe with `steam.on('FavoritesListAccountsUpdated_t', cb)`. */
   FavoritesListAccountsUpdated_t: 516,
+  /** `JoinPartyCallback_t` callback id. Subscribe with `steam.on('JoinPartyCallback_t', cb)`. */
   JoinPartyCallback_t: 5301,
+  /** `CreateBeaconCallback_t` callback id. Subscribe with `steam.on('CreateBeaconCallback_t', cb)`. */
   CreateBeaconCallback_t: 5302,
+  /** `ReservationNotificationCallback_t` callback id. Subscribe with `steam.on('ReservationNotificationCallback_t', cb)`. */
   ReservationNotificationCallback_t: 5303,
+  /** `ChangeNumOpenSlotsCallback_t` callback id. Subscribe with `steam.on('ChangeNumOpenSlotsCallback_t', cb)`. */
   ChangeNumOpenSlotsCallback_t: 5304,
+  /** `AvailableBeaconLocationsUpdated_t` callback id. Subscribe with `steam.on('AvailableBeaconLocationsUpdated_t', cb)`. */
   AvailableBeaconLocationsUpdated_t: 5305,
+  /** `ActiveBeaconsUpdated_t` callback id. Subscribe with `steam.on('ActiveBeaconsUpdated_t', cb)`. */
   ActiveBeaconsUpdated_t: 5306,
+  /** `RemoteStorageFileShareResult_t` callback id. Subscribe with `steam.on('RemoteStorageFileShareResult_t', cb)`. */
   RemoteStorageFileShareResult_t: 1307,
+  /** `RemoteStoragePublishFileResult_t` callback id. Subscribe with `steam.on('RemoteStoragePublishFileResult_t', cb)`. */
   RemoteStoragePublishFileResult_t: 1309,
+  /** `RemoteStorageDeletePublishedFileResult_t` callback id. Subscribe with `steam.on('RemoteStorageDeletePublishedFileResult_t', cb)`. */
   RemoteStorageDeletePublishedFileResult_t: 1311,
+  /** `RemoteStorageEnumerateUserPublishedFilesResult_t` callback id. Subscribe with `steam.on('RemoteStorageEnumerateUserPublishedFilesResult_t', cb)`. */
   RemoteStorageEnumerateUserPublishedFilesResult_t: 1312,
+  /** `RemoteStorageSubscribePublishedFileResult_t` callback id. Subscribe with `steam.on('RemoteStorageSubscribePublishedFileResult_t', cb)`. */
   RemoteStorageSubscribePublishedFileResult_t: 1313,
+  /** `RemoteStorageEnumerateUserSubscribedFilesResult_t` callback id. Subscribe with `steam.on('RemoteStorageEnumerateUserSubscribedFilesResult_t', cb)`. */
   RemoteStorageEnumerateUserSubscribedFilesResult_t: 1314,
+  /** `RemoteStorageUnsubscribePublishedFileResult_t` callback id. Subscribe with `steam.on('RemoteStorageUnsubscribePublishedFileResult_t', cb)`. */
   RemoteStorageUnsubscribePublishedFileResult_t: 1315,
+  /** `RemoteStorageUpdatePublishedFileResult_t` callback id. Subscribe with `steam.on('RemoteStorageUpdatePublishedFileResult_t', cb)`. */
   RemoteStorageUpdatePublishedFileResult_t: 1316,
+  /** `RemoteStorageDownloadUGCResult_t` callback id. Subscribe with `steam.on('RemoteStorageDownloadUGCResult_t', cb)`. */
   RemoteStorageDownloadUGCResult_t: 1317,
+  /** `RemoteStorageGetPublishedFileDetailsResult_t` callback id. Subscribe with `steam.on('RemoteStorageGetPublishedFileDetailsResult_t', cb)`. */
   RemoteStorageGetPublishedFileDetailsResult_t: 1318,
+  /** `RemoteStorageEnumerateWorkshopFilesResult_t` callback id. Subscribe with `steam.on('RemoteStorageEnumerateWorkshopFilesResult_t', cb)`. */
   RemoteStorageEnumerateWorkshopFilesResult_t: 1319,
+  /** `RemoteStorageGetPublishedItemVoteDetailsResult_t` callback id. Subscribe with `steam.on('RemoteStorageGetPublishedItemVoteDetailsResult_t', cb)`. */
   RemoteStorageGetPublishedItemVoteDetailsResult_t: 1320,
+  /** `RemoteStoragePublishedFileSubscribed_t` callback id. Subscribe with `steam.on('RemoteStoragePublishedFileSubscribed_t', cb)`. */
   RemoteStoragePublishedFileSubscribed_t: 1321,
+  /** `RemoteStoragePublishedFileUnsubscribed_t` callback id. Subscribe with `steam.on('RemoteStoragePublishedFileUnsubscribed_t', cb)`. */
   RemoteStoragePublishedFileUnsubscribed_t: 1322,
+  /** `RemoteStoragePublishedFileDeleted_t` callback id. Subscribe with `steam.on('RemoteStoragePublishedFileDeleted_t', cb)`. */
   RemoteStoragePublishedFileDeleted_t: 1323,
+  /** `RemoteStorageUpdateUserPublishedItemVoteResult_t` callback id. Subscribe with `steam.on('RemoteStorageUpdateUserPublishedItemVoteResult_t', cb)`. */
   RemoteStorageUpdateUserPublishedItemVoteResult_t: 1324,
+  /** `RemoteStorageUserVoteDetails_t` callback id. Subscribe with `steam.on('RemoteStorageUserVoteDetails_t', cb)`. */
   RemoteStorageUserVoteDetails_t: 1325,
+  /** `RemoteStorageEnumerateUserSharedWorkshopFilesResult_t` callback id. Subscribe with `steam.on('RemoteStorageEnumerateUserSharedWorkshopFilesResult_t', cb)`. */
   RemoteStorageEnumerateUserSharedWorkshopFilesResult_t: 1326,
+  /** `RemoteStorageSetUserPublishedFileActionResult_t` callback id. Subscribe with `steam.on('RemoteStorageSetUserPublishedFileActionResult_t', cb)`. */
   RemoteStorageSetUserPublishedFileActionResult_t: 1327,
+  /** `RemoteStorageEnumeratePublishedFilesByUserActionResult_t` callback id. Subscribe with `steam.on('RemoteStorageEnumeratePublishedFilesByUserActionResult_t', cb)`. */
   RemoteStorageEnumeratePublishedFilesByUserActionResult_t: 1328,
+  /** `RemoteStoragePublishFileProgress_t` callback id. Subscribe with `steam.on('RemoteStoragePublishFileProgress_t', cb)`. */
   RemoteStoragePublishFileProgress_t: 1329,
+  /** `RemoteStoragePublishedFileUpdated_t` callback id. Subscribe with `steam.on('RemoteStoragePublishedFileUpdated_t', cb)`. */
   RemoteStoragePublishedFileUpdated_t: 1330,
+  /** `RemoteStorageFileWriteAsyncComplete_t` callback id. Subscribe with `steam.on('RemoteStorageFileWriteAsyncComplete_t', cb)`. */
   RemoteStorageFileWriteAsyncComplete_t: 1331,
+  /** `RemoteStorageFileReadAsyncComplete_t` callback id. Subscribe with `steam.on('RemoteStorageFileReadAsyncComplete_t', cb)`. */
   RemoteStorageFileReadAsyncComplete_t: 1332,
+  /** `RemoteStorageLocalFileChange_t` callback id. Subscribe with `steam.on('RemoteStorageLocalFileChange_t', cb)`. */
   RemoteStorageLocalFileChange_t: 1333,
+  /** `UserStatsReceived_t` callback id. Subscribe with `steam.on('UserStatsReceived_t', cb)`. */
   UserStatsReceived_t: 1101,
+  /** `UserStatsStored_t` callback id. Subscribe with `steam.on('UserStatsStored_t', cb)`. */
   UserStatsStored_t: 1102,
+  /** `UserAchievementStored_t` callback id. Subscribe with `steam.on('UserAchievementStored_t', cb)`. */
   UserAchievementStored_t: 1103,
+  /** `LeaderboardFindResult_t` callback id. Subscribe with `steam.on('LeaderboardFindResult_t', cb)`. */
   LeaderboardFindResult_t: 1104,
+  /** `LeaderboardScoresDownloaded_t` callback id. Subscribe with `steam.on('LeaderboardScoresDownloaded_t', cb)`. */
   LeaderboardScoresDownloaded_t: 1105,
+  /** `LeaderboardScoreUploaded_t` callback id. Subscribe with `steam.on('LeaderboardScoreUploaded_t', cb)`. */
   LeaderboardScoreUploaded_t: 1106,
+  /** `NumberOfCurrentPlayers_t` callback id. Subscribe with `steam.on('NumberOfCurrentPlayers_t', cb)`. */
   NumberOfCurrentPlayers_t: 1107,
+  /** `UserStatsUnloaded_t` callback id. Subscribe with `steam.on('UserStatsUnloaded_t', cb)`. */
   UserStatsUnloaded_t: 1108,
+  /** `UserAchievementIconFetched_t` callback id. Subscribe with `steam.on('UserAchievementIconFetched_t', cb)`. */
   UserAchievementIconFetched_t: 1109,
+  /** `GlobalAchievementPercentagesReady_t` callback id. Subscribe with `steam.on('GlobalAchievementPercentagesReady_t', cb)`. */
   GlobalAchievementPercentagesReady_t: 1110,
+  /** `LeaderboardUGCSet_t` callback id. Subscribe with `steam.on('LeaderboardUGCSet_t', cb)`. */
   LeaderboardUGCSet_t: 1111,
+  /** `GlobalStatsReceived_t` callback id. Subscribe with `steam.on('GlobalStatsReceived_t', cb)`. */
   GlobalStatsReceived_t: 1112,
+  /** `DlcInstalled_t` callback id. Subscribe with `steam.on('DlcInstalled_t', cb)`. */
   DlcInstalled_t: 1005,
+  /** `NewUrlLaunchParameters_t` callback id. Subscribe with `steam.on('NewUrlLaunchParameters_t', cb)`. */
   NewUrlLaunchParameters_t: 1014,
+  /** `AppProofOfPurchaseKeyResponse_t` callback id. Subscribe with `steam.on('AppProofOfPurchaseKeyResponse_t', cb)`. */
   AppProofOfPurchaseKeyResponse_t: 1021,
+  /** `FileDetailsResult_t` callback id. Subscribe with `steam.on('FileDetailsResult_t', cb)`. */
   FileDetailsResult_t: 1023,
+  /** `TimedTrialStatus_t` callback id. Subscribe with `steam.on('TimedTrialStatus_t', cb)`. */
   TimedTrialStatus_t: 1030,
+  /** `P2PSessionRequest_t` callback id. Subscribe with `steam.on('P2PSessionRequest_t', cb)`. */
   P2PSessionRequest_t: 1202,
+  /** `P2PSessionConnectFail_t` callback id. Subscribe with `steam.on('P2PSessionConnectFail_t', cb)`. */
   P2PSessionConnectFail_t: 1203,
+  /** `SocketStatusCallback_t` callback id. Subscribe with `steam.on('SocketStatusCallback_t', cb)`. */
   SocketStatusCallback_t: 1201,
+  /** `ScreenshotReady_t` callback id. Subscribe with `steam.on('ScreenshotReady_t', cb)`. */
   ScreenshotReady_t: 2301,
+  /** `ScreenshotRequested_t` callback id. Subscribe with `steam.on('ScreenshotRequested_t', cb)`. */
   ScreenshotRequested_t: 2302,
+  /** `PlaybackStatusHasChanged_t` callback id. Subscribe with `steam.on('PlaybackStatusHasChanged_t', cb)`. */
   PlaybackStatusHasChanged_t: 4001,
+  /** `VolumeHasChanged_t` callback id. Subscribe with `steam.on('VolumeHasChanged_t', cb)`. */
   VolumeHasChanged_t: 4002,
+  /** `HTTPRequestCompleted_t` callback id. Subscribe with `steam.on('HTTPRequestCompleted_t', cb)`. */
   HTTPRequestCompleted_t: 2101,
+  /** `HTTPRequestHeadersReceived_t` callback id. Subscribe with `steam.on('HTTPRequestHeadersReceived_t', cb)`. */
   HTTPRequestHeadersReceived_t: 2102,
+  /** `HTTPRequestDataReceived_t` callback id. Subscribe with `steam.on('HTTPRequestDataReceived_t', cb)`. */
   HTTPRequestDataReceived_t: 2103,
+  /** `SteamInputDeviceConnected_t` callback id. Subscribe with `steam.on('SteamInputDeviceConnected_t', cb)`. */
   SteamInputDeviceConnected_t: 2801,
+  /** `SteamInputDeviceDisconnected_t` callback id. Subscribe with `steam.on('SteamInputDeviceDisconnected_t', cb)`. */
   SteamInputDeviceDisconnected_t: 2802,
+  /** `SteamInputConfigurationLoaded_t` callback id. Subscribe with `steam.on('SteamInputConfigurationLoaded_t', cb)`. */
   SteamInputConfigurationLoaded_t: 2803,
+  /** `SteamInputGamepadSlotChange_t` callback id. Subscribe with `steam.on('SteamInputGamepadSlotChange_t', cb)`. */
   SteamInputGamepadSlotChange_t: 2804,
+  /** `SteamUGCQueryCompleted_t` callback id. Subscribe with `steam.on('SteamUGCQueryCompleted_t', cb)`. */
   SteamUGCQueryCompleted_t: 3401,
+  /** `SteamUGCRequestUGCDetailsResult_t` callback id. Subscribe with `steam.on('SteamUGCRequestUGCDetailsResult_t', cb)`. */
   SteamUGCRequestUGCDetailsResult_t: 3402,
+  /** `CreateItemResult_t` callback id. Subscribe with `steam.on('CreateItemResult_t', cb)`. */
   CreateItemResult_t: 3403,
+  /** `SubmitItemUpdateResult_t` callback id. Subscribe with `steam.on('SubmitItemUpdateResult_t', cb)`. */
   SubmitItemUpdateResult_t: 3404,
+  /** `ItemInstalled_t` callback id. Subscribe with `steam.on('ItemInstalled_t', cb)`. */
   ItemInstalled_t: 3405,
+  /** `DownloadItemResult_t` callback id. Subscribe with `steam.on('DownloadItemResult_t', cb)`. */
   DownloadItemResult_t: 3406,
+  /** `UserFavoriteItemsListChanged_t` callback id. Subscribe with `steam.on('UserFavoriteItemsListChanged_t', cb)`. */
   UserFavoriteItemsListChanged_t: 3407,
+  /** `SetUserItemVoteResult_t` callback id. Subscribe with `steam.on('SetUserItemVoteResult_t', cb)`. */
   SetUserItemVoteResult_t: 3408,
+  /** `GetUserItemVoteResult_t` callback id. Subscribe with `steam.on('GetUserItemVoteResult_t', cb)`. */
   GetUserItemVoteResult_t: 3409,
+  /** `StartPlaytimeTrackingResult_t` callback id. Subscribe with `steam.on('StartPlaytimeTrackingResult_t', cb)`. */
   StartPlaytimeTrackingResult_t: 3410,
+  /** `StopPlaytimeTrackingResult_t` callback id. Subscribe with `steam.on('StopPlaytimeTrackingResult_t', cb)`. */
   StopPlaytimeTrackingResult_t: 3411,
+  /** `AddUGCDependencyResult_t` callback id. Subscribe with `steam.on('AddUGCDependencyResult_t', cb)`. */
   AddUGCDependencyResult_t: 3412,
+  /** `RemoveUGCDependencyResult_t` callback id. Subscribe with `steam.on('RemoveUGCDependencyResult_t', cb)`. */
   RemoveUGCDependencyResult_t: 3413,
+  /** `AddAppDependencyResult_t` callback id. Subscribe with `steam.on('AddAppDependencyResult_t', cb)`. */
   AddAppDependencyResult_t: 3414,
+  /** `RemoveAppDependencyResult_t` callback id. Subscribe with `steam.on('RemoveAppDependencyResult_t', cb)`. */
   RemoveAppDependencyResult_t: 3415,
+  /** `GetAppDependenciesResult_t` callback id. Subscribe with `steam.on('GetAppDependenciesResult_t', cb)`. */
   GetAppDependenciesResult_t: 3416,
+  /** `DeleteItemResult_t` callback id. Subscribe with `steam.on('DeleteItemResult_t', cb)`. */
   DeleteItemResult_t: 3417,
+  /** `UserSubscribedItemsListChanged_t` callback id. Subscribe with `steam.on('UserSubscribedItemsListChanged_t', cb)`. */
   UserSubscribedItemsListChanged_t: 3418,
+  /** `WorkshopEULAStatus_t` callback id. Subscribe with `steam.on('WorkshopEULAStatus_t', cb)`. */
   WorkshopEULAStatus_t: 3420,
+  /** `HTML_BrowserReady_t` callback id. Subscribe with `steam.on('HTML_BrowserReady_t', cb)`. */
   HTML_BrowserReady_t: 4501,
+  /** `HTML_NeedsPaint_t` callback id. Subscribe with `steam.on('HTML_NeedsPaint_t', cb)`. */
   HTML_NeedsPaint_t: 4502,
+  /** `HTML_StartRequest_t` callback id. Subscribe with `steam.on('HTML_StartRequest_t', cb)`. */
   HTML_StartRequest_t: 4503,
+  /** `HTML_CloseBrowser_t` callback id. Subscribe with `steam.on('HTML_CloseBrowser_t', cb)`. */
   HTML_CloseBrowser_t: 4504,
+  /** `HTML_URLChanged_t` callback id. Subscribe with `steam.on('HTML_URLChanged_t', cb)`. */
   HTML_URLChanged_t: 4505,
+  /** `HTML_FinishedRequest_t` callback id. Subscribe with `steam.on('HTML_FinishedRequest_t', cb)`. */
   HTML_FinishedRequest_t: 4506,
+  /** `HTML_OpenLinkInNewTab_t` callback id. Subscribe with `steam.on('HTML_OpenLinkInNewTab_t', cb)`. */
   HTML_OpenLinkInNewTab_t: 4507,
+  /** `HTML_ChangedTitle_t` callback id. Subscribe with `steam.on('HTML_ChangedTitle_t', cb)`. */
   HTML_ChangedTitle_t: 4508,
+  /** `HTML_SearchResults_t` callback id. Subscribe with `steam.on('HTML_SearchResults_t', cb)`. */
   HTML_SearchResults_t: 4509,
+  /** `HTML_CanGoBackAndForward_t` callback id. Subscribe with `steam.on('HTML_CanGoBackAndForward_t', cb)`. */
   HTML_CanGoBackAndForward_t: 4510,
+  /** `HTML_HorizontalScroll_t` callback id. Subscribe with `steam.on('HTML_HorizontalScroll_t', cb)`. */
   HTML_HorizontalScroll_t: 4511,
+  /** `HTML_VerticalScroll_t` callback id. Subscribe with `steam.on('HTML_VerticalScroll_t', cb)`. */
   HTML_VerticalScroll_t: 4512,
+  /** `HTML_LinkAtPosition_t` callback id. Subscribe with `steam.on('HTML_LinkAtPosition_t', cb)`. */
   HTML_LinkAtPosition_t: 4513,
+  /** `HTML_JSAlert_t` callback id. Subscribe with `steam.on('HTML_JSAlert_t', cb)`. */
   HTML_JSAlert_t: 4514,
+  /** `HTML_JSConfirm_t` callback id. Subscribe with `steam.on('HTML_JSConfirm_t', cb)`. */
   HTML_JSConfirm_t: 4515,
+  /** `HTML_FileOpenDialog_t` callback id. Subscribe with `steam.on('HTML_FileOpenDialog_t', cb)`. */
   HTML_FileOpenDialog_t: 4516,
+  /** `HTML_NewWindow_t` callback id. Subscribe with `steam.on('HTML_NewWindow_t', cb)`. */
   HTML_NewWindow_t: 4521,
+  /** `HTML_SetCursor_t` callback id. Subscribe with `steam.on('HTML_SetCursor_t', cb)`. */
   HTML_SetCursor_t: 4522,
+  /** `HTML_StatusText_t` callback id. Subscribe with `steam.on('HTML_StatusText_t', cb)`. */
   HTML_StatusText_t: 4523,
+  /** `HTML_ShowToolTip_t` callback id. Subscribe with `steam.on('HTML_ShowToolTip_t', cb)`. */
   HTML_ShowToolTip_t: 4524,
+  /** `HTML_UpdateToolTip_t` callback id. Subscribe with `steam.on('HTML_UpdateToolTip_t', cb)`. */
   HTML_UpdateToolTip_t: 4525,
+  /** `HTML_HideToolTip_t` callback id. Subscribe with `steam.on('HTML_HideToolTip_t', cb)`. */
   HTML_HideToolTip_t: 4526,
+  /** `HTML_BrowserRestarted_t` callback id. Subscribe with `steam.on('HTML_BrowserRestarted_t', cb)`. */
   HTML_BrowserRestarted_t: 4527,
+  /** `SteamInventoryResultReady_t` callback id. Subscribe with `steam.on('SteamInventoryResultReady_t', cb)`. */
   SteamInventoryResultReady_t: 4700,
+  /** `SteamInventoryFullUpdate_t` callback id. Subscribe with `steam.on('SteamInventoryFullUpdate_t', cb)`. */
   SteamInventoryFullUpdate_t: 4701,
+  /** `SteamInventoryDefinitionUpdate_t` callback id. Subscribe with `steam.on('SteamInventoryDefinitionUpdate_t', cb)`. */
   SteamInventoryDefinitionUpdate_t: 4702,
+  /** `SteamInventoryEligiblePromoItemDefIDs_t` callback id. Subscribe with `steam.on('SteamInventoryEligiblePromoItemDefIDs_t', cb)`. */
   SteamInventoryEligiblePromoItemDefIDs_t: 4703,
+  /** `SteamInventoryStartPurchaseResult_t` callback id. Subscribe with `steam.on('SteamInventoryStartPurchaseResult_t', cb)`. */
   SteamInventoryStartPurchaseResult_t: 4704,
+  /** `SteamInventoryRequestPricesResult_t` callback id. Subscribe with `steam.on('SteamInventoryRequestPricesResult_t', cb)`. */
   SteamInventoryRequestPricesResult_t: 4705,
+  /** `SteamTimelineGamePhaseRecordingExists_t` callback id. Subscribe with `steam.on('SteamTimelineGamePhaseRecordingExists_t', cb)`. */
   SteamTimelineGamePhaseRecordingExists_t: 6001,
+  /** `SteamTimelineEventRecordingExists_t` callback id. Subscribe with `steam.on('SteamTimelineEventRecordingExists_t', cb)`. */
   SteamTimelineEventRecordingExists_t: 6002,
+  /** `GetVideoURLResult_t` callback id. Subscribe with `steam.on('GetVideoURLResult_t', cb)`. */
   GetVideoURLResult_t: 4611,
+  /** `GetOPFSettingsResult_t` callback id. Subscribe with `steam.on('GetOPFSettingsResult_t', cb)`. */
   GetOPFSettingsResult_t: 4624,
+  /** `BroadcastUploadStart_t` callback id. Subscribe with `steam.on('BroadcastUploadStart_t', cb)`. */
   BroadcastUploadStart_t: 4604,
+  /** `BroadcastUploadStop_t` callback id. Subscribe with `steam.on('BroadcastUploadStop_t', cb)`. */
   BroadcastUploadStop_t: 4605,
+  /** `SteamParentalSettingsChanged_t` callback id. Subscribe with `steam.on('SteamParentalSettingsChanged_t', cb)`. */
   SteamParentalSettingsChanged_t: 5001,
+  /** `SteamRemotePlaySessionConnected_t` callback id. Subscribe with `steam.on('SteamRemotePlaySessionConnected_t', cb)`. */
   SteamRemotePlaySessionConnected_t: 5701,
+  /** `SteamRemotePlaySessionDisconnected_t` callback id. Subscribe with `steam.on('SteamRemotePlaySessionDisconnected_t', cb)`. */
   SteamRemotePlaySessionDisconnected_t: 5702,
+  /** `SteamRemotePlayTogetherGuestInvite_t` callback id. Subscribe with `steam.on('SteamRemotePlayTogetherGuestInvite_t', cb)`. */
   SteamRemotePlayTogetherGuestInvite_t: 5703,
+  /** `SteamRemotePlaySessionAvatarLoaded_t` callback id. Subscribe with `steam.on('SteamRemotePlaySessionAvatarLoaded_t', cb)`. */
   SteamRemotePlaySessionAvatarLoaded_t: 5704,
+  /** `SteamNetAuthenticationStatus_t` callback id. Subscribe with `steam.on('SteamNetAuthenticationStatus_t', cb)`. */
   SteamNetAuthenticationStatus_t: 1222,
+  /** `SteamRelayNetworkStatus_t` callback id. Subscribe with `steam.on('SteamRelayNetworkStatus_t', cb)`. */
   SteamRelayNetworkStatus_t: 1281,
+  /** `GSClientApprove_t` callback id. Subscribe with `steam.on('GSClientApprove_t', cb)`. */
   GSClientApprove_t: 201,
+  /** `GSClientDeny_t` callback id. Subscribe with `steam.on('GSClientDeny_t', cb)`. */
   GSClientDeny_t: 202,
+  /** `GSClientKick_t` callback id. Subscribe with `steam.on('GSClientKick_t', cb)`. */
   GSClientKick_t: 203,
+  /** `GSClientAchievementStatus_t` callback id. Subscribe with `steam.on('GSClientAchievementStatus_t', cb)`. */
   GSClientAchievementStatus_t: 206,
+  /** `GSPolicyResponse_t` callback id. Subscribe with `steam.on('GSPolicyResponse_t', cb)`. */
   GSPolicyResponse_t: 115,
+  /** `GSGameplayStats_t` callback id. Subscribe with `steam.on('GSGameplayStats_t', cb)`. */
   GSGameplayStats_t: 207,
+  /** `GSClientGroupStatus_t` callback id. Subscribe with `steam.on('GSClientGroupStatus_t', cb)`. */
   GSClientGroupStatus_t: 208,
+  /** `GSReputation_t` callback id. Subscribe with `steam.on('GSReputation_t', cb)`. */
   GSReputation_t: 209,
+  /** `AssociateWithClanResult_t` callback id. Subscribe with `steam.on('AssociateWithClanResult_t', cb)`. */
   AssociateWithClanResult_t: 210,
+  /** `ComputeNewPlayerCompatibilityResult_t` callback id. Subscribe with `steam.on('ComputeNewPlayerCompatibilityResult_t', cb)`. */
   ComputeNewPlayerCompatibilityResult_t: 211,
+  /** `GSStatsReceived_t` callback id. Subscribe with `steam.on('GSStatsReceived_t', cb)`. */
   GSStatsReceived_t: 1800,
+  /** `GSStatsStored_t` callback id. Subscribe with `steam.on('GSStatsStored_t', cb)`. */
   GSStatsStored_t: 1801,
 } as const;

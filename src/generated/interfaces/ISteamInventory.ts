@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamInventory (accessor SteamAPI_SteamInventory_v003) */
+/**
+ * ISteamInventory (accessor SteamAPI_SteamInventory_v003)
+ * @see https://partner.steamgames.com/doc/api/ISteamInventory
+ */
 export class ISteamInventory {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,157 +14,450 @@ export class ISteamInventory {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamInventory_v003 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `EResult GetResultStatus(SteamInventoryResult_t resultHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetResultStatus`
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetResultStatus
+   */
   GetResultStatus(resultHandle: number): number {
     return this.nat.func('SteamAPI_ISteamInventory_GetResultStatus', 'int32', ['void *', 'int32'])(this.ptr, resultHandle) as number;
   }
 
+  /**
+   * `bool GetResultItems(SteamInventoryResult_t resultHandle, SteamItemDetails_t *pOutItemsArray, uint32 *punOutItemsArraySize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetResultItems`
+   * @param pOutItemsArray Buffer you allocate for `SteamItemDetails_t *`: `Buffer.alloc(layoutOf('SteamItemDetails_t').size)`.
+   * @param punOutItemsArraySize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItems
+   */
   GetResultItems(resultHandle: number, pOutItemsArray: Buffer | null, punOutItemsArraySize: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GetResultItems', 'bool', ['void *', 'int32', 'void *', 'void *'])(this.ptr, resultHandle, pOutItemsArray, punOutItemsArraySize) as boolean;
   }
 
+  /**
+   * `bool GetResultItemProperty(SteamInventoryResult_t resultHandle, uint32 unItemIndex, const char *pchPropertyName, char *pchValueBuffer, uint32 *punValueBufferSizeOut)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetResultItemProperty`
+   * @param pchValueBuffer Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @param punValueBufferSizeOut Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItemProperty
+   */
   GetResultItemProperty(resultHandle: number, unItemIndex: number, pchPropertyName: string, pchValueBuffer: Buffer | null, punValueBufferSizeOut: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GetResultItemProperty', 'bool', ['void *', 'int32', 'uint32', 'str', 'void *', 'void *'])(this.ptr, resultHandle, unItemIndex, pchPropertyName, pchValueBuffer, punValueBufferSizeOut) as boolean;
   }
 
+  /**
+   * `uint32 GetResultTimestamp(SteamInventoryResult_t resultHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetResultTimestamp`
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetResultTimestamp
+   */
   GetResultTimestamp(resultHandle: number): number {
     return this.nat.func('SteamAPI_ISteamInventory_GetResultTimestamp', 'uint32', ['void *', 'int32'])(this.ptr, resultHandle) as number;
   }
 
+  /**
+   * `bool CheckResultSteamID(SteamInventoryResult_t resultHandle, CSteamID steamIDExpected)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_CheckResultSteamID`
+   * @param steamIDExpected `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#CheckResultSteamID
+   */
   CheckResultSteamID(resultHandle: number, steamIDExpected: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_CheckResultSteamID', 'bool', ['void *', 'int32', 'uint64'])(this.ptr, resultHandle, steamIDExpected) as boolean;
   }
 
+  /**
+   * `void DestroyResult(SteamInventoryResult_t resultHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_DestroyResult`
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#DestroyResult
+   */
   DestroyResult(resultHandle: number): void {
     this.nat.func('SteamAPI_ISteamInventory_DestroyResult', 'void', ['void *', 'int32'])(this.ptr, resultHandle);
   }
 
+  /**
+   * `bool GetAllItems(SteamInventoryResult_t *pResultHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetAllItems`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetAllItems
+   */
   GetAllItems(pResultHandle: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GetAllItems', 'bool', ['void *', 'void *'])(this.ptr, pResultHandle) as boolean;
   }
 
+  /**
+   * `bool GetItemsByID(SteamInventoryResult_t *pResultHandle, const SteamItemInstanceID_t *pInstanceIDs, uint32 unCountInstanceIDs)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetItemsByID`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @param pInstanceIDs Buffer you allocate for `const SteamItemInstanceID_t *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsByID
+   */
   GetItemsByID(pResultHandle: Buffer | null, pInstanceIDs: Buffer | null, unCountInstanceIDs: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GetItemsByID', 'bool', ['void *', 'void *', 'void *', 'uint32'])(this.ptr, pResultHandle, pInstanceIDs, unCountInstanceIDs) as boolean;
   }
 
+  /**
+   * `bool SerializeResult(SteamInventoryResult_t resultHandle, void *pOutBuffer, uint32 *punOutBufferSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_SerializeResult`
+   * @param pOutBuffer Buffer you allocate for `void *`.
+   * @param punOutBufferSize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#SerializeResult
+   */
   SerializeResult(resultHandle: number, pOutBuffer: Buffer | null, punOutBufferSize: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SerializeResult', 'bool', ['void *', 'int32', 'void *', 'void *'])(this.ptr, resultHandle, pOutBuffer, punOutBufferSize) as boolean;
   }
 
+  /**
+   * `bool DeserializeResult(SteamInventoryResult_t *pOutResultHandle, const void *pBuffer, uint32 unBufferSize, bool bRESERVED_MUST_BE_FALSE)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_DeserializeResult`
+   * @param pOutResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @param pBuffer Buffer you allocate for `const void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#DeserializeResult
+   */
   DeserializeResult(pOutResultHandle: Buffer | null, pBuffer: Buffer | null, unBufferSize: number, bRESERVED_MUST_BE_FALSE: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_DeserializeResult', 'bool', ['void *', 'void *', 'void *', 'uint32', 'bool'])(this.ptr, pOutResultHandle, pBuffer, unBufferSize, bRESERVED_MUST_BE_FALSE) as boolean;
   }
 
+  /**
+   * `bool GenerateItems(SteamInventoryResult_t *pResultHandle, const SteamItemDef_t *pArrayItemDefs, const uint32 *punArrayQuantity, uint32 unArrayLength)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GenerateItems`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @param pArrayItemDefs Buffer you allocate for `const SteamItemDef_t *`: `Buffer.alloc(4)` per element.
+   * @param punArrayQuantity Buffer you allocate for `const uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GenerateItems
+   */
   GenerateItems(pResultHandle: Buffer | null, pArrayItemDefs: Buffer | null, punArrayQuantity: Buffer | null, unArrayLength: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GenerateItems', 'bool', ['void *', 'void *', 'void *', 'void *', 'uint32'])(this.ptr, pResultHandle, pArrayItemDefs, punArrayQuantity, unArrayLength) as boolean;
   }
 
+  /**
+   * `bool GrantPromoItems(SteamInventoryResult_t *pResultHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GrantPromoItems`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GrantPromoItems
+   */
   GrantPromoItems(pResultHandle: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GrantPromoItems', 'bool', ['void *', 'void *'])(this.ptr, pResultHandle) as boolean;
   }
 
+  /**
+   * `bool AddPromoItem(SteamInventoryResult_t *pResultHandle, SteamItemDef_t itemDef)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_AddPromoItem`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItem
+   */
   AddPromoItem(pResultHandle: Buffer | null, itemDef: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_AddPromoItem', 'bool', ['void *', 'void *', 'int32'])(this.ptr, pResultHandle, itemDef) as boolean;
   }
 
+  /**
+   * `bool AddPromoItems(SteamInventoryResult_t *pResultHandle, const SteamItemDef_t *pArrayItemDefs, uint32 unArrayLength)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_AddPromoItems`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @param pArrayItemDefs Buffer you allocate for `const SteamItemDef_t *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItems
+   */
   AddPromoItems(pResultHandle: Buffer | null, pArrayItemDefs: Buffer | null, unArrayLength: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_AddPromoItems', 'bool', ['void *', 'void *', 'void *', 'uint32'])(this.ptr, pResultHandle, pArrayItemDefs, unArrayLength) as boolean;
   }
 
+  /**
+   * `bool ConsumeItem(SteamInventoryResult_t *pResultHandle, SteamItemInstanceID_t itemConsume, uint32 unQuantity)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_ConsumeItem`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @param itemConsume `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#ConsumeItem
+   */
   ConsumeItem(pResultHandle: Buffer | null, itemConsume: bigint | number, unQuantity: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_ConsumeItem', 'bool', ['void *', 'void *', 'uint64', 'uint32'])(this.ptr, pResultHandle, itemConsume, unQuantity) as boolean;
   }
 
+  /**
+   * `bool ExchangeItems(SteamInventoryResult_t *pResultHandle, const SteamItemDef_t *pArrayGenerate, const uint32 *punArrayGenerateQuantity, uint32 unArrayGenerateLength, const SteamItemInstanceID_t *pArrayDestroy, const uint32 *punArrayDestroyQuantity, uint32 unArrayDestroyLength)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_ExchangeItems`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @param pArrayGenerate Buffer you allocate for `const SteamItemDef_t *`: `Buffer.alloc(4)` per element.
+   * @param punArrayGenerateQuantity Buffer you allocate for `const uint32 *`: `Buffer.alloc(4)` per element.
+   * @param pArrayDestroy Buffer you allocate for `const SteamItemInstanceID_t *`: `Buffer.alloc(8)` per element.
+   * @param punArrayDestroyQuantity Buffer you allocate for `const uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#ExchangeItems
+   */
   ExchangeItems(pResultHandle: Buffer | null, pArrayGenerate: Buffer | null, punArrayGenerateQuantity: Buffer | null, unArrayGenerateLength: number, pArrayDestroy: Buffer | null, punArrayDestroyQuantity: Buffer | null, unArrayDestroyLength: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_ExchangeItems', 'bool', ['void *', 'void *', 'void *', 'void *', 'uint32', 'void *', 'void *', 'uint32'])(this.ptr, pResultHandle, pArrayGenerate, punArrayGenerateQuantity, unArrayGenerateLength, pArrayDestroy, punArrayDestroyQuantity, unArrayDestroyLength) as boolean;
   }
 
+  /**
+   * `bool TransferItemQuantity(SteamInventoryResult_t *pResultHandle, SteamItemInstanceID_t itemIdSource, uint32 unQuantity, SteamItemInstanceID_t itemIdDest)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_TransferItemQuantity`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @param itemIdSource `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @param itemIdDest `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#TransferItemQuantity
+   */
   TransferItemQuantity(pResultHandle: Buffer | null, itemIdSource: bigint | number, unQuantity: number, itemIdDest: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_TransferItemQuantity', 'bool', ['void *', 'void *', 'uint64', 'uint32', 'uint64'])(this.ptr, pResultHandle, itemIdSource, unQuantity, itemIdDest) as boolean;
   }
 
+  /**
+   * `void SendItemDropHeartbeat()`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_SendItemDropHeartbeat`
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#SendItemDropHeartbeat
+   */
   SendItemDropHeartbeat(): void {
     this.nat.func('SteamAPI_ISteamInventory_SendItemDropHeartbeat', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `bool TriggerItemDrop(SteamInventoryResult_t *pResultHandle, SteamItemDef_t dropListDefinition)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_TriggerItemDrop`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#TriggerItemDrop
+   */
   TriggerItemDrop(pResultHandle: Buffer | null, dropListDefinition: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_TriggerItemDrop', 'bool', ['void *', 'void *', 'int32'])(this.ptr, pResultHandle, dropListDefinition) as boolean;
   }
 
+  /**
+   * `bool TradeItems(SteamInventoryResult_t *pResultHandle, CSteamID steamIDTradePartner, const SteamItemInstanceID_t *pArrayGive, const uint32 *pArrayGiveQuantity, uint32 nArrayGiveLength, const SteamItemInstanceID_t *pArrayGet, const uint32 *pArrayGetQuantity, uint32 nArrayGetLength)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_TradeItems`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @param steamIDTradePartner `CSteamID`, 64-bit: bigint or number.
+   * @param pArrayGive Buffer you allocate for `const SteamItemInstanceID_t *`: `Buffer.alloc(8)` per element.
+   * @param pArrayGiveQuantity Buffer you allocate for `const uint32 *`: `Buffer.alloc(4)` per element.
+   * @param pArrayGet Buffer you allocate for `const SteamItemInstanceID_t *`: `Buffer.alloc(8)` per element.
+   * @param pArrayGetQuantity Buffer you allocate for `const uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#TradeItems
+   */
   TradeItems(pResultHandle: Buffer | null, steamIDTradePartner: bigint | number, pArrayGive: Buffer | null, pArrayGiveQuantity: Buffer | null, nArrayGiveLength: number, pArrayGet: Buffer | null, pArrayGetQuantity: Buffer | null, nArrayGetLength: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_TradeItems', 'bool', ['void *', 'void *', 'uint64', 'void *', 'void *', 'uint32', 'void *', 'void *', 'uint32'])(this.ptr, pResultHandle, steamIDTradePartner, pArrayGive, pArrayGiveQuantity, nArrayGiveLength, pArrayGet, pArrayGetQuantity, nArrayGetLength) as boolean;
   }
 
+  /**
+   * `bool LoadItemDefinitions()`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_LoadItemDefinitions`
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#LoadItemDefinitions
+   */
   LoadItemDefinitions(): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_LoadItemDefinitions', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool GetItemDefinitionIDs(SteamItemDef_t *pItemDefIDs, uint32 *punItemDefIDsArraySize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetItemDefinitionIDs`
+   * @param pItemDefIDs Buffer you allocate for `SteamItemDef_t *`: `Buffer.alloc(4)` per element.
+   * @param punItemDefIDsArraySize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionIDs
+   */
   GetItemDefinitionIDs(pItemDefIDs: Buffer | null, punItemDefIDsArraySize: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GetItemDefinitionIDs', 'bool', ['void *', 'void *', 'void *'])(this.ptr, pItemDefIDs, punItemDefIDsArraySize) as boolean;
   }
 
+  /**
+   * `bool GetItemDefinitionProperty(SteamItemDef_t iDefinition, const char *pchPropertyName, char *pchValueBuffer, uint32 *punValueBufferSizeOut)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetItemDefinitionProperty`
+   * @param pchValueBuffer Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @param punValueBufferSizeOut Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionProperty
+   */
   GetItemDefinitionProperty(iDefinition: number, pchPropertyName: string, pchValueBuffer: Buffer | null, punValueBufferSizeOut: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GetItemDefinitionProperty', 'bool', ['void *', 'int32', 'str', 'void *', 'void *'])(this.ptr, iDefinition, pchPropertyName, pchValueBuffer, punValueBufferSizeOut) as boolean;
   }
 
-  /** Call result: SteamInventoryEligiblePromoItemDefIDs_t */
+  /**
+   * `SteamAPICall_t RequestEligiblePromoItemDefinitionsIDs(CSteamID steamID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_RequestEligiblePromoItemDefinitionsIDs`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamInventoryEligiblePromoItemDefIDs_t>(handle, layoutOf('SteamInventoryEligiblePromoItemDefIDs_t'))`.
+   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#RequestEligiblePromoItemDefinitionsIDs
+   */
   RequestEligiblePromoItemDefinitionsIDs(steamID: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInventory_RequestEligiblePromoItemDefinitionsIDs', 'uint64', ['void *', 'uint64'])(this.ptr, steamID) as number | bigint);
   }
 
+  /**
+   * `bool GetEligiblePromoItemDefinitionIDs(CSteamID steamID, SteamItemDef_t *pItemDefIDs, uint32 *punItemDefIDsArraySize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetEligiblePromoItemDefinitionIDs`
+   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param pItemDefIDs Buffer you allocate for `SteamItemDef_t *`: `Buffer.alloc(4)` per element.
+   * @param punItemDefIDsArraySize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetEligiblePromoItemDefinitionIDs
+   */
   GetEligiblePromoItemDefinitionIDs(steamID: bigint | number, pItemDefIDs: Buffer | null, punItemDefIDsArraySize: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GetEligiblePromoItemDefinitionIDs', 'bool', ['void *', 'uint64', 'void *', 'void *'])(this.ptr, steamID, pItemDefIDs, punItemDefIDsArraySize) as boolean;
   }
 
-  /** Call result: SteamInventoryStartPurchaseResult_t */
+  /**
+   * `SteamAPICall_t StartPurchase(const SteamItemDef_t *pArrayItemDefs, const uint32 *punArrayQuantity, uint32 unArrayLength)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_StartPurchase`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamInventoryStartPurchaseResult_t>(handle, layoutOf('SteamInventoryStartPurchaseResult_t'))`.
+   * @param pArrayItemDefs Buffer you allocate for `const SteamItemDef_t *`: `Buffer.alloc(4)` per element.
+   * @param punArrayQuantity Buffer you allocate for `const uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#StartPurchase
+   */
   StartPurchase(pArrayItemDefs: Buffer | null, punArrayQuantity: Buffer | null, unArrayLength: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInventory_StartPurchase', 'uint64', ['void *', 'void *', 'void *', 'uint32'])(this.ptr, pArrayItemDefs, punArrayQuantity, unArrayLength) as number | bigint);
   }
 
-  /** Call result: SteamInventoryRequestPricesResult_t */
+  /**
+   * `SteamAPICall_t RequestPrices()`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_RequestPrices`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamInventoryRequestPricesResult_t>(handle, layoutOf('SteamInventoryRequestPricesResult_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#RequestPrices
+   */
   RequestPrices(): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInventory_RequestPrices', 'uint64', ['void *'])(this.ptr) as number | bigint);
   }
 
+  /**
+   * `uint32 GetNumItemsWithPrices()`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetNumItemsWithPrices`
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetNumItemsWithPrices
+   */
   GetNumItemsWithPrices(): number {
     return this.nat.func('SteamAPI_ISteamInventory_GetNumItemsWithPrices', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `bool GetItemsWithPrices(SteamItemDef_t *pArrayItemDefs, uint64 *pCurrentPrices, uint64 *pBasePrices, uint32 unArrayLength)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetItemsWithPrices`
+   * @param pArrayItemDefs Buffer you allocate for `SteamItemDef_t *`: `Buffer.alloc(4)` per element.
+   * @param pCurrentPrices Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
+   * @param pBasePrices Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsWithPrices
+   */
   GetItemsWithPrices(pArrayItemDefs: Buffer | null, pCurrentPrices: Buffer | null, pBasePrices: Buffer | null, unArrayLength: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GetItemsWithPrices', 'bool', ['void *', 'void *', 'void *', 'void *', 'uint32'])(this.ptr, pArrayItemDefs, pCurrentPrices, pBasePrices, unArrayLength) as boolean;
   }
 
+  /**
+   * `bool GetItemPrice(SteamItemDef_t iDefinition, uint64 *pCurrentPrice, uint64 *pBasePrice)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_GetItemPrice`
+   * @param pCurrentPrice Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
+   * @param pBasePrice Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#GetItemPrice
+   */
   GetItemPrice(iDefinition: number, pCurrentPrice: Buffer | null, pBasePrice: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_GetItemPrice', 'bool', ['void *', 'int32', 'void *', 'void *'])(this.ptr, iDefinition, pCurrentPrice, pBasePrice) as boolean;
   }
 
+  /**
+   * `SteamInventoryUpdateHandle_t StartUpdateProperties()`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_StartUpdateProperties`
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#StartUpdateProperties
+   */
   StartUpdateProperties(): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInventory_StartUpdateProperties', 'uint64', ['void *'])(this.ptr) as number | bigint);
   }
 
+  /**
+   * `bool RemoveProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, const char *pchPropertyName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_RemoveProperty`
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
+   * @param nItemID `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#RemoveProperty
+   */
   RemoveProperty(handle: bigint | number, nItemID: bigint | number, pchPropertyName: string): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_RemoveProperty', 'bool', ['void *', 'uint64', 'uint64', 'str'])(this.ptr, handle, nItemID, pchPropertyName) as boolean;
   }
 
+  /**
+   * `bool SetProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, const char *pchPropertyName, const char *pchPropertyValue)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_SetPropertyString`
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
+   * @param nItemID `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
+   */
   SetPropertyString(handle: bigint | number, nItemID: bigint | number, pchPropertyName: string, pchPropertyValue: string): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SetPropertyString', 'bool', ['void *', 'uint64', 'uint64', 'str', 'str'])(this.ptr, handle, nItemID, pchPropertyName, pchPropertyValue) as boolean;
   }
 
+  /**
+   * `bool SetProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, const char *pchPropertyName, bool bValue)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_SetPropertyBool`
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
+   * @param nItemID `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
+   */
   SetPropertyBool(handle: bigint | number, nItemID: bigint | number, pchPropertyName: string, bValue: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SetPropertyBool', 'bool', ['void *', 'uint64', 'uint64', 'str', 'bool'])(this.ptr, handle, nItemID, pchPropertyName, bValue) as boolean;
   }
 
+  /**
+   * `bool SetProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, const char *pchPropertyName, int64 nValue)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_SetPropertyInt64`
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
+   * @param nItemID `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @param nValue `int64`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
+   */
   SetPropertyInt64(handle: bigint | number, nItemID: bigint | number, pchPropertyName: string, nValue: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SetPropertyInt64', 'bool', ['void *', 'uint64', 'uint64', 'str', 'int64'])(this.ptr, handle, nItemID, pchPropertyName, nValue) as boolean;
   }
 
+  /**
+   * `bool SetProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, const char *pchPropertyName, float flValue)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_SetPropertyFloat`
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
+   * @param nItemID `SteamItemInstanceID_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
+   */
   SetPropertyFloat(handle: bigint | number, nItemID: bigint | number, pchPropertyName: string, flValue: number): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SetPropertyFloat', 'bool', ['void *', 'uint64', 'uint64', 'str', 'float'])(this.ptr, handle, nItemID, pchPropertyName, flValue) as boolean;
   }
 
+  /**
+   * `bool SubmitUpdateProperties(SteamInventoryUpdateHandle_t handle, SteamInventoryResult_t *pResultHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_SubmitUpdateProperties`
+   * @param handle `SteamInventoryUpdateHandle_t`, 64-bit: bigint or number.
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#SubmitUpdateProperties
+   */
   SubmitUpdateProperties(handle: bigint | number, pResultHandle: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_SubmitUpdateProperties', 'bool', ['void *', 'uint64', 'void *'])(this.ptr, handle, pResultHandle) as boolean;
   }
 
+  /**
+   * `bool InspectItem(SteamInventoryResult_t *pResultHandle, const char *pchItemToken)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInventory_InspectItem`
+   * @param pResultHandle Buffer you allocate for `SteamInventoryResult_t *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInventory#InspectItem
+   */
   InspectItem(pResultHandle: Buffer | null, pchItemToken: string): boolean {
     return this.nat.func('SteamAPI_ISteamInventory_InspectItem', 'bool', ['void *', 'void *', 'str'])(this.ptr, pResultHandle, pchItemToken) as boolean;
   }

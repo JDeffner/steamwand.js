@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamTimeline (accessor SteamAPI_SteamTimeline_v004) */
+/**
+ * ISteamTimeline (accessor SteamAPI_SteamTimeline_v004)
+ * @see https://partner.steamgames.com/doc/api/ISteamTimeline
+ */
 export class ISteamTimeline {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,76 +14,194 @@ export class ISteamTimeline {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamTimeline_v004 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `void SetTimelineTooltip(const char *pchDescription, float flTimeDelta)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_SetTimelineTooltip`
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#SetTimelineTooltip
+   */
   SetTimelineTooltip(pchDescription: string, flTimeDelta: number): void {
     this.nat.func('SteamAPI_ISteamTimeline_SetTimelineTooltip', 'void', ['void *', 'str', 'float'])(this.ptr, pchDescription, flTimeDelta);
   }
 
+  /**
+   * `void ClearTimelineTooltip(float flTimeDelta)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_ClearTimelineTooltip`
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#ClearTimelineTooltip
+   */
   ClearTimelineTooltip(flTimeDelta: number): void {
     this.nat.func('SteamAPI_ISteamTimeline_ClearTimelineTooltip', 'void', ['void *', 'float'])(this.ptr, flTimeDelta);
   }
 
+  /**
+   * `void SetTimelineGameMode(ETimelineGameMode eMode)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_SetTimelineGameMode`
+   * @param eMode enum `ETimelineGameMode`; values on `flat.ETimelineGameMode`.
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#SetTimelineGameMode
+   */
   SetTimelineGameMode(eMode: number): void {
     this.nat.func('SteamAPI_ISteamTimeline_SetTimelineGameMode', 'void', ['void *', 'int32'])(this.ptr, eMode);
   }
 
+  /**
+   * `TimelineEventHandle_t AddInstantaneousTimelineEvent(const char *pchTitle, const char *pchDescription, const char *pchIcon, uint32 unIconPriority, float flStartOffsetSeconds, ETimelineEventClipPriority ePossibleClip)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_AddInstantaneousTimelineEvent`
+   * @param ePossibleClip enum `ETimelineEventClipPriority`; values on `flat.ETimelineEventClipPriority`.
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#AddInstantaneousTimelineEvent
+   */
   AddInstantaneousTimelineEvent(pchTitle: string, pchDescription: string, pchIcon: string, unIconPriority: number, flStartOffsetSeconds: number, ePossibleClip: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamTimeline_AddInstantaneousTimelineEvent', 'uint64', ['void *', 'str', 'str', 'str', 'uint32', 'float', 'int32'])(this.ptr, pchTitle, pchDescription, pchIcon, unIconPriority, flStartOffsetSeconds, ePossibleClip) as number | bigint);
   }
 
+  /**
+   * `TimelineEventHandle_t AddRangeTimelineEvent(const char *pchTitle, const char *pchDescription, const char *pchIcon, uint32 unIconPriority, float flStartOffsetSeconds, float flDuration, ETimelineEventClipPriority ePossibleClip)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_AddRangeTimelineEvent`
+   * @param ePossibleClip enum `ETimelineEventClipPriority`; values on `flat.ETimelineEventClipPriority`.
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#AddRangeTimelineEvent
+   */
   AddRangeTimelineEvent(pchTitle: string, pchDescription: string, pchIcon: string, unIconPriority: number, flStartOffsetSeconds: number, flDuration: number, ePossibleClip: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamTimeline_AddRangeTimelineEvent', 'uint64', ['void *', 'str', 'str', 'str', 'uint32', 'float', 'float', 'int32'])(this.ptr, pchTitle, pchDescription, pchIcon, unIconPriority, flStartOffsetSeconds, flDuration, ePossibleClip) as number | bigint);
   }
 
+  /**
+   * `TimelineEventHandle_t StartRangeTimelineEvent(const char *pchTitle, const char *pchDescription, const char *pchIcon, uint32 unPriority, float flStartOffsetSeconds, ETimelineEventClipPriority ePossibleClip)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_StartRangeTimelineEvent`
+   * @param ePossibleClip enum `ETimelineEventClipPriority`; values on `flat.ETimelineEventClipPriority`.
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#StartRangeTimelineEvent
+   */
   StartRangeTimelineEvent(pchTitle: string, pchDescription: string, pchIcon: string, unPriority: number, flStartOffsetSeconds: number, ePossibleClip: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamTimeline_StartRangeTimelineEvent', 'uint64', ['void *', 'str', 'str', 'str', 'uint32', 'float', 'int32'])(this.ptr, pchTitle, pchDescription, pchIcon, unPriority, flStartOffsetSeconds, ePossibleClip) as number | bigint);
   }
 
+  /**
+   * `void UpdateRangeTimelineEvent(TimelineEventHandle_t ulEvent, const char *pchTitle, const char *pchDescription, const char *pchIcon, uint32 unPriority, ETimelineEventClipPriority ePossibleClip)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_UpdateRangeTimelineEvent`
+   * @param ulEvent `TimelineEventHandle_t`, 64-bit: bigint or number.
+   * @param ePossibleClip enum `ETimelineEventClipPriority`; values on `flat.ETimelineEventClipPriority`.
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#UpdateRangeTimelineEvent
+   */
   UpdateRangeTimelineEvent(ulEvent: bigint | number, pchTitle: string, pchDescription: string, pchIcon: string, unPriority: number, ePossibleClip: number): void {
     this.nat.func('SteamAPI_ISteamTimeline_UpdateRangeTimelineEvent', 'void', ['void *', 'uint64', 'str', 'str', 'str', 'uint32', 'int32'])(this.ptr, ulEvent, pchTitle, pchDescription, pchIcon, unPriority, ePossibleClip);
   }
 
+  /**
+   * `void EndRangeTimelineEvent(TimelineEventHandle_t ulEvent, float flEndOffsetSeconds)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_EndRangeTimelineEvent`
+   * @param ulEvent `TimelineEventHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#EndRangeTimelineEvent
+   */
   EndRangeTimelineEvent(ulEvent: bigint | number, flEndOffsetSeconds: number): void {
     this.nat.func('SteamAPI_ISteamTimeline_EndRangeTimelineEvent', 'void', ['void *', 'uint64', 'float'])(this.ptr, ulEvent, flEndOffsetSeconds);
   }
 
+  /**
+   * `void RemoveTimelineEvent(TimelineEventHandle_t ulEvent)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_RemoveTimelineEvent`
+   * @param ulEvent `TimelineEventHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#RemoveTimelineEvent
+   */
   RemoveTimelineEvent(ulEvent: bigint | number): void {
     this.nat.func('SteamAPI_ISteamTimeline_RemoveTimelineEvent', 'void', ['void *', 'uint64'])(this.ptr, ulEvent);
   }
 
-  /** Call result: SteamTimelineEventRecordingExists_t */
+  /**
+   * `SteamAPICall_t DoesEventRecordingExist(TimelineEventHandle_t ulEvent)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_DoesEventRecordingExist`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamTimelineEventRecordingExists_t>(handle, layoutOf('SteamTimelineEventRecordingExists_t'))`.
+   * @param ulEvent `TimelineEventHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#DoesEventRecordingExist
+   */
   DoesEventRecordingExist(ulEvent: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamTimeline_DoesEventRecordingExist', 'uint64', ['void *', 'uint64'])(this.ptr, ulEvent) as number | bigint);
   }
 
+  /**
+   * `void StartGamePhase()`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_StartGamePhase`
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#StartGamePhase
+   */
   StartGamePhase(): void {
     this.nat.func('SteamAPI_ISteamTimeline_StartGamePhase', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `void EndGamePhase()`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_EndGamePhase`
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#EndGamePhase
+   */
   EndGamePhase(): void {
     this.nat.func('SteamAPI_ISteamTimeline_EndGamePhase', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `void SetGamePhaseID(const char *pchPhaseID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_SetGamePhaseID`
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#SetGamePhaseID
+   */
   SetGamePhaseID(pchPhaseID: string): void {
     this.nat.func('SteamAPI_ISteamTimeline_SetGamePhaseID', 'void', ['void *', 'str'])(this.ptr, pchPhaseID);
   }
 
-  /** Call result: SteamTimelineGamePhaseRecordingExists_t */
+  /**
+   * `SteamAPICall_t DoesGamePhaseRecordingExist(const char *pchPhaseID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_DoesGamePhaseRecordingExist`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamTimelineGamePhaseRecordingExists_t>(handle, layoutOf('SteamTimelineGamePhaseRecordingExists_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#DoesGamePhaseRecordingExist
+   */
   DoesGamePhaseRecordingExist(pchPhaseID: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamTimeline_DoesGamePhaseRecordingExist', 'uint64', ['void *', 'str'])(this.ptr, pchPhaseID) as number | bigint);
   }
 
+  /**
+   * `void AddGamePhaseTag(const char *pchTagName, const char *pchTagIcon, const char *pchTagGroup, uint32 unPriority)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_AddGamePhaseTag`
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#AddGamePhaseTag
+   */
   AddGamePhaseTag(pchTagName: string, pchTagIcon: string, pchTagGroup: string, unPriority: number): void {
     this.nat.func('SteamAPI_ISteamTimeline_AddGamePhaseTag', 'void', ['void *', 'str', 'str', 'str', 'uint32'])(this.ptr, pchTagName, pchTagIcon, pchTagGroup, unPriority);
   }
 
+  /**
+   * `void SetGamePhaseAttribute(const char *pchAttributeGroup, const char *pchAttributeValue, uint32 unPriority)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_SetGamePhaseAttribute`
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#SetGamePhaseAttribute
+   */
   SetGamePhaseAttribute(pchAttributeGroup: string, pchAttributeValue: string, unPriority: number): void {
     this.nat.func('SteamAPI_ISteamTimeline_SetGamePhaseAttribute', 'void', ['void *', 'str', 'str', 'uint32'])(this.ptr, pchAttributeGroup, pchAttributeValue, unPriority);
   }
 
+  /**
+   * `void OpenOverlayToGamePhase(const char *pchPhaseID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_OpenOverlayToGamePhase`
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#OpenOverlayToGamePhase
+   */
   OpenOverlayToGamePhase(pchPhaseID: string): void {
     this.nat.func('SteamAPI_ISteamTimeline_OpenOverlayToGamePhase', 'void', ['void *', 'str'])(this.ptr, pchPhaseID);
   }
 
+  /**
+   * `void OpenOverlayToTimelineEvent(const TimelineEventHandle_t ulEvent)`
+   *
+   * Flat symbol: `SteamAPI_ISteamTimeline_OpenOverlayToTimelineEvent`
+   * @param ulEvent `const TimelineEventHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamTimeline#OpenOverlayToTimelineEvent
+   */
   OpenOverlayToTimelineEvent(ulEvent: bigint | number): void {
     this.nat.func('SteamAPI_ISteamTimeline_OpenOverlayToTimelineEvent', 'void', ['void *', 'uint64'])(this.ptr, ulEvent);
   }

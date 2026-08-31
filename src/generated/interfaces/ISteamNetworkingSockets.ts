@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamNetworkingSockets (accessor SteamAPI_SteamNetworkingSockets_SteamAPI_v013) */
+/**
+ * ISteamNetworkingSockets (accessor SteamAPI_SteamNetworkingSockets_SteamAPI_v013)
+ * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets
+ */
 export class ISteamNetworkingSockets {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,190 +14,525 @@ export class ISteamNetworkingSockets {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamNetworkingSockets_SteamAPI_v013 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `HSteamListenSocket CreateListenSocketIP(const SteamNetworkingIPAddr &localAddress, int nOptions, const SteamNetworkingConfigValue_t *pOptions)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_CreateListenSocketIP`
+   * @param localAddress Buffer you allocate for `const SteamNetworkingIPAddr &`.
+   * @param pOptions Buffer you allocate for `const SteamNetworkingConfigValue_t *`: `Buffer.alloc(layoutOf('SteamNetworkingConfigValue_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#CreateListenSocketIP
+   */
   CreateListenSocketIP(localAddress: Buffer | null, nOptions: number, pOptions: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_CreateListenSocketIP', 'uint32', ['void *', 'void *', 'int32', 'void *'])(this.ptr, localAddress, nOptions, pOptions) as number;
   }
 
+  /**
+   * `HSteamNetConnection ConnectByIPAddress(const SteamNetworkingIPAddr &address, int nOptions, const SteamNetworkingConfigValue_t *pOptions)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_ConnectByIPAddress`
+   * @param address Buffer you allocate for `const SteamNetworkingIPAddr &`.
+   * @param pOptions Buffer you allocate for `const SteamNetworkingConfigValue_t *`: `Buffer.alloc(layoutOf('SteamNetworkingConfigValue_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#ConnectByIPAddress
+   */
   ConnectByIPAddress(address: Buffer | null, nOptions: number, pOptions: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_ConnectByIPAddress', 'uint32', ['void *', 'void *', 'int32', 'void *'])(this.ptr, address, nOptions, pOptions) as number;
   }
 
+  /**
+   * `HSteamListenSocket CreateListenSocketP2P(int nLocalVirtualPort, int nOptions, const SteamNetworkingConfigValue_t *pOptions)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_CreateListenSocketP2P`
+   * @param pOptions Buffer you allocate for `const SteamNetworkingConfigValue_t *`: `Buffer.alloc(layoutOf('SteamNetworkingConfigValue_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#CreateListenSocketP2P
+   */
   CreateListenSocketP2P(nLocalVirtualPort: number, nOptions: number, pOptions: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_CreateListenSocketP2P', 'uint32', ['void *', 'int32', 'int32', 'void *'])(this.ptr, nLocalVirtualPort, nOptions, pOptions) as number;
   }
 
+  /**
+   * `HSteamNetConnection ConnectP2P(const SteamNetworkingIdentity &identityRemote, int nRemoteVirtualPort, int nOptions, const SteamNetworkingConfigValue_t *pOptions)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_ConnectP2P`
+   * @param identityRemote Buffer you allocate for `const SteamNetworkingIdentity &`.
+   * @param pOptions Buffer you allocate for `const SteamNetworkingConfigValue_t *`: `Buffer.alloc(layoutOf('SteamNetworkingConfigValue_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#ConnectP2P
+   */
   ConnectP2P(identityRemote: Buffer | null, nRemoteVirtualPort: number, nOptions: number, pOptions: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_ConnectP2P', 'uint32', ['void *', 'void *', 'int32', 'int32', 'void *'])(this.ptr, identityRemote, nRemoteVirtualPort, nOptions, pOptions) as number;
   }
 
+  /**
+   * `EResult AcceptConnection(HSteamNetConnection hConn)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_AcceptConnection`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#AcceptConnection
+   */
   AcceptConnection(hConn: number): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_AcceptConnection', 'int32', ['void *', 'uint32'])(this.ptr, hConn) as number;
   }
 
+  /**
+   * `bool CloseConnection(HSteamNetConnection hPeer, int nReason, const char *pszDebug, bool bEnableLinger)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_CloseConnection`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#CloseConnection
+   */
   CloseConnection(hPeer: number, nReason: number, pszDebug: string, bEnableLinger: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_CloseConnection', 'bool', ['void *', 'uint32', 'int32', 'str', 'bool'])(this.ptr, hPeer, nReason, pszDebug, bEnableLinger) as boolean;
   }
 
+  /**
+   * `bool CloseListenSocket(HSteamListenSocket hSocket)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_CloseListenSocket`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#CloseListenSocket
+   */
   CloseListenSocket(hSocket: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_CloseListenSocket', 'bool', ['void *', 'uint32'])(this.ptr, hSocket) as boolean;
   }
 
+  /**
+   * `bool SetConnectionUserData(HSteamNetConnection hPeer, int64 nUserData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_SetConnectionUserData`
+   * @param nUserData `int64`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#SetConnectionUserData
+   */
   SetConnectionUserData(hPeer: number, nUserData: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_SetConnectionUserData', 'bool', ['void *', 'uint32', 'int64'])(this.ptr, hPeer, nUserData) as boolean;
   }
 
+  /**
+   * `int64 GetConnectionUserData(HSteamNetConnection hPeer)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetConnectionUserData`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetConnectionUserData
+   */
   GetConnectionUserData(hPeer: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamNetworkingSockets_GetConnectionUserData', 'int64', ['void *', 'uint32'])(this.ptr, hPeer) as number | bigint);
   }
 
+  /**
+   * `void SetConnectionName(HSteamNetConnection hPeer, const char *pszName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_SetConnectionName`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#SetConnectionName
+   */
   SetConnectionName(hPeer: number, pszName: string): void {
     this.nat.func('SteamAPI_ISteamNetworkingSockets_SetConnectionName', 'void', ['void *', 'uint32', 'str'])(this.ptr, hPeer, pszName);
   }
 
+  /**
+   * `bool GetConnectionName(HSteamNetConnection hPeer, char *pszName, int nMaxLen)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetConnectionName`
+   * @param pszName Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetConnectionName
+   */
   GetConnectionName(hPeer: number, pszName: Buffer | null, nMaxLen: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetConnectionName', 'bool', ['void *', 'uint32', 'void *', 'int32'])(this.ptr, hPeer, pszName, nMaxLen) as boolean;
   }
 
+  /**
+   * `EResult SendMessageToConnection(HSteamNetConnection hConn, const void *pData, uint32 cbData, int nSendFlags, int64 *pOutMessageNumber)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_SendMessageToConnection`
+   * @param pData Buffer you allocate for `const void *`.
+   * @param pOutMessageNumber Buffer you allocate for `int64 *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#SendMessageToConnection
+   */
   SendMessageToConnection(hConn: number, pData: Buffer | null, cbData: number, nSendFlags: number, pOutMessageNumber: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_SendMessageToConnection', 'int32', ['void *', 'uint32', 'void *', 'uint32', 'int32', 'void *'])(this.ptr, hConn, pData, cbData, nSendFlags, pOutMessageNumber) as number;
   }
 
+  /**
+   * `void SendMessages(int nMessages, SteamNetworkingMessage_t **pMessages, int64 *pOutMessageNumberOrResult, bool bDeleteFailedMessages)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_SendMessages`
+   * @param pMessages Buffer you allocate for `SteamNetworkingMessage_t **`.
+   * @param pOutMessageNumberOrResult Buffer you allocate for `int64 *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#SendMessages
+   */
   SendMessages(nMessages: number, pMessages: Buffer | null, pOutMessageNumberOrResult: Buffer | null, bDeleteFailedMessages: boolean): void {
     this.nat.func('SteamAPI_ISteamNetworkingSockets_SendMessages', 'void', ['void *', 'int32', 'void *', 'void *', 'bool'])(this.ptr, nMessages, pMessages, pOutMessageNumberOrResult, bDeleteFailedMessages);
   }
 
+  /**
+   * `EResult FlushMessagesOnConnection(HSteamNetConnection hConn)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_FlushMessagesOnConnection`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#FlushMessagesOnConnection
+   */
   FlushMessagesOnConnection(hConn: number): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_FlushMessagesOnConnection', 'int32', ['void *', 'uint32'])(this.ptr, hConn) as number;
   }
 
+  /**
+   * `int ReceiveMessagesOnConnection(HSteamNetConnection hConn, SteamNetworkingMessage_t **ppOutMessages, int nMaxMessages)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_ReceiveMessagesOnConnection`
+   * @param ppOutMessages Buffer you allocate for `SteamNetworkingMessage_t **`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#ReceiveMessagesOnConnection
+   */
   ReceiveMessagesOnConnection(hConn: number, ppOutMessages: Buffer | null, nMaxMessages: number): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_ReceiveMessagesOnConnection', 'int32', ['void *', 'uint32', 'void *', 'int32'])(this.ptr, hConn, ppOutMessages, nMaxMessages) as number;
   }
 
+  /**
+   * `bool GetConnectionInfo(HSteamNetConnection hConn, SteamNetConnectionInfo_t *pInfo)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetConnectionInfo`
+   * @param pInfo Buffer you allocate for `SteamNetConnectionInfo_t *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetConnectionInfo
+   */
   GetConnectionInfo(hConn: number, pInfo: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetConnectionInfo', 'bool', ['void *', 'uint32', 'void *'])(this.ptr, hConn, pInfo) as boolean;
   }
 
+  /**
+   * `EResult GetConnectionRealTimeStatus(HSteamNetConnection hConn, SteamNetConnectionRealTimeStatus_t *pStatus, int nLanes, SteamNetConnectionRealTimeLaneStatus_t *pLanes)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetConnectionRealTimeStatus`
+   * @param pStatus Buffer you allocate for `SteamNetConnectionRealTimeStatus_t *`: `Buffer.alloc(layoutOf('SteamNetConnectionRealTimeStatus_t').size)`.
+   * @param pLanes Buffer you allocate for `SteamNetConnectionRealTimeLaneStatus_t *`: `Buffer.alloc(layoutOf('SteamNetConnectionRealTimeLaneStatus_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetConnectionRealTimeStatus
+   */
   GetConnectionRealTimeStatus(hConn: number, pStatus: Buffer | null, nLanes: number, pLanes: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetConnectionRealTimeStatus', 'int32', ['void *', 'uint32', 'void *', 'int32', 'void *'])(this.ptr, hConn, pStatus, nLanes, pLanes) as number;
   }
 
+  /**
+   * `int GetDetailedConnectionStatus(HSteamNetConnection hConn, char *pszBuf, int cbBuf)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetDetailedConnectionStatus`
+   * @param pszBuf Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetDetailedConnectionStatus
+   */
   GetDetailedConnectionStatus(hConn: number, pszBuf: Buffer | null, cbBuf: number): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetDetailedConnectionStatus', 'int32', ['void *', 'uint32', 'void *', 'int32'])(this.ptr, hConn, pszBuf, cbBuf) as number;
   }
 
+  /**
+   * `bool GetListenSocketAddress(HSteamListenSocket hSocket, SteamNetworkingIPAddr *address)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetListenSocketAddress`
+   * @param address Buffer you allocate for `SteamNetworkingIPAddr *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetListenSocketAddress
+   */
   GetListenSocketAddress(hSocket: number, address: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetListenSocketAddress', 'bool', ['void *', 'uint32', 'void *'])(this.ptr, hSocket, address) as boolean;
   }
 
+  /**
+   * `bool CreateSocketPair(HSteamNetConnection *pOutConnection1, HSteamNetConnection *pOutConnection2, bool bUseNetworkLoopback, const SteamNetworkingIdentity *pPeerIdentity1, const SteamNetworkingIdentity *pPeerIdentity2)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_CreateSocketPair`
+   * @param pOutConnection1 Buffer you allocate for `HSteamNetConnection *`: `Buffer.alloc(4)` per element.
+   * @param pOutConnection2 Buffer you allocate for `HSteamNetConnection *`: `Buffer.alloc(4)` per element.
+   * @param pPeerIdentity1 Buffer you allocate for `const SteamNetworkingIdentity *`.
+   * @param pPeerIdentity2 Buffer you allocate for `const SteamNetworkingIdentity *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#CreateSocketPair
+   */
   CreateSocketPair(pOutConnection1: Buffer | null, pOutConnection2: Buffer | null, bUseNetworkLoopback: boolean, pPeerIdentity1: Buffer | null, pPeerIdentity2: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_CreateSocketPair', 'bool', ['void *', 'void *', 'void *', 'bool', 'void *', 'void *'])(this.ptr, pOutConnection1, pOutConnection2, bUseNetworkLoopback, pPeerIdentity1, pPeerIdentity2) as boolean;
   }
 
+  /**
+   * `EResult ConfigureConnectionLanes(HSteamNetConnection hConn, int nNumLanes, const int *pLanePriorities, const uint16 *pLaneWeights)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_ConfigureConnectionLanes`
+   * @param pLanePriorities Buffer you allocate for `const int *`: `Buffer.alloc(4)` per element.
+   * @param pLaneWeights Buffer you allocate for `const uint16 *`: `Buffer.alloc(2)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#ConfigureConnectionLanes
+   */
   ConfigureConnectionLanes(hConn: number, nNumLanes: number, pLanePriorities: Buffer | null, pLaneWeights: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_ConfigureConnectionLanes', 'int32', ['void *', 'uint32', 'int32', 'void *', 'void *'])(this.ptr, hConn, nNumLanes, pLanePriorities, pLaneWeights) as number;
   }
 
+  /**
+   * `bool GetIdentity(SteamNetworkingIdentity *pIdentity)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetIdentity`
+   * @param pIdentity Buffer you allocate for `SteamNetworkingIdentity *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetIdentity
+   */
   GetIdentity(pIdentity: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetIdentity', 'bool', ['void *', 'void *'])(this.ptr, pIdentity) as boolean;
   }
 
+  /**
+   * `ESteamNetworkingAvailability InitAuthentication()`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_InitAuthentication`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#InitAuthentication
+   */
   InitAuthentication(): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_InitAuthentication', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `ESteamNetworkingAvailability GetAuthenticationStatus(SteamNetAuthenticationStatus_t *pDetails)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetAuthenticationStatus`
+   * @param pDetails Buffer you allocate for `SteamNetAuthenticationStatus_t *`: `Buffer.alloc(layoutOf('SteamNetAuthenticationStatus_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetAuthenticationStatus
+   */
   GetAuthenticationStatus(pDetails: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetAuthenticationStatus', 'int32', ['void *', 'void *'])(this.ptr, pDetails) as number;
   }
 
+  /**
+   * `HSteamNetPollGroup CreatePollGroup()`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_CreatePollGroup`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#CreatePollGroup
+   */
   CreatePollGroup(): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_CreatePollGroup', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `bool DestroyPollGroup(HSteamNetPollGroup hPollGroup)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_DestroyPollGroup`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#DestroyPollGroup
+   */
   DestroyPollGroup(hPollGroup: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_DestroyPollGroup', 'bool', ['void *', 'uint32'])(this.ptr, hPollGroup) as boolean;
   }
 
+  /**
+   * `bool SetConnectionPollGroup(HSteamNetConnection hConn, HSteamNetPollGroup hPollGroup)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_SetConnectionPollGroup`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#SetConnectionPollGroup
+   */
   SetConnectionPollGroup(hConn: number, hPollGroup: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_SetConnectionPollGroup', 'bool', ['void *', 'uint32', 'uint32'])(this.ptr, hConn, hPollGroup) as boolean;
   }
 
+  /**
+   * `int ReceiveMessagesOnPollGroup(HSteamNetPollGroup hPollGroup, SteamNetworkingMessage_t **ppOutMessages, int nMaxMessages)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_ReceiveMessagesOnPollGroup`
+   * @param ppOutMessages Buffer you allocate for `SteamNetworkingMessage_t **`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#ReceiveMessagesOnPollGroup
+   */
   ReceiveMessagesOnPollGroup(hPollGroup: number, ppOutMessages: Buffer | null, nMaxMessages: number): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_ReceiveMessagesOnPollGroup', 'int32', ['void *', 'uint32', 'void *', 'int32'])(this.ptr, hPollGroup, ppOutMessages, nMaxMessages) as number;
   }
 
+  /**
+   * `bool ReceivedRelayAuthTicket(const void *pvTicket, int cbTicket, SteamDatagramRelayAuthTicket *pOutParsedTicket)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_ReceivedRelayAuthTicket`
+   * @param pvTicket Buffer you allocate for `const void *`.
+   * @param pOutParsedTicket Buffer you allocate for `SteamDatagramRelayAuthTicket *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#ReceivedRelayAuthTicket
+   */
   ReceivedRelayAuthTicket(pvTicket: Buffer | null, cbTicket: number, pOutParsedTicket: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_ReceivedRelayAuthTicket', 'bool', ['void *', 'void *', 'int32', 'void *'])(this.ptr, pvTicket, cbTicket, pOutParsedTicket) as boolean;
   }
 
+  /**
+   * `int FindRelayAuthTicketForServer(const SteamNetworkingIdentity &identityGameServer, int nRemoteVirtualPort, SteamDatagramRelayAuthTicket *pOutParsedTicket)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_FindRelayAuthTicketForServer`
+   * @param identityGameServer Buffer you allocate for `const SteamNetworkingIdentity &`.
+   * @param pOutParsedTicket Buffer you allocate for `SteamDatagramRelayAuthTicket *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#FindRelayAuthTicketForServer
+   */
   FindRelayAuthTicketForServer(identityGameServer: Buffer | null, nRemoteVirtualPort: number, pOutParsedTicket: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_FindRelayAuthTicketForServer', 'int32', ['void *', 'void *', 'int32', 'void *'])(this.ptr, identityGameServer, nRemoteVirtualPort, pOutParsedTicket) as number;
   }
 
+  /**
+   * `HSteamNetConnection ConnectToHostedDedicatedServer(const SteamNetworkingIdentity &identityTarget, int nRemoteVirtualPort, int nOptions, const SteamNetworkingConfigValue_t *pOptions)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_ConnectToHostedDedicatedServer`
+   * @param identityTarget Buffer you allocate for `const SteamNetworkingIdentity &`.
+   * @param pOptions Buffer you allocate for `const SteamNetworkingConfigValue_t *`: `Buffer.alloc(layoutOf('SteamNetworkingConfigValue_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#ConnectToHostedDedicatedServer
+   */
   ConnectToHostedDedicatedServer(identityTarget: Buffer | null, nRemoteVirtualPort: number, nOptions: number, pOptions: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_ConnectToHostedDedicatedServer', 'uint32', ['void *', 'void *', 'int32', 'int32', 'void *'])(this.ptr, identityTarget, nRemoteVirtualPort, nOptions, pOptions) as number;
   }
 
+  /**
+   * `uint16 GetHostedDedicatedServerPort()`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetHostedDedicatedServerPort`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetHostedDedicatedServerPort
+   */
   GetHostedDedicatedServerPort(): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetHostedDedicatedServerPort', 'uint16', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `SteamNetworkingPOPID GetHostedDedicatedServerPOPID()`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetHostedDedicatedServerPOPID`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetHostedDedicatedServerPOPID
+   */
   GetHostedDedicatedServerPOPID(): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetHostedDedicatedServerPOPID', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `EResult GetHostedDedicatedServerAddress(SteamDatagramHostedAddress *pRouting)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetHostedDedicatedServerAddress`
+   * @param pRouting Buffer you allocate for `SteamDatagramHostedAddress *`: `Buffer.alloc(layoutOf('SteamDatagramHostedAddress').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetHostedDedicatedServerAddress
+   */
   GetHostedDedicatedServerAddress(pRouting: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetHostedDedicatedServerAddress', 'int32', ['void *', 'void *'])(this.ptr, pRouting) as number;
   }
 
+  /**
+   * `HSteamListenSocket CreateHostedDedicatedServerListenSocket(int nLocalVirtualPort, int nOptions, const SteamNetworkingConfigValue_t *pOptions)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_CreateHostedDedicatedServerListenSocket`
+   * @param pOptions Buffer you allocate for `const SteamNetworkingConfigValue_t *`: `Buffer.alloc(layoutOf('SteamNetworkingConfigValue_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#CreateHostedDedicatedServerListenSocket
+   */
   CreateHostedDedicatedServerListenSocket(nLocalVirtualPort: number, nOptions: number, pOptions: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_CreateHostedDedicatedServerListenSocket', 'uint32', ['void *', 'int32', 'int32', 'void *'])(this.ptr, nLocalVirtualPort, nOptions, pOptions) as number;
   }
 
+  /**
+   * `EResult GetGameCoordinatorServerLogin(SteamDatagramGameCoordinatorServerLogin *pLoginInfo, int *pcbSignedBlob, void *pBlob)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetGameCoordinatorServerLogin`
+   * @param pLoginInfo Buffer you allocate for `SteamDatagramGameCoordinatorServerLogin *`.
+   * @param pcbSignedBlob Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
+   * @param pBlob Buffer you allocate for `void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetGameCoordinatorServerLogin
+   */
   GetGameCoordinatorServerLogin(pLoginInfo: Buffer | null, pcbSignedBlob: Buffer | null, pBlob: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetGameCoordinatorServerLogin', 'int32', ['void *', 'void *', 'void *', 'void *'])(this.ptr, pLoginInfo, pcbSignedBlob, pBlob) as number;
   }
 
+  /**
+   * `HSteamNetConnection ConnectP2PCustomSignaling(ISteamNetworkingConnectionSignaling *pSignaling, const SteamNetworkingIdentity *pPeerIdentity, int nRemoteVirtualPort, int nOptions, const SteamNetworkingConfigValue_t *pOptions)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_ConnectP2PCustomSignaling`
+   * @param pSignaling Buffer you allocate for `ISteamNetworkingConnectionSignaling *`.
+   * @param pPeerIdentity Buffer you allocate for `const SteamNetworkingIdentity *`.
+   * @param pOptions Buffer you allocate for `const SteamNetworkingConfigValue_t *`: `Buffer.alloc(layoutOf('SteamNetworkingConfigValue_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#ConnectP2PCustomSignaling
+   */
   ConnectP2PCustomSignaling(pSignaling: Buffer | null, pPeerIdentity: Buffer | null, nRemoteVirtualPort: number, nOptions: number, pOptions: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_ConnectP2PCustomSignaling', 'uint32', ['void *', 'void *', 'void *', 'int32', 'int32', 'void *'])(this.ptr, pSignaling, pPeerIdentity, nRemoteVirtualPort, nOptions, pOptions) as number;
   }
 
+  /**
+   * `bool ReceivedP2PCustomSignal(const void *pMsg, int cbMsg, ISteamNetworkingSignalingRecvContext *pContext)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_ReceivedP2PCustomSignal`
+   * @param pMsg Buffer you allocate for `const void *`.
+   * @param pContext Buffer you allocate for `ISteamNetworkingSignalingRecvContext *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#ReceivedP2PCustomSignal
+   */
   ReceivedP2PCustomSignal(pMsg: Buffer | null, cbMsg: number, pContext: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_ReceivedP2PCustomSignal', 'bool', ['void *', 'void *', 'int32', 'void *'])(this.ptr, pMsg, cbMsg, pContext) as boolean;
   }
 
+  /**
+   * `bool GetCertificateRequest(int *pcbBlob, void *pBlob, SteamNetworkingErrMsg &errMsg)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetCertificateRequest`
+   * @param pcbBlob Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
+   * @param pBlob Buffer you allocate for `void *`.
+   * @param errMsg Buffer you allocate for `SteamNetworkingErrMsg &`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetCertificateRequest
+   */
   GetCertificateRequest(pcbBlob: Buffer | null, pBlob: Buffer | null, errMsg: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetCertificateRequest', 'bool', ['void *', 'void *', 'void *', 'void *'])(this.ptr, pcbBlob, pBlob, errMsg) as boolean;
   }
 
+  /**
+   * `bool SetCertificate(const void *pCertificate, int cbCertificate, SteamNetworkingErrMsg &errMsg)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_SetCertificate`
+   * @param pCertificate Buffer you allocate for `const void *`.
+   * @param errMsg Buffer you allocate for `SteamNetworkingErrMsg &`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#SetCertificate
+   */
   SetCertificate(pCertificate: Buffer | null, cbCertificate: number, errMsg: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_SetCertificate', 'bool', ['void *', 'void *', 'int32', 'void *'])(this.ptr, pCertificate, cbCertificate, errMsg) as boolean;
   }
 
+  /**
+   * `void ResetIdentity(const SteamNetworkingIdentity *pIdentity)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_ResetIdentity`
+   * @param pIdentity Buffer you allocate for `const SteamNetworkingIdentity *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#ResetIdentity
+   */
   ResetIdentity(pIdentity: Buffer | null): void {
     this.nat.func('SteamAPI_ISteamNetworkingSockets_ResetIdentity', 'void', ['void *', 'void *'])(this.ptr, pIdentity);
   }
 
+  /**
+   * `void RunCallbacks()`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_RunCallbacks`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#RunCallbacks
+   */
   RunCallbacks(): void {
     this.nat.func('SteamAPI_ISteamNetworkingSockets_RunCallbacks', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `bool BeginAsyncRequestFakeIP(int nNumPorts)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_BeginAsyncRequestFakeIP`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#BeginAsyncRequestFakeIP
+   */
   BeginAsyncRequestFakeIP(nNumPorts: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_BeginAsyncRequestFakeIP', 'bool', ['void *', 'int32'])(this.ptr, nNumPorts) as boolean;
   }
 
+  /**
+   * `void GetFakeIP(int idxFirstPort, SteamNetworkingFakeIPResult_t *pInfo)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetFakeIP`
+   * @param pInfo Buffer you allocate for `SteamNetworkingFakeIPResult_t *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetFakeIP
+   */
   GetFakeIP(idxFirstPort: number, pInfo: Buffer | null): void {
     this.nat.func('SteamAPI_ISteamNetworkingSockets_GetFakeIP', 'void', ['void *', 'int32', 'void *'])(this.ptr, idxFirstPort, pInfo);
   }
 
+  /**
+   * `HSteamListenSocket CreateListenSocketP2PFakeIP(int idxFakePort, int nOptions, const SteamNetworkingConfigValue_t *pOptions)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_CreateListenSocketP2PFakeIP`
+   * @param pOptions Buffer you allocate for `const SteamNetworkingConfigValue_t *`: `Buffer.alloc(layoutOf('SteamNetworkingConfigValue_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#CreateListenSocketP2PFakeIP
+   */
   CreateListenSocketP2PFakeIP(idxFakePort: number, nOptions: number, pOptions: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_CreateListenSocketP2PFakeIP', 'uint32', ['void *', 'int32', 'int32', 'void *'])(this.ptr, idxFakePort, nOptions, pOptions) as number;
   }
 
+  /**
+   * `EResult GetRemoteFakeIPForConnection(HSteamNetConnection hConn, SteamNetworkingIPAddr *pOutAddr)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_GetRemoteFakeIPForConnection`
+   * @param pOutAddr Buffer you allocate for `SteamNetworkingIPAddr *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#GetRemoteFakeIPForConnection
+   */
   GetRemoteFakeIPForConnection(hConn: number, pOutAddr: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_GetRemoteFakeIPForConnection', 'int32', ['void *', 'uint32', 'void *'])(this.ptr, hConn, pOutAddr) as number;
   }
 
+  /**
+   * `ISteamNetworkingFakeUDPPort * CreateFakeUDPPort(int idxFakeServerPort)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingSockets_CreateFakeUDPPort`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#CreateFakeUDPPort
+   */
   CreateFakeUDPPort(idxFakeServerPort: number): unknown {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_CreateFakeUDPPort', 'void *', ['void *', 'int32'])(this.ptr, idxFakeServerPort) as unknown;
   }

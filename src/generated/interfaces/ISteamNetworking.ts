@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamNetworking (accessor SteamAPI_SteamNetworking_v006) */
+/**
+ * ISteamNetworking (accessor SteamAPI_SteamNetworking_v006)
+ * @see https://partner.steamgames.com/doc/api/ISteamNetworking
+ */
 export class ISteamNetworking {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,82 +14,230 @@ export class ISteamNetworking {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamNetworking_v006 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `bool SendP2PPacket(CSteamID steamIDRemote, const void *pubData, uint32 cubData, EP2PSend eP2PSendType, int nChannel)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_SendP2PPacket`
+   * @param steamIDRemote `CSteamID`, 64-bit: bigint or number.
+   * @param pubData Buffer you allocate for `const void *`.
+   * @param eP2PSendType enum `EP2PSend`; values on `flat.EP2PSend`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket
+   */
   SendP2PPacket(steamIDRemote: bigint | number, pubData: Buffer | null, cubData: number, eP2PSendType: number, nChannel: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_SendP2PPacket', 'bool', ['void *', 'uint64', 'void *', 'uint32', 'int32', 'int32'])(this.ptr, steamIDRemote, pubData, cubData, eP2PSendType, nChannel) as boolean;
   }
 
+  /**
+   * `bool IsP2PPacketAvailable(uint32 *pcubMsgSize, int nChannel)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_IsP2PPacketAvailable`
+   * @param pcubMsgSize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#IsP2PPacketAvailable
+   */
   IsP2PPacketAvailable(pcubMsgSize: Buffer | null, nChannel: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_IsP2PPacketAvailable', 'bool', ['void *', 'void *', 'int32'])(this.ptr, pcubMsgSize, nChannel) as boolean;
   }
 
+  /**
+   * `bool ReadP2PPacket(void *pubDest, uint32 cubDest, uint32 *pcubMsgSize, CSteamID *psteamIDRemote, int nChannel)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_ReadP2PPacket`
+   * @param pubDest Buffer you allocate for `void *`.
+   * @param pcubMsgSize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @param psteamIDRemote Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#ReadP2PPacket
+   */
   ReadP2PPacket(pubDest: Buffer | null, cubDest: number, pcubMsgSize: Buffer | null, psteamIDRemote: Buffer | null, nChannel: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_ReadP2PPacket', 'bool', ['void *', 'void *', 'uint32', 'void *', 'void *', 'int32'])(this.ptr, pubDest, cubDest, pcubMsgSize, psteamIDRemote, nChannel) as boolean;
   }
 
+  /**
+   * `bool AcceptP2PSessionWithUser(CSteamID steamIDRemote)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_AcceptP2PSessionWithUser`
+   * @param steamIDRemote `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser
+   */
   AcceptP2PSessionWithUser(steamIDRemote: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_AcceptP2PSessionWithUser', 'bool', ['void *', 'uint64'])(this.ptr, steamIDRemote) as boolean;
   }
 
+  /**
+   * `bool CloseP2PSessionWithUser(CSteamID steamIDRemote)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_CloseP2PSessionWithUser`
+   * @param steamIDRemote `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PSessionWithUser
+   */
   CloseP2PSessionWithUser(steamIDRemote: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_CloseP2PSessionWithUser', 'bool', ['void *', 'uint64'])(this.ptr, steamIDRemote) as boolean;
   }
 
+  /**
+   * `bool CloseP2PChannelWithUser(CSteamID steamIDRemote, int nChannel)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_CloseP2PChannelWithUser`
+   * @param steamIDRemote `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser
+   */
   CloseP2PChannelWithUser(steamIDRemote: bigint | number, nChannel: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_CloseP2PChannelWithUser', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, steamIDRemote, nChannel) as boolean;
   }
 
+  /**
+   * `bool GetP2PSessionState(CSteamID steamIDRemote, P2PSessionState_t *pConnectionState)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_GetP2PSessionState`
+   * @param steamIDRemote `CSteamID`, 64-bit: bigint or number.
+   * @param pConnectionState Buffer you allocate for `P2PSessionState_t *`: `Buffer.alloc(layoutOf('P2PSessionState_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#GetP2PSessionState
+   */
   GetP2PSessionState(steamIDRemote: bigint | number, pConnectionState: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_GetP2PSessionState', 'bool', ['void *', 'uint64', 'void *'])(this.ptr, steamIDRemote, pConnectionState) as boolean;
   }
 
+  /**
+   * `bool AllowP2PPacketRelay(bool bAllow)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_AllowP2PPacketRelay`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#AllowP2PPacketRelay
+   */
   AllowP2PPacketRelay(bAllow: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_AllowP2PPacketRelay', 'bool', ['void *', 'bool'])(this.ptr, bAllow) as boolean;
   }
 
+  /**
+   * `SNetSocket_t CreateP2PConnectionSocket(CSteamID steamIDTarget, int nVirtualPort, int nTimeoutSec, bool bAllowUseOfPacketRelay)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_CreateP2PConnectionSocket`
+   * @param steamIDTarget `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#CreateP2PConnectionSocket
+   */
   CreateP2PConnectionSocket(steamIDTarget: bigint | number, nVirtualPort: number, nTimeoutSec: number, bAllowUseOfPacketRelay: boolean): number {
     return this.nat.func('SteamAPI_ISteamNetworking_CreateP2PConnectionSocket', 'uint32', ['void *', 'uint64', 'int32', 'int32', 'bool'])(this.ptr, steamIDTarget, nVirtualPort, nTimeoutSec, bAllowUseOfPacketRelay) as number;
   }
 
+  /**
+   * `bool DestroySocket(SNetSocket_t hSocket, bool bNotifyRemoteEnd)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_DestroySocket`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#DestroySocket
+   */
   DestroySocket(hSocket: number, bNotifyRemoteEnd: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_DestroySocket', 'bool', ['void *', 'uint32', 'bool'])(this.ptr, hSocket, bNotifyRemoteEnd) as boolean;
   }
 
+  /**
+   * `bool DestroyListenSocket(SNetListenSocket_t hSocket, bool bNotifyRemoteEnd)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_DestroyListenSocket`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#DestroyListenSocket
+   */
   DestroyListenSocket(hSocket: number, bNotifyRemoteEnd: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_DestroyListenSocket', 'bool', ['void *', 'uint32', 'bool'])(this.ptr, hSocket, bNotifyRemoteEnd) as boolean;
   }
 
+  /**
+   * `bool SendDataOnSocket(SNetSocket_t hSocket, void *pubData, uint32 cubData, bool bReliable)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_SendDataOnSocket`
+   * @param pubData Buffer you allocate for `void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#SendDataOnSocket
+   */
   SendDataOnSocket(hSocket: number, pubData: Buffer | null, cubData: number, bReliable: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_SendDataOnSocket', 'bool', ['void *', 'uint32', 'void *', 'uint32', 'bool'])(this.ptr, hSocket, pubData, cubData, bReliable) as boolean;
   }
 
+  /**
+   * `bool IsDataAvailableOnSocket(SNetSocket_t hSocket, uint32 *pcubMsgSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_IsDataAvailableOnSocket`
+   * @param pcubMsgSize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailableOnSocket
+   */
   IsDataAvailableOnSocket(hSocket: number, pcubMsgSize: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_IsDataAvailableOnSocket', 'bool', ['void *', 'uint32', 'void *'])(this.ptr, hSocket, pcubMsgSize) as boolean;
   }
 
+  /**
+   * `bool RetrieveDataFromSocket(SNetSocket_t hSocket, void *pubDest, uint32 cubDest, uint32 *pcubMsgSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_RetrieveDataFromSocket`
+   * @param pubDest Buffer you allocate for `void *`.
+   * @param pcubMsgSize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveDataFromSocket
+   */
   RetrieveDataFromSocket(hSocket: number, pubDest: Buffer | null, cubDest: number, pcubMsgSize: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_RetrieveDataFromSocket', 'bool', ['void *', 'uint32', 'void *', 'uint32', 'void *'])(this.ptr, hSocket, pubDest, cubDest, pcubMsgSize) as boolean;
   }
 
+  /**
+   * `bool IsDataAvailable(SNetListenSocket_t hListenSocket, uint32 *pcubMsgSize, SNetSocket_t *phSocket)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_IsDataAvailable`
+   * @param pcubMsgSize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @param phSocket Buffer you allocate for `SNetSocket_t *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailable
+   */
   IsDataAvailable(hListenSocket: number, pcubMsgSize: Buffer | null, phSocket: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_IsDataAvailable', 'bool', ['void *', 'uint32', 'void *', 'void *'])(this.ptr, hListenSocket, pcubMsgSize, phSocket) as boolean;
   }
 
+  /**
+   * `bool RetrieveData(SNetListenSocket_t hListenSocket, void *pubDest, uint32 cubDest, uint32 *pcubMsgSize, SNetSocket_t *phSocket)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_RetrieveData`
+   * @param pubDest Buffer you allocate for `void *`.
+   * @param pcubMsgSize Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @param phSocket Buffer you allocate for `SNetSocket_t *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveData
+   */
   RetrieveData(hListenSocket: number, pubDest: Buffer | null, cubDest: number, pcubMsgSize: Buffer | null, phSocket: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_RetrieveData', 'bool', ['void *', 'uint32', 'void *', 'uint32', 'void *', 'void *'])(this.ptr, hListenSocket, pubDest, cubDest, pcubMsgSize, phSocket) as boolean;
   }
 
+  /**
+   * `bool GetSocketInfo(SNetSocket_t hSocket, CSteamID *pSteamIDRemote, int *peSocketStatus, SteamIPAddress_t *punIPRemote, uint16 *punPortRemote)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_GetSocketInfo`
+   * @param pSteamIDRemote Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
+   * @param peSocketStatus Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
+   * @param punIPRemote Buffer you allocate for `SteamIPAddress_t *`: `Buffer.alloc(layoutOf('SteamIPAddress_t').size)`.
+   * @param punPortRemote Buffer you allocate for `uint16 *`: `Buffer.alloc(2)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketInfo
+   */
   GetSocketInfo(hSocket: number, pSteamIDRemote: Buffer | null, peSocketStatus: Buffer | null, punIPRemote: Buffer | null, punPortRemote: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_GetSocketInfo', 'bool', ['void *', 'uint32', 'void *', 'void *', 'void *', 'void *'])(this.ptr, hSocket, pSteamIDRemote, peSocketStatus, punIPRemote, punPortRemote) as boolean;
   }
 
+  /**
+   * `bool GetListenSocketInfo(SNetListenSocket_t hListenSocket, SteamIPAddress_t *pnIP, uint16 *pnPort)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_GetListenSocketInfo`
+   * @param pnIP Buffer you allocate for `SteamIPAddress_t *`: `Buffer.alloc(layoutOf('SteamIPAddress_t').size)`.
+   * @param pnPort Buffer you allocate for `uint16 *`: `Buffer.alloc(2)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#GetListenSocketInfo
+   */
   GetListenSocketInfo(hListenSocket: number, pnIP: Buffer | null, pnPort: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_GetListenSocketInfo', 'bool', ['void *', 'uint32', 'void *', 'void *'])(this.ptr, hListenSocket, pnIP, pnPort) as boolean;
   }
 
+  /**
+   * `ESNetSocketConnectionType GetSocketConnectionType(SNetSocket_t hSocket)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_GetSocketConnectionType`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketConnectionType
+   */
   GetSocketConnectionType(hSocket: number): number {
     return this.nat.func('SteamAPI_ISteamNetworking_GetSocketConnectionType', 'int32', ['void *', 'uint32'])(this.ptr, hSocket) as number;
   }
 
+  /**
+   * `int GetMaxPacketSize(SNetSocket_t hSocket)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworking_GetMaxPacketSize`
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworking#GetMaxPacketSize
+   */
   GetMaxPacketSize(hSocket: number): number {
     return this.nat.func('SteamAPI_ISteamNetworking_GetMaxPacketSize', 'int32', ['void *', 'uint32'])(this.ptr, hSocket) as number;
   }

@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamMatchmakingServers (accessor SteamAPI_SteamMatchmakingServers_v003) */
+/**
+ * ISteamMatchmakingServers (accessor SteamAPI_SteamMatchmakingServers_v003)
+ * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers
+ */
 export class ISteamMatchmakingServers {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,74 +14,197 @@ export class ISteamMatchmakingServers {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamMatchmakingServers_v003 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `HServerListRequest RequestInternetServerList(AppId_t iApp, MatchMakingKeyValuePair_t **ppchFilters, uint32 nFilters, ISteamMatchmakingServerListResponse *pRequestServersResponse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_RequestInternetServerList`
+   * @param ppchFilters Buffer you allocate for `MatchMakingKeyValuePair_t **`: `Buffer.alloc(layoutOf('MatchMakingKeyValuePair_t').size)`.
+   * @param pRequestServersResponse Buffer you allocate for `ISteamMatchmakingServerListResponse *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#RequestInternetServerList
+   */
   RequestInternetServerList(iApp: number, ppchFilters: Buffer | null, nFilters: number, pRequestServersResponse: Buffer | null): unknown {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_RequestInternetServerList', 'void *', ['void *', 'uint32', 'void *', 'uint32', 'void *'])(this.ptr, iApp, ppchFilters, nFilters, pRequestServersResponse) as unknown;
   }
 
+  /**
+   * `HServerListRequest RequestLANServerList(AppId_t iApp, ISteamMatchmakingServerListResponse *pRequestServersResponse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_RequestLANServerList`
+   * @param pRequestServersResponse Buffer you allocate for `ISteamMatchmakingServerListResponse *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#RequestLANServerList
+   */
   RequestLANServerList(iApp: number, pRequestServersResponse: Buffer | null): unknown {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_RequestLANServerList', 'void *', ['void *', 'uint32', 'void *'])(this.ptr, iApp, pRequestServersResponse) as unknown;
   }
 
+  /**
+   * `HServerListRequest RequestFriendsServerList(AppId_t iApp, MatchMakingKeyValuePair_t **ppchFilters, uint32 nFilters, ISteamMatchmakingServerListResponse *pRequestServersResponse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_RequestFriendsServerList`
+   * @param ppchFilters Buffer you allocate for `MatchMakingKeyValuePair_t **`: `Buffer.alloc(layoutOf('MatchMakingKeyValuePair_t').size)`.
+   * @param pRequestServersResponse Buffer you allocate for `ISteamMatchmakingServerListResponse *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#RequestFriendsServerList
+   */
   RequestFriendsServerList(iApp: number, ppchFilters: Buffer | null, nFilters: number, pRequestServersResponse: Buffer | null): unknown {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_RequestFriendsServerList', 'void *', ['void *', 'uint32', 'void *', 'uint32', 'void *'])(this.ptr, iApp, ppchFilters, nFilters, pRequestServersResponse) as unknown;
   }
 
+  /**
+   * `HServerListRequest RequestFavoritesServerList(AppId_t iApp, MatchMakingKeyValuePair_t **ppchFilters, uint32 nFilters, ISteamMatchmakingServerListResponse *pRequestServersResponse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_RequestFavoritesServerList`
+   * @param ppchFilters Buffer you allocate for `MatchMakingKeyValuePair_t **`: `Buffer.alloc(layoutOf('MatchMakingKeyValuePair_t').size)`.
+   * @param pRequestServersResponse Buffer you allocate for `ISteamMatchmakingServerListResponse *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#RequestFavoritesServerList
+   */
   RequestFavoritesServerList(iApp: number, ppchFilters: Buffer | null, nFilters: number, pRequestServersResponse: Buffer | null): unknown {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_RequestFavoritesServerList', 'void *', ['void *', 'uint32', 'void *', 'uint32', 'void *'])(this.ptr, iApp, ppchFilters, nFilters, pRequestServersResponse) as unknown;
   }
 
+  /**
+   * `HServerListRequest RequestHistoryServerList(AppId_t iApp, MatchMakingKeyValuePair_t **ppchFilters, uint32 nFilters, ISteamMatchmakingServerListResponse *pRequestServersResponse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_RequestHistoryServerList`
+   * @param ppchFilters Buffer you allocate for `MatchMakingKeyValuePair_t **`: `Buffer.alloc(layoutOf('MatchMakingKeyValuePair_t').size)`.
+   * @param pRequestServersResponse Buffer you allocate for `ISteamMatchmakingServerListResponse *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#RequestHistoryServerList
+   */
   RequestHistoryServerList(iApp: number, ppchFilters: Buffer | null, nFilters: number, pRequestServersResponse: Buffer | null): unknown {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_RequestHistoryServerList', 'void *', ['void *', 'uint32', 'void *', 'uint32', 'void *'])(this.ptr, iApp, ppchFilters, nFilters, pRequestServersResponse) as unknown;
   }
 
+  /**
+   * `HServerListRequest RequestSpectatorServerList(AppId_t iApp, MatchMakingKeyValuePair_t **ppchFilters, uint32 nFilters, ISteamMatchmakingServerListResponse *pRequestServersResponse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_RequestSpectatorServerList`
+   * @param ppchFilters Buffer you allocate for `MatchMakingKeyValuePair_t **`: `Buffer.alloc(layoutOf('MatchMakingKeyValuePair_t').size)`.
+   * @param pRequestServersResponse Buffer you allocate for `ISteamMatchmakingServerListResponse *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#RequestSpectatorServerList
+   */
   RequestSpectatorServerList(iApp: number, ppchFilters: Buffer | null, nFilters: number, pRequestServersResponse: Buffer | null): unknown {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_RequestSpectatorServerList', 'void *', ['void *', 'uint32', 'void *', 'uint32', 'void *'])(this.ptr, iApp, ppchFilters, nFilters, pRequestServersResponse) as unknown;
   }
 
+  /**
+   * `void ReleaseRequest(HServerListRequest hServerListRequest)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_ReleaseRequest`
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#ReleaseRequest
+   */
   ReleaseRequest(hServerListRequest: unknown): void {
     this.nat.func('SteamAPI_ISteamMatchmakingServers_ReleaseRequest', 'void', ['void *', 'void *'])(this.ptr, hServerListRequest);
   }
 
+  /**
+   * `gameserveritem_t * GetServerDetails(HServerListRequest hRequest, int iServer)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_GetServerDetails`
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#GetServerDetails
+   */
   GetServerDetails(hRequest: unknown, iServer: number): unknown {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_GetServerDetails', 'void *', ['void *', 'void *', 'int32'])(this.ptr, hRequest, iServer) as unknown;
   }
 
+  /**
+   * `void CancelQuery(HServerListRequest hRequest)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_CancelQuery`
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#CancelQuery
+   */
   CancelQuery(hRequest: unknown): void {
     this.nat.func('SteamAPI_ISteamMatchmakingServers_CancelQuery', 'void', ['void *', 'void *'])(this.ptr, hRequest);
   }
 
+  /**
+   * `void RefreshQuery(HServerListRequest hRequest)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_RefreshQuery`
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#RefreshQuery
+   */
   RefreshQuery(hRequest: unknown): void {
     this.nat.func('SteamAPI_ISteamMatchmakingServers_RefreshQuery', 'void', ['void *', 'void *'])(this.ptr, hRequest);
   }
 
+  /**
+   * `bool IsRefreshing(HServerListRequest hRequest)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_IsRefreshing`
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#IsRefreshing
+   */
   IsRefreshing(hRequest: unknown): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_IsRefreshing', 'bool', ['void *', 'void *'])(this.ptr, hRequest) as boolean;
   }
 
+  /**
+   * `int GetServerCount(HServerListRequest hRequest)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_GetServerCount`
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#GetServerCount
+   */
   GetServerCount(hRequest: unknown): number {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_GetServerCount', 'int32', ['void *', 'void *'])(this.ptr, hRequest) as number;
   }
 
+  /**
+   * `void RefreshServer(HServerListRequest hRequest, int iServer)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_RefreshServer`
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#RefreshServer
+   */
   RefreshServer(hRequest: unknown, iServer: number): void {
     this.nat.func('SteamAPI_ISteamMatchmakingServers_RefreshServer', 'void', ['void *', 'void *', 'int32'])(this.ptr, hRequest, iServer);
   }
 
+  /**
+   * `HServerQuery PingServer(uint32 unIP, uint16 usPort, ISteamMatchmakingPingResponse *pRequestServersResponse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_PingServer`
+   * @param pRequestServersResponse Buffer you allocate for `ISteamMatchmakingPingResponse *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#PingServer
+   */
   PingServer(unIP: number, usPort: number, pRequestServersResponse: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_PingServer', 'int32', ['void *', 'uint32', 'uint16', 'void *'])(this.ptr, unIP, usPort, pRequestServersResponse) as number;
   }
 
+  /**
+   * `HServerQuery PlayerDetails(uint32 unIP, uint16 usPort, ISteamMatchmakingPlayersResponse *pRequestServersResponse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_PlayerDetails`
+   * @param pRequestServersResponse Buffer you allocate for `ISteamMatchmakingPlayersResponse *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#PlayerDetails
+   */
   PlayerDetails(unIP: number, usPort: number, pRequestServersResponse: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_PlayerDetails', 'int32', ['void *', 'uint32', 'uint16', 'void *'])(this.ptr, unIP, usPort, pRequestServersResponse) as number;
   }
 
+  /**
+   * `HServerQuery ServerRules(uint32 unIP, uint16 usPort, ISteamMatchmakingRulesResponse *pRequestServersResponse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_ServerRules`
+   * @param pRequestServersResponse Buffer you allocate for `ISteamMatchmakingRulesResponse *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#ServerRules
+   */
   ServerRules(unIP: number, usPort: number, pRequestServersResponse: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_ServerRules', 'int32', ['void *', 'uint32', 'uint16', 'void *'])(this.ptr, unIP, usPort, pRequestServersResponse) as number;
   }
 
+  /**
+   * `HServerQuery ServerFriends(uint32 unIP, uint16 usPort, ISteamMatchmakingServerFriendsResponse *pRequestServersResponse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_ServerFriends`
+   * @param pRequestServersResponse Buffer you allocate for `ISteamMatchmakingServerFriendsResponse *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#ServerFriends
+   */
   ServerFriends(unIP: number, usPort: number, pRequestServersResponse: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamMatchmakingServers_ServerFriends', 'int32', ['void *', 'uint32', 'uint16', 'void *'])(this.ptr, unIP, usPort, pRequestServersResponse) as number;
   }
 
+  /**
+   * `void CancelServerQuery(HServerQuery hServerQuery)`
+   *
+   * Flat symbol: `SteamAPI_ISteamMatchmakingServers_CancelServerQuery`
+   * @see https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#CancelServerQuery
+   */
   CancelServerQuery(hServerQuery: number): void {
     this.nat.func('SteamAPI_ISteamMatchmakingServers_CancelServerQuery', 'void', ['void *', 'int32'])(this.ptr, hServerQuery);
   }

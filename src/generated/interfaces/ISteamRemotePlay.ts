@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamRemotePlay (accessor SteamAPI_SteamRemotePlay_v004) */
+/**
+ * ISteamRemotePlay (accessor SteamAPI_SteamRemotePlay_v004)
+ * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay
+ */
 export class ISteamRemotePlay {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,82 +14,207 @@ export class ISteamRemotePlay {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamRemotePlay_v004 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `uint32 GetSessionCount()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_GetSessionCount`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#GetSessionCount
+   */
   GetSessionCount(): number {
     return this.nat.func('SteamAPI_ISteamRemotePlay_GetSessionCount', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `RemotePlaySessionID_t GetSessionID(int iSessionIndex)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_GetSessionID`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#GetSessionID
+   */
   GetSessionID(iSessionIndex: number): number {
     return this.nat.func('SteamAPI_ISteamRemotePlay_GetSessionID', 'uint32', ['void *', 'int32'])(this.ptr, iSessionIndex) as number;
   }
 
+  /**
+   * `bool BSessionRemotePlayTogether(RemotePlaySessionID_t unSessionID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_BSessionRemotePlayTogether`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#BSessionRemotePlayTogether
+   */
   BSessionRemotePlayTogether(unSessionID: number): boolean {
     return this.nat.func('SteamAPI_ISteamRemotePlay_BSessionRemotePlayTogether', 'bool', ['void *', 'uint32'])(this.ptr, unSessionID) as boolean;
   }
 
+  /**
+   * `CSteamID GetSessionSteamID(RemotePlaySessionID_t unSessionID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_GetSessionSteamID`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#GetSessionSteamID
+   */
   GetSessionSteamID(unSessionID: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemotePlay_GetSessionSteamID', 'uint64', ['void *', 'uint32'])(this.ptr, unSessionID) as number | bigint);
   }
 
+  /**
+   * `uint32 GetSessionGuestID(RemotePlaySessionID_t unSessionID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_GetSessionGuestID`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#GetSessionGuestID
+   */
   GetSessionGuestID(unSessionID: number): number {
     return this.nat.func('SteamAPI_ISteamRemotePlay_GetSessionGuestID', 'uint32', ['void *', 'uint32'])(this.ptr, unSessionID) as number;
   }
 
+  /**
+   * `int GetSmallSessionAvatar(RemotePlaySessionID_t unSessionID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_GetSmallSessionAvatar`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#GetSmallSessionAvatar
+   */
   GetSmallSessionAvatar(unSessionID: number): number {
     return this.nat.func('SteamAPI_ISteamRemotePlay_GetSmallSessionAvatar', 'int32', ['void *', 'uint32'])(this.ptr, unSessionID) as number;
   }
 
+  /**
+   * `int GetMediumSessionAvatar(RemotePlaySessionID_t unSessionID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_GetMediumSessionAvatar`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#GetMediumSessionAvatar
+   */
   GetMediumSessionAvatar(unSessionID: number): number {
     return this.nat.func('SteamAPI_ISteamRemotePlay_GetMediumSessionAvatar', 'int32', ['void *', 'uint32'])(this.ptr, unSessionID) as number;
   }
 
+  /**
+   * `int GetLargeSessionAvatar(RemotePlaySessionID_t unSessionID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_GetLargeSessionAvatar`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#GetLargeSessionAvatar
+   */
   GetLargeSessionAvatar(unSessionID: number): number {
     return this.nat.func('SteamAPI_ISteamRemotePlay_GetLargeSessionAvatar', 'int32', ['void *', 'uint32'])(this.ptr, unSessionID) as number;
   }
 
+  /**
+   * `const char * GetSessionClientName(RemotePlaySessionID_t unSessionID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_GetSessionClientName`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#GetSessionClientName
+   */
   GetSessionClientName(unSessionID: number): string {
     return this.nat.func('SteamAPI_ISteamRemotePlay_GetSessionClientName', 'str', ['void *', 'uint32'])(this.ptr, unSessionID) as string;
   }
 
+  /**
+   * `ESteamDeviceFormFactor GetSessionClientFormFactor(RemotePlaySessionID_t unSessionID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_GetSessionClientFormFactor`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#GetSessionClientFormFactor
+   */
   GetSessionClientFormFactor(unSessionID: number): number {
     return this.nat.func('SteamAPI_ISteamRemotePlay_GetSessionClientFormFactor', 'int32', ['void *', 'uint32'])(this.ptr, unSessionID) as number;
   }
 
+  /**
+   * `bool BGetSessionClientResolution(RemotePlaySessionID_t unSessionID, int *pnResolutionX, int *pnResolutionY)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_BGetSessionClientResolution`
+   * @param pnResolutionX Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
+   * @param pnResolutionY Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#BGetSessionClientResolution
+   */
   BGetSessionClientResolution(unSessionID: number, pnResolutionX: Buffer | null, pnResolutionY: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamRemotePlay_BGetSessionClientResolution', 'bool', ['void *', 'uint32', 'void *', 'void *'])(this.ptr, unSessionID, pnResolutionX, pnResolutionY) as boolean;
   }
 
+  /**
+   * `bool ShowRemotePlayTogetherUI()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_ShowRemotePlayTogetherUI`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#ShowRemotePlayTogetherUI
+   */
   ShowRemotePlayTogetherUI(): boolean {
     return this.nat.func('SteamAPI_ISteamRemotePlay_ShowRemotePlayTogetherUI', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BSendRemotePlayTogetherInvite(CSteamID steamIDFriend)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_BSendRemotePlayTogetherInvite`
+   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#BSendRemotePlayTogetherInvite
+   */
   BSendRemotePlayTogetherInvite(steamIDFriend: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamRemotePlay_BSendRemotePlayTogetherInvite', 'bool', ['void *', 'uint64'])(this.ptr, steamIDFriend) as boolean;
   }
 
+  /**
+   * `bool BEnableRemotePlayTogetherDirectInput()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_BEnableRemotePlayTogetherDirectInput`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#BEnableRemotePlayTogetherDirectInput
+   */
   BEnableRemotePlayTogetherDirectInput(): boolean {
     return this.nat.func('SteamAPI_ISteamRemotePlay_BEnableRemotePlayTogetherDirectInput', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `void DisableRemotePlayTogetherDirectInput()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_DisableRemotePlayTogetherDirectInput`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#DisableRemotePlayTogetherDirectInput
+   */
   DisableRemotePlayTogetherDirectInput(): void {
     this.nat.func('SteamAPI_ISteamRemotePlay_DisableRemotePlayTogetherDirectInput', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `uint32 GetInput(RemotePlayInput_t *pInput, uint32 unMaxEvents)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_GetInput`
+   * @param pInput Buffer you allocate for `RemotePlayInput_t *`: `Buffer.alloc(layoutOf('RemotePlayInput_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#GetInput
+   */
   GetInput(pInput: Buffer | null, unMaxEvents: number): number {
     return this.nat.func('SteamAPI_ISteamRemotePlay_GetInput', 'uint32', ['void *', 'void *', 'uint32'])(this.ptr, pInput, unMaxEvents) as number;
   }
 
+  /**
+   * `void SetMouseVisibility(RemotePlaySessionID_t unSessionID, bool bVisible)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_SetMouseVisibility`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#SetMouseVisibility
+   */
   SetMouseVisibility(unSessionID: number, bVisible: boolean): void {
     this.nat.func('SteamAPI_ISteamRemotePlay_SetMouseVisibility', 'void', ['void *', 'uint32', 'bool'])(this.ptr, unSessionID, bVisible);
   }
 
+  /**
+   * `void SetMousePosition(RemotePlaySessionID_t unSessionID, float flNormalizedX, float flNormalizedY)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_SetMousePosition`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#SetMousePosition
+   */
   SetMousePosition(unSessionID: number, flNormalizedX: number, flNormalizedY: number): void {
     this.nat.func('SteamAPI_ISteamRemotePlay_SetMousePosition', 'void', ['void *', 'uint32', 'float', 'float'])(this.ptr, unSessionID, flNormalizedX, flNormalizedY);
   }
 
+  /**
+   * `RemotePlayCursorID_t CreateMouseCursor(int nWidth, int nHeight, int nHotX, int nHotY, const void *pBGRA, int nPitch)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_CreateMouseCursor`
+   * @param pBGRA Buffer you allocate for `const void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#CreateMouseCursor
+   */
   CreateMouseCursor(nWidth: number, nHeight: number, nHotX: number, nHotY: number, pBGRA: Buffer | null, nPitch: number): number {
     return this.nat.func('SteamAPI_ISteamRemotePlay_CreateMouseCursor', 'uint32', ['void *', 'int32', 'int32', 'int32', 'int32', 'void *', 'int32'])(this.ptr, nWidth, nHeight, nHotX, nHotY, pBGRA, nPitch) as number;
   }
 
+  /**
+   * `void SetMouseCursor(RemotePlaySessionID_t unSessionID, RemotePlayCursorID_t unCursorID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemotePlay_SetMouseCursor`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemotePlay#SetMouseCursor
+   */
   SetMouseCursor(unSessionID: number, unCursorID: number): void {
     this.nat.func('SteamAPI_ISteamRemotePlay_SetMouseCursor', 'void', ['void *', 'uint32', 'uint32'])(this.ptr, unSessionID, unCursorID);
   }

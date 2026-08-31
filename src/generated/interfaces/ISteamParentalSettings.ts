@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamParentalSettings (accessor SteamAPI_SteamParentalSettings_v001) */
+/**
+ * ISteamParentalSettings (accessor SteamAPI_SteamParentalSettings_v001)
+ * @see https://partner.steamgames.com/doc/api/ISteamParentalSettings
+ */
 export class ISteamParentalSettings {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,26 +14,64 @@ export class ISteamParentalSettings {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamParentalSettings_v001 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `bool BIsParentalLockEnabled()`
+   *
+   * Flat symbol: `SteamAPI_ISteamParentalSettings_BIsParentalLockEnabled`
+   * @see https://partner.steamgames.com/doc/api/ISteamParentalSettings#BIsParentalLockEnabled
+   */
   BIsParentalLockEnabled(): boolean {
     return this.nat.func('SteamAPI_ISteamParentalSettings_BIsParentalLockEnabled', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BIsParentalLockLocked()`
+   *
+   * Flat symbol: `SteamAPI_ISteamParentalSettings_BIsParentalLockLocked`
+   * @see https://partner.steamgames.com/doc/api/ISteamParentalSettings#BIsParentalLockLocked
+   */
   BIsParentalLockLocked(): boolean {
     return this.nat.func('SteamAPI_ISteamParentalSettings_BIsParentalLockLocked', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BIsAppBlocked(AppId_t nAppID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParentalSettings_BIsAppBlocked`
+   * @see https://partner.steamgames.com/doc/api/ISteamParentalSettings#BIsAppBlocked
+   */
   BIsAppBlocked(nAppID: number): boolean {
     return this.nat.func('SteamAPI_ISteamParentalSettings_BIsAppBlocked', 'bool', ['void *', 'uint32'])(this.ptr, nAppID) as boolean;
   }
 
+  /**
+   * `bool BIsAppInBlockList(AppId_t nAppID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParentalSettings_BIsAppInBlockList`
+   * @see https://partner.steamgames.com/doc/api/ISteamParentalSettings#BIsAppInBlockList
+   */
   BIsAppInBlockList(nAppID: number): boolean {
     return this.nat.func('SteamAPI_ISteamParentalSettings_BIsAppInBlockList', 'bool', ['void *', 'uint32'])(this.ptr, nAppID) as boolean;
   }
 
+  /**
+   * `bool BIsFeatureBlocked(EParentalFeature eFeature)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParentalSettings_BIsFeatureBlocked`
+   * @param eFeature enum `EParentalFeature`; values on `flat.EParentalFeature`.
+   * @see https://partner.steamgames.com/doc/api/ISteamParentalSettings#BIsFeatureBlocked
+   */
   BIsFeatureBlocked(eFeature: number): boolean {
     return this.nat.func('SteamAPI_ISteamParentalSettings_BIsFeatureBlocked', 'bool', ['void *', 'int32'])(this.ptr, eFeature) as boolean;
   }
 
+  /**
+   * `bool BIsFeatureInBlockList(EParentalFeature eFeature)`
+   *
+   * Flat symbol: `SteamAPI_ISteamParentalSettings_BIsFeatureInBlockList`
+   * @param eFeature enum `EParentalFeature`; values on `flat.EParentalFeature`.
+   * @see https://partner.steamgames.com/doc/api/ISteamParentalSettings#BIsFeatureInBlockList
+   */
   BIsFeatureInBlockList(eFeature: number): boolean {
     return this.nat.func('SteamAPI_ISteamParentalSettings_BIsFeatureInBlockList', 'bool', ['void *', 'int32'])(this.ptr, eFeature) as boolean;
   }

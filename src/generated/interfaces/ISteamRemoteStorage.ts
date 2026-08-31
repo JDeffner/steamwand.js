@@ -4,7 +4,10 @@
 import type { SteamNative } from '../../runtime/native';
 import { SteamParamStringArrayPtr, type SteamParamStringArrayJs } from '../../runtime/types';
 
-/** ISteamRemoteStorage (accessor SteamAPI_SteamRemoteStorage_v016) */
+/**
+ * ISteamRemoteStorage (accessor SteamAPI_SteamRemoteStorage_v016)
+ * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage
+ */
 export class ISteamRemoteStorage {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -12,259 +15,674 @@ export class ISteamRemoteStorage {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamRemoteStorage_v016 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `bool FileWrite(const char *pchFile, const void *pvData, int32 cubData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileWrite`
+   * @param pvData Buffer you allocate for `const void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWrite
+   */
   FileWrite(pchFile: string, pvData: Buffer | null, cubData: number): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileWrite', 'bool', ['void *', 'str', 'void *', 'int32'])(this.ptr, pchFile, pvData, cubData) as boolean;
   }
 
+  /**
+   * `int32 FileRead(const char *pchFile, void *pvData, int32 cubDataToRead)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileRead`
+   * @param pvData Buffer you allocate for `void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileRead
+   */
   FileRead(pchFile: string, pvData: Buffer | null, cubDataToRead: number): number {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileRead', 'int32', ['void *', 'str', 'void *', 'int32'])(this.ptr, pchFile, pvData, cubDataToRead) as number;
   }
 
-  /** Call result: RemoteStorageFileWriteAsyncComplete_t */
+  /**
+   * `SteamAPICall_t FileWriteAsync(const char *pchFile, const void *pvData, uint32 cubData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileWriteAsync`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageFileWriteAsyncComplete_t>(handle, layoutOf('RemoteStorageFileWriteAsyncComplete_t'))`.
+   * @param pvData Buffer you allocate for `const void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteAsync
+   */
   FileWriteAsync(pchFile: string, pvData: Buffer | null, cubData: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_FileWriteAsync', 'uint64', ['void *', 'str', 'void *', 'uint32'])(this.ptr, pchFile, pvData, cubData) as number | bigint);
   }
 
-  /** Call result: RemoteStorageFileReadAsyncComplete_t */
+  /**
+   * `SteamAPICall_t FileReadAsync(const char *pchFile, uint32 nOffset, uint32 cubToRead)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileReadAsync`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageFileReadAsyncComplete_t>(handle, layoutOf('RemoteStorageFileReadAsyncComplete_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsync
+   */
   FileReadAsync(pchFile: string, nOffset: number, cubToRead: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_FileReadAsync', 'uint64', ['void *', 'str', 'uint32', 'uint32'])(this.ptr, pchFile, nOffset, cubToRead) as number | bigint);
   }
 
+  /**
+   * `bool FileReadAsyncComplete(SteamAPICall_t hReadCall, void *pvBuffer, uint32 cubToRead)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileReadAsyncComplete`
+   * @param hReadCall `SteamAPICall_t`, 64-bit: bigint or number.
+   * @param pvBuffer Buffer you allocate for `void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsyncComplete
+   */
   FileReadAsyncComplete(hReadCall: bigint | number, pvBuffer: Buffer | null, cubToRead: number): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileReadAsyncComplete', 'bool', ['void *', 'uint64', 'void *', 'uint32'])(this.ptr, hReadCall, pvBuffer, cubToRead) as boolean;
   }
 
+  /**
+   * `bool FileForget(const char *pchFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileForget`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileForget
+   */
   FileForget(pchFile: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileForget', 'bool', ['void *', 'str'])(this.ptr, pchFile) as boolean;
   }
 
+  /**
+   * `bool FileDelete(const char *pchFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileDelete`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileDelete
+   */
   FileDelete(pchFile: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileDelete', 'bool', ['void *', 'str'])(this.ptr, pchFile) as boolean;
   }
 
-  /** Call result: RemoteStorageFileShareResult_t */
+  /**
+   * `SteamAPICall_t FileShare(const char *pchFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileShare`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageFileShareResult_t>(handle, layoutOf('RemoteStorageFileShareResult_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileShare
+   */
   FileShare(pchFile: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_FileShare', 'uint64', ['void *', 'str'])(this.ptr, pchFile) as number | bigint);
   }
 
+  /**
+   * `bool SetSyncPlatforms(const char *pchFile, ERemoteStoragePlatform eRemoteStoragePlatform)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_SetSyncPlatforms`
+   * @param eRemoteStoragePlatform enum `ERemoteStoragePlatform`; values on `flat.ERemoteStoragePlatform`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetSyncPlatforms
+   */
   SetSyncPlatforms(pchFile: string, eRemoteStoragePlatform: number): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_SetSyncPlatforms', 'bool', ['void *', 'str', 'int32'])(this.ptr, pchFile, eRemoteStoragePlatform) as boolean;
   }
 
+  /**
+   * `UGCFileWriteStreamHandle_t FileWriteStreamOpen(const char *pchFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileWriteStreamOpen`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamOpen
+   */
   FileWriteStreamOpen(pchFile: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_FileWriteStreamOpen', 'uint64', ['void *', 'str'])(this.ptr, pchFile) as number | bigint);
   }
 
+  /**
+   * `bool FileWriteStreamWriteChunk(UGCFileWriteStreamHandle_t writeHandle, const void *pvData, int32 cubData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileWriteStreamWriteChunk`
+   * @param writeHandle `UGCFileWriteStreamHandle_t`, 64-bit: bigint or number.
+   * @param pvData Buffer you allocate for `const void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamWriteChunk
+   */
   FileWriteStreamWriteChunk(writeHandle: bigint | number, pvData: Buffer | null, cubData: number): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileWriteStreamWriteChunk', 'bool', ['void *', 'uint64', 'void *', 'int32'])(this.ptr, writeHandle, pvData, cubData) as boolean;
   }
 
+  /**
+   * `bool FileWriteStreamClose(UGCFileWriteStreamHandle_t writeHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileWriteStreamClose`
+   * @param writeHandle `UGCFileWriteStreamHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamClose
+   */
   FileWriteStreamClose(writeHandle: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileWriteStreamClose', 'bool', ['void *', 'uint64'])(this.ptr, writeHandle) as boolean;
   }
 
+  /**
+   * `bool FileWriteStreamCancel(UGCFileWriteStreamHandle_t writeHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileWriteStreamCancel`
+   * @param writeHandle `UGCFileWriteStreamHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamCancel
+   */
   FileWriteStreamCancel(writeHandle: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileWriteStreamCancel', 'bool', ['void *', 'uint64'])(this.ptr, writeHandle) as boolean;
   }
 
+  /**
+   * `bool FileExists(const char *pchFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileExists`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileExists
+   */
   FileExists(pchFile: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileExists', 'bool', ['void *', 'str'])(this.ptr, pchFile) as boolean;
   }
 
+  /**
+   * `bool FilePersisted(const char *pchFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_FilePersisted`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FilePersisted
+   */
   FilePersisted(pchFile: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FilePersisted', 'bool', ['void *', 'str'])(this.ptr, pchFile) as boolean;
   }
 
+  /**
+   * `int32 GetFileSize(const char *pchFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetFileSize`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileSize
+   */
   GetFileSize(pchFile: string): number {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetFileSize', 'int32', ['void *', 'str'])(this.ptr, pchFile) as number;
   }
 
+  /**
+   * `int64 GetFileTimestamp(const char *pchFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetFileTimestamp`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileTimestamp
+   */
   GetFileTimestamp(pchFile: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_GetFileTimestamp', 'int64', ['void *', 'str'])(this.ptr, pchFile) as number | bigint);
   }
 
+  /**
+   * `ERemoteStoragePlatform GetSyncPlatforms(const char *pchFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetSyncPlatforms`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetSyncPlatforms
+   */
   GetSyncPlatforms(pchFile: string): number {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetSyncPlatforms', 'int32', ['void *', 'str'])(this.ptr, pchFile) as number;
   }
 
+  /**
+   * `int32 GetFileCount()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetFileCount`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileCount
+   */
   GetFileCount(): number {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetFileCount', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `const char * GetFileNameAndSize(int iFile, int32 *pnFileSizeInBytes)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetFileNameAndSize`
+   * @param pnFileSizeInBytes Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileNameAndSize
+   */
   GetFileNameAndSize(iFile: number, pnFileSizeInBytes: Buffer | null): string {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetFileNameAndSize', 'str', ['void *', 'int32', 'void *'])(this.ptr, iFile, pnFileSizeInBytes) as string;
   }
 
+  /**
+   * `bool GetQuota(uint64 *pnTotalBytes, uint64 *puAvailableBytes)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetQuota`
+   * @param pnTotalBytes Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
+   * @param puAvailableBytes Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetQuota
+   */
   GetQuota(pnTotalBytes: Buffer | null, puAvailableBytes: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetQuota', 'bool', ['void *', 'void *', 'void *'])(this.ptr, pnTotalBytes, puAvailableBytes) as boolean;
   }
 
+  /**
+   * `bool IsCloudEnabledForAccount()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_IsCloudEnabledForAccount`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForAccount
+   */
   IsCloudEnabledForAccount(): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_IsCloudEnabledForAccount', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool IsCloudEnabledForApp()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_IsCloudEnabledForApp`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForApp
+   */
   IsCloudEnabledForApp(): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_IsCloudEnabledForApp', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `void SetCloudEnabledForApp(bool bEnabled)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_SetCloudEnabledForApp`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetCloudEnabledForApp
+   */
   SetCloudEnabledForApp(bEnabled: boolean): void {
     this.nat.func('SteamAPI_ISteamRemoteStorage_SetCloudEnabledForApp', 'void', ['void *', 'bool'])(this.ptr, bEnabled);
   }
 
-  /** Call result: RemoteStorageDownloadUGCResult_t */
+  /**
+   * `SteamAPICall_t UGCDownload(UGCHandle_t hContent, uint32 unPriority)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UGCDownload`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageDownloadUGCResult_t>(handle, layoutOf('RemoteStorageDownloadUGCResult_t'))`.
+   * @param hContent `UGCHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownload
+   */
   UGCDownload(hContent: bigint | number, unPriority: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_UGCDownload', 'uint64', ['void *', 'uint64', 'uint32'])(this.ptr, hContent, unPriority) as number | bigint);
   }
 
+  /**
+   * `bool GetUGCDownloadProgress(UGCHandle_t hContent, int32 *pnBytesDownloaded, int32 *pnBytesExpected)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetUGCDownloadProgress`
+   * @param hContent `UGCHandle_t`, 64-bit: bigint or number.
+   * @param pnBytesDownloaded Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
+   * @param pnBytesExpected Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDownloadProgress
+   */
   GetUGCDownloadProgress(hContent: bigint | number, pnBytesDownloaded: Buffer | null, pnBytesExpected: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetUGCDownloadProgress', 'bool', ['void *', 'uint64', 'void *', 'void *'])(this.ptr, hContent, pnBytesDownloaded, pnBytesExpected) as boolean;
   }
 
+  /**
+   * `bool GetUGCDetails(UGCHandle_t hContent, AppId_t *pnAppID, char **ppchName, int32 *pnFileSizeInBytes, CSteamID *pSteamIDOwner)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetUGCDetails`
+   * @param hContent `UGCHandle_t`, 64-bit: bigint or number.
+   * @param pnAppID Buffer you allocate for `AppId_t *`: `Buffer.alloc(4)` per element.
+   * @param ppchName Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @param pnFileSizeInBytes Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
+   * @param pSteamIDOwner Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDetails
+   */
   GetUGCDetails(hContent: bigint | number, pnAppID: Buffer | null, ppchName: Buffer | null, pnFileSizeInBytes: Buffer | null, pSteamIDOwner: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetUGCDetails', 'bool', ['void *', 'uint64', 'void *', 'void *', 'void *', 'void *'])(this.ptr, hContent, pnAppID, ppchName, pnFileSizeInBytes, pSteamIDOwner) as boolean;
   }
 
+  /**
+   * `int32 UGCRead(UGCHandle_t hContent, void *pvData, int32 cubDataToRead, uint32 cOffset, EUGCReadAction eAction)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UGCRead`
+   * @param hContent `UGCHandle_t`, 64-bit: bigint or number.
+   * @param pvData Buffer you allocate for `void *`.
+   * @param eAction enum `EUGCReadAction`; values on `flat.EUGCReadAction`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCRead
+   */
   UGCRead(hContent: bigint | number, pvData: Buffer | null, cubDataToRead: number, cOffset: number, eAction: number): number {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UGCRead', 'int32', ['void *', 'uint64', 'void *', 'int32', 'uint32', 'int32'])(this.ptr, hContent, pvData, cubDataToRead, cOffset, eAction) as number;
   }
 
+  /**
+   * `int32 GetCachedUGCCount()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetCachedUGCCount`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCCount
+   */
   GetCachedUGCCount(): number {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetCachedUGCCount', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `UGCHandle_t GetCachedUGCHandle(int32 iCachedContent)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetCachedUGCHandle`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCHandle
+   */
   GetCachedUGCHandle(iCachedContent: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_GetCachedUGCHandle', 'uint64', ['void *', 'int32'])(this.ptr, iCachedContent) as number | bigint);
   }
 
-  /** Call result: RemoteStoragePublishFileProgress_t */
+  /**
+   * `SteamAPICall_t PublishWorkshopFile(const char *pchFile, const char *pchPreviewFile, AppId_t nConsumerAppId, const char *pchTitle, const char *pchDescription, ERemoteStoragePublishedFileVisibility eVisibility, SteamParamStringArray_t *pTags, EWorkshopFileType eWorkshopFileType)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_PublishWorkshopFile`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStoragePublishFileProgress_t>(handle, layoutOf('RemoteStoragePublishFileProgress_t'))`.
+   * @param eVisibility enum `ERemoteStoragePublishedFileVisibility`; values on `flat.ERemoteStoragePublishedFileVisibility`.
+   * @param pTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
+   * @param eWorkshopFileType enum `EWorkshopFileType`; values on `flat.EWorkshopFileType`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#PublishWorkshopFile
+   */
   PublishWorkshopFile(pchFile: string, pchPreviewFile: string, nConsumerAppId: number, pchTitle: string, pchDescription: string, eVisibility: number, pTags: SteamParamStringArrayJs, eWorkshopFileType: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_PublishWorkshopFile', 'uint64', ['void *', 'str', 'str', 'uint32', 'str', 'str', 'int32', SteamParamStringArrayPtr, 'int32'])(this.ptr, pchFile, pchPreviewFile, nConsumerAppId, pchTitle, pchDescription, eVisibility, pTags, eWorkshopFileType) as number | bigint);
   }
 
+  /**
+   * `PublishedFileUpdateHandle_t CreatePublishedFileUpdateRequest(PublishedFileId_t unPublishedFileId)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_CreatePublishedFileUpdateRequest`
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#CreatePublishedFileUpdateRequest
+   */
   CreatePublishedFileUpdateRequest(unPublishedFileId: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_CreatePublishedFileUpdateRequest', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
+  /**
+   * `bool UpdatePublishedFileFile(PublishedFileUpdateHandle_t updateHandle, const char *pchFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileFile`
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileFile
+   */
   UpdatePublishedFileFile(updateHandle: bigint | number, pchFile: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileFile', 'bool', ['void *', 'uint64', 'str'])(this.ptr, updateHandle, pchFile) as boolean;
   }
 
+  /**
+   * `bool UpdatePublishedFilePreviewFile(PublishedFileUpdateHandle_t updateHandle, const char *pchPreviewFile)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFilePreviewFile`
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFilePreviewFile
+   */
   UpdatePublishedFilePreviewFile(updateHandle: bigint | number, pchPreviewFile: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFilePreviewFile', 'bool', ['void *', 'uint64', 'str'])(this.ptr, updateHandle, pchPreviewFile) as boolean;
   }
 
+  /**
+   * `bool UpdatePublishedFileTitle(PublishedFileUpdateHandle_t updateHandle, const char *pchTitle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileTitle`
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileTitle
+   */
   UpdatePublishedFileTitle(updateHandle: bigint | number, pchTitle: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileTitle', 'bool', ['void *', 'uint64', 'str'])(this.ptr, updateHandle, pchTitle) as boolean;
   }
 
+  /**
+   * `bool UpdatePublishedFileDescription(PublishedFileUpdateHandle_t updateHandle, const char *pchDescription)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileDescription`
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileDescription
+   */
   UpdatePublishedFileDescription(updateHandle: bigint | number, pchDescription: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileDescription', 'bool', ['void *', 'uint64', 'str'])(this.ptr, updateHandle, pchDescription) as boolean;
   }
 
+  /**
+   * `bool UpdatePublishedFileVisibility(PublishedFileUpdateHandle_t updateHandle, ERemoteStoragePublishedFileVisibility eVisibility)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileVisibility`
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @param eVisibility enum `ERemoteStoragePublishedFileVisibility`; values on `flat.ERemoteStoragePublishedFileVisibility`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileVisibility
+   */
   UpdatePublishedFileVisibility(updateHandle: bigint | number, eVisibility: number): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileVisibility', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, updateHandle, eVisibility) as boolean;
   }
 
+  /**
+   * `bool UpdatePublishedFileTags(PublishedFileUpdateHandle_t updateHandle, SteamParamStringArray_t *pTags)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileTags`
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @param pTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileTags
+   */
   UpdatePublishedFileTags(updateHandle: bigint | number, pTags: SteamParamStringArrayJs): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileTags', 'bool', ['void *', 'uint64', SteamParamStringArrayPtr])(this.ptr, updateHandle, pTags) as boolean;
   }
 
-  /** Call result: RemoteStorageUpdatePublishedFileResult_t */
+  /**
+   * `SteamAPICall_t CommitPublishedFileUpdate(PublishedFileUpdateHandle_t updateHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_CommitPublishedFileUpdate`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUpdatePublishedFileResult_t>(handle, layoutOf('RemoteStorageUpdatePublishedFileResult_t'))`.
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#CommitPublishedFileUpdate
+   */
   CommitPublishedFileUpdate(updateHandle: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_CommitPublishedFileUpdate', 'uint64', ['void *', 'uint64'])(this.ptr, updateHandle) as number | bigint);
   }
 
-  /** Call result: RemoteStorageGetPublishedFileDetailsResult_t */
+  /**
+   * `SteamAPICall_t GetPublishedFileDetails(PublishedFileId_t unPublishedFileId, uint32 unMaxSecondsOld)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetPublishedFileDetails`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageGetPublishedFileDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedFileDetailsResult_t'))`.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetPublishedFileDetails
+   */
   GetPublishedFileDetails(unPublishedFileId: bigint | number, unMaxSecondsOld: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_GetPublishedFileDetails', 'uint64', ['void *', 'uint64', 'uint32'])(this.ptr, unPublishedFileId, unMaxSecondsOld) as number | bigint);
   }
 
-  /** Call result: RemoteStorageDeletePublishedFileResult_t */
+  /**
+   * `SteamAPICall_t DeletePublishedFile(PublishedFileId_t unPublishedFileId)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_DeletePublishedFile`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageDeletePublishedFileResult_t>(handle, layoutOf('RemoteStorageDeletePublishedFileResult_t'))`.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#DeletePublishedFile
+   */
   DeletePublishedFile(unPublishedFileId: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_DeletePublishedFile', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
-  /** Call result: RemoteStorageEnumerateUserPublishedFilesResult_t */
+  /**
+   * `SteamAPICall_t EnumerateUserPublishedFiles(uint32 unStartIndex)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumerateUserPublishedFiles`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumerateUserPublishedFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateUserPublishedFilesResult_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumerateUserPublishedFiles
+   */
   EnumerateUserPublishedFiles(unStartIndex: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_EnumerateUserPublishedFiles', 'uint64', ['void *', 'uint32'])(this.ptr, unStartIndex) as number | bigint);
   }
 
-  /** Call result: RemoteStorageSubscribePublishedFileResult_t */
+  /**
+   * `SteamAPICall_t SubscribePublishedFile(PublishedFileId_t unPublishedFileId)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_SubscribePublishedFile`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageSubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageSubscribePublishedFileResult_t'))`.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SubscribePublishedFile
+   */
   SubscribePublishedFile(unPublishedFileId: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_SubscribePublishedFile', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
-  /** Call result: RemoteStorageEnumerateUserSubscribedFilesResult_t */
+  /**
+   * `SteamAPICall_t EnumerateUserSubscribedFiles(uint32 unStartIndex)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumerateUserSubscribedFiles`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumerateUserSubscribedFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateUserSubscribedFilesResult_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumerateUserSubscribedFiles
+   */
   EnumerateUserSubscribedFiles(unStartIndex: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_EnumerateUserSubscribedFiles', 'uint64', ['void *', 'uint32'])(this.ptr, unStartIndex) as number | bigint);
   }
 
-  /** Call result: RemoteStorageUnsubscribePublishedFileResult_t */
+  /**
+   * `SteamAPICall_t UnsubscribePublishedFile(PublishedFileId_t unPublishedFileId)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UnsubscribePublishedFile`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUnsubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageUnsubscribePublishedFileResult_t'))`.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UnsubscribePublishedFile
+   */
   UnsubscribePublishedFile(unPublishedFileId: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_UnsubscribePublishedFile', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
+  /**
+   * `bool UpdatePublishedFileSetChangeDescription(PublishedFileUpdateHandle_t updateHandle, const char *pchChangeDescription)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileSetChangeDescription`
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileSetChangeDescription
+   */
   UpdatePublishedFileSetChangeDescription(updateHandle: bigint | number, pchChangeDescription: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileSetChangeDescription', 'bool', ['void *', 'uint64', 'str'])(this.ptr, updateHandle, pchChangeDescription) as boolean;
   }
 
-  /** Call result: RemoteStorageGetPublishedItemVoteDetailsResult_t */
+  /**
+   * `SteamAPICall_t GetPublishedItemVoteDetails(PublishedFileId_t unPublishedFileId)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetPublishedItemVoteDetails`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageGetPublishedItemVoteDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t'))`.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetPublishedItemVoteDetails
+   */
   GetPublishedItemVoteDetails(unPublishedFileId: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_GetPublishedItemVoteDetails', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
-  /** Call result: RemoteStorageUpdateUserPublishedItemVoteResult_t */
+  /**
+   * `SteamAPICall_t UpdateUserPublishedItemVote(PublishedFileId_t unPublishedFileId, bool bVoteUp)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdateUserPublishedItemVote`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUpdateUserPublishedItemVoteResult_t>(handle, layoutOf('RemoteStorageUpdateUserPublishedItemVoteResult_t'))`.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdateUserPublishedItemVote
+   */
   UpdateUserPublishedItemVote(unPublishedFileId: bigint | number, bVoteUp: boolean): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_UpdateUserPublishedItemVote', 'uint64', ['void *', 'uint64', 'bool'])(this.ptr, unPublishedFileId, bVoteUp) as number | bigint);
   }
 
-  /** Call result: RemoteStorageGetPublishedItemVoteDetailsResult_t */
+  /**
+   * `SteamAPICall_t GetUserPublishedItemVoteDetails(PublishedFileId_t unPublishedFileId)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetUserPublishedItemVoteDetails`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageGetPublishedItemVoteDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t'))`.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUserPublishedItemVoteDetails
+   */
   GetUserPublishedItemVoteDetails(unPublishedFileId: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_GetUserPublishedItemVoteDetails', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
-  /** Call result: RemoteStorageEnumerateUserPublishedFilesResult_t */
+  /**
+   * `SteamAPICall_t EnumerateUserSharedWorkshopFiles(CSteamID steamId, uint32 unStartIndex, SteamParamStringArray_t *pRequiredTags, SteamParamStringArray_t *pExcludedTags)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumerateUserSharedWorkshopFiles`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumerateUserPublishedFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateUserPublishedFilesResult_t'))`.
+   * @param steamId `CSteamID`, 64-bit: bigint or number.
+   * @param pRequiredTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
+   * @param pExcludedTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumerateUserSharedWorkshopFiles
+   */
   EnumerateUserSharedWorkshopFiles(steamId: bigint | number, unStartIndex: number, pRequiredTags: SteamParamStringArrayJs, pExcludedTags: SteamParamStringArrayJs): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_EnumerateUserSharedWorkshopFiles', 'uint64', ['void *', 'uint64', 'uint32', SteamParamStringArrayPtr, SteamParamStringArrayPtr])(this.ptr, steamId, unStartIndex, pRequiredTags, pExcludedTags) as number | bigint);
   }
 
-  /** Call result: RemoteStoragePublishFileProgress_t */
+  /**
+   * `SteamAPICall_t PublishVideo(EWorkshopVideoProvider eVideoProvider, const char *pchVideoAccount, const char *pchVideoIdentifier, const char *pchPreviewFile, AppId_t nConsumerAppId, const char *pchTitle, const char *pchDescription, ERemoteStoragePublishedFileVisibility eVisibility, SteamParamStringArray_t *pTags)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_PublishVideo`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStoragePublishFileProgress_t>(handle, layoutOf('RemoteStoragePublishFileProgress_t'))`.
+   * @param eVideoProvider enum `EWorkshopVideoProvider`; values on `flat.EWorkshopVideoProvider`.
+   * @param eVisibility enum `ERemoteStoragePublishedFileVisibility`; values on `flat.ERemoteStoragePublishedFileVisibility`.
+   * @param pTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#PublishVideo
+   */
   PublishVideo(eVideoProvider: number, pchVideoAccount: string, pchVideoIdentifier: string, pchPreviewFile: string, nConsumerAppId: number, pchTitle: string, pchDescription: string, eVisibility: number, pTags: SteamParamStringArrayJs): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_PublishVideo', 'uint64', ['void *', 'int32', 'str', 'str', 'str', 'uint32', 'str', 'str', 'int32', SteamParamStringArrayPtr])(this.ptr, eVideoProvider, pchVideoAccount, pchVideoIdentifier, pchPreviewFile, nConsumerAppId, pchTitle, pchDescription, eVisibility, pTags) as number | bigint);
   }
 
-  /** Call result: RemoteStorageSetUserPublishedFileActionResult_t */
+  /**
+   * `SteamAPICall_t SetUserPublishedFileAction(PublishedFileId_t unPublishedFileId, EWorkshopFileAction eAction)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_SetUserPublishedFileAction`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageSetUserPublishedFileActionResult_t>(handle, layoutOf('RemoteStorageSetUserPublishedFileActionResult_t'))`.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param eAction enum `EWorkshopFileAction`; values on `flat.EWorkshopFileAction`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetUserPublishedFileAction
+   */
   SetUserPublishedFileAction(unPublishedFileId: bigint | number, eAction: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_SetUserPublishedFileAction', 'uint64', ['void *', 'uint64', 'int32'])(this.ptr, unPublishedFileId, eAction) as number | bigint);
   }
 
-  /** Call result: RemoteStorageEnumeratePublishedFilesByUserActionResult_t */
+  /**
+   * `SteamAPICall_t EnumeratePublishedFilesByUserAction(EWorkshopFileAction eAction, uint32 unStartIndex)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumeratePublishedFilesByUserAction`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumeratePublishedFilesByUserActionResult_t>(handle, layoutOf('RemoteStorageEnumeratePublishedFilesByUserActionResult_t'))`.
+   * @param eAction enum `EWorkshopFileAction`; values on `flat.EWorkshopFileAction`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumeratePublishedFilesByUserAction
+   */
   EnumeratePublishedFilesByUserAction(eAction: number, unStartIndex: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_EnumeratePublishedFilesByUserAction', 'uint64', ['void *', 'int32', 'uint32'])(this.ptr, eAction, unStartIndex) as number | bigint);
   }
 
-  /** Call result: RemoteStorageEnumerateWorkshopFilesResult_t */
+  /**
+   * `SteamAPICall_t EnumeratePublishedWorkshopFiles(EWorkshopEnumerationType eEnumerationType, uint32 unStartIndex, uint32 unCount, uint32 unDays, SteamParamStringArray_t *pTags, SteamParamStringArray_t *pUserTags)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumeratePublishedWorkshopFiles`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumerateWorkshopFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateWorkshopFilesResult_t'))`.
+   * @param eEnumerationType enum `EWorkshopEnumerationType`; values on `flat.EWorkshopEnumerationType`.
+   * @param pTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
+   * @param pUserTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumeratePublishedWorkshopFiles
+   */
   EnumeratePublishedWorkshopFiles(eEnumerationType: number, unStartIndex: number, unCount: number, unDays: number, pTags: SteamParamStringArrayJs, pUserTags: SteamParamStringArrayJs): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_EnumeratePublishedWorkshopFiles', 'uint64', ['void *', 'int32', 'uint32', 'uint32', 'uint32', SteamParamStringArrayPtr, SteamParamStringArrayPtr])(this.ptr, eEnumerationType, unStartIndex, unCount, unDays, pTags, pUserTags) as number | bigint);
   }
 
-  /** Call result: RemoteStorageDownloadUGCResult_t */
+  /**
+   * `SteamAPICall_t UGCDownloadToLocation(UGCHandle_t hContent, const char *pchLocation, uint32 unPriority)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_UGCDownloadToLocation`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageDownloadUGCResult_t>(handle, layoutOf('RemoteStorageDownloadUGCResult_t'))`.
+   * @param hContent `UGCHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownloadToLocation
+   */
   UGCDownloadToLocation(hContent: bigint | number, pchLocation: string, unPriority: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_UGCDownloadToLocation', 'uint64', ['void *', 'uint64', 'str', 'uint32'])(this.ptr, hContent, pchLocation, unPriority) as number | bigint);
   }
 
+  /**
+   * `int32 GetLocalFileChangeCount()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetLocalFileChangeCount`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetLocalFileChangeCount
+   */
   GetLocalFileChangeCount(): number {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetLocalFileChangeCount', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `const char * GetLocalFileChange(int iFile, ERemoteStorageLocalFileChange *pEChangeType, ERemoteStorageFilePathType *pEFilePathType)`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetLocalFileChange`
+   * @param pEChangeType Buffer you allocate for `ERemoteStorageLocalFileChange *`: `Buffer.alloc(4)` per element.
+   * @param pEFilePathType Buffer you allocate for `ERemoteStorageFilePathType *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetLocalFileChange
+   */
   GetLocalFileChange(iFile: number, pEChangeType: Buffer | null, pEFilePathType: Buffer | null): string {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetLocalFileChange', 'str', ['void *', 'int32', 'void *', 'void *'])(this.ptr, iFile, pEChangeType, pEFilePathType) as string;
   }
 
+  /**
+   * `bool BeginFileWriteBatch()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_BeginFileWriteBatch`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#BeginFileWriteBatch
+   */
   BeginFileWriteBatch(): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_BeginFileWriteBatch', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool EndFileWriteBatch()`
+   *
+   * Flat symbol: `SteamAPI_ISteamRemoteStorage_EndFileWriteBatch`
+   * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EndFileWriteBatch
+   */
   EndFileWriteBatch(): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_EndFileWriteBatch', 'bool', ['void *'])(this.ptr) as boolean;
   }

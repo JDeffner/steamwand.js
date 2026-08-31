@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamHTMLSurface (accessor SteamAPI_SteamHTMLSurface_v005) */
+/**
+ * ISteamHTMLSurface (accessor SteamAPI_SteamHTMLSurface_v005)
+ * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface
+ */
 export class ISteamHTMLSurface {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,151 +14,380 @@ export class ISteamHTMLSurface {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamHTMLSurface_v005 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `bool Init()`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_Init`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#Init
+   */
   Init(): boolean {
     return this.nat.func('SteamAPI_ISteamHTMLSurface_Init', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool Shutdown()`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_Shutdown`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#Shutdown
+   */
   Shutdown(): boolean {
     return this.nat.func('SteamAPI_ISteamHTMLSurface_Shutdown', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
-  /** Call result: HTML_BrowserReady_t */
+  /**
+   * `SteamAPICall_t CreateBrowser(const char *pchUserAgent, const char *pchUserCSS)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_CreateBrowser`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<HTML_BrowserReady_t>(handle, layoutOf('HTML_BrowserReady_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#CreateBrowser
+   */
   CreateBrowser(pchUserAgent: string, pchUserCSS: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamHTMLSurface_CreateBrowser', 'uint64', ['void *', 'str', 'str'])(this.ptr, pchUserAgent, pchUserCSS) as number | bigint);
   }
 
+  /**
+   * `void RemoveBrowser(HHTMLBrowser unBrowserHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_RemoveBrowser`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#RemoveBrowser
+   */
   RemoveBrowser(unBrowserHandle: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_RemoveBrowser', 'void', ['void *', 'uint32'])(this.ptr, unBrowserHandle);
   }
 
+  /**
+   * `void LoadURL(HHTMLBrowser unBrowserHandle, const char *pchURL, const char *pchPostData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_LoadURL`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#LoadURL
+   */
   LoadURL(unBrowserHandle: number, pchURL: string, pchPostData: string): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_LoadURL', 'void', ['void *', 'uint32', 'str', 'str'])(this.ptr, unBrowserHandle, pchURL, pchPostData);
   }
 
+  /**
+   * `void SetSize(HHTMLBrowser unBrowserHandle, uint32 unWidth, uint32 unHeight)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_SetSize`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#SetSize
+   */
   SetSize(unBrowserHandle: number, unWidth: number, unHeight: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_SetSize', 'void', ['void *', 'uint32', 'uint32', 'uint32'])(this.ptr, unBrowserHandle, unWidth, unHeight);
   }
 
+  /**
+   * `void StopLoad(HHTMLBrowser unBrowserHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_StopLoad`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#StopLoad
+   */
   StopLoad(unBrowserHandle: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_StopLoad', 'void', ['void *', 'uint32'])(this.ptr, unBrowserHandle);
   }
 
+  /**
+   * `void Reload(HHTMLBrowser unBrowserHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_Reload`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#Reload
+   */
   Reload(unBrowserHandle: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_Reload', 'void', ['void *', 'uint32'])(this.ptr, unBrowserHandle);
   }
 
+  /**
+   * `void GoBack(HHTMLBrowser unBrowserHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_GoBack`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#GoBack
+   */
   GoBack(unBrowserHandle: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_GoBack', 'void', ['void *', 'uint32'])(this.ptr, unBrowserHandle);
   }
 
+  /**
+   * `void GoForward(HHTMLBrowser unBrowserHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_GoForward`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#GoForward
+   */
   GoForward(unBrowserHandle: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_GoForward', 'void', ['void *', 'uint32'])(this.ptr, unBrowserHandle);
   }
 
+  /**
+   * `void AddHeader(HHTMLBrowser unBrowserHandle, const char *pchKey, const char *pchValue)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_AddHeader`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#AddHeader
+   */
   AddHeader(unBrowserHandle: number, pchKey: string, pchValue: string): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_AddHeader', 'void', ['void *', 'uint32', 'str', 'str'])(this.ptr, unBrowserHandle, pchKey, pchValue);
   }
 
+  /**
+   * `void ExecuteJavascript(HHTMLBrowser unBrowserHandle, const char *pchScript)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_ExecuteJavascript`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#ExecuteJavascript
+   */
   ExecuteJavascript(unBrowserHandle: number, pchScript: string): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_ExecuteJavascript', 'void', ['void *', 'uint32', 'str'])(this.ptr, unBrowserHandle, pchScript);
   }
 
+  /**
+   * `void MouseUp(HHTMLBrowser unBrowserHandle, ISteamHTMLSurface::EHTMLMouseButton eMouseButton)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_MouseUp`
+   * @param eMouseButton `ISteamHTMLSurface::EHTMLMouseButton` is enum `EHTMLMouseButton`; values on `flat.EHTMLMouseButton`.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#MouseUp
+   */
   MouseUp(unBrowserHandle: number, eMouseButton: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_MouseUp', 'void', ['void *', 'uint32', 'int32'])(this.ptr, unBrowserHandle, eMouseButton);
   }
 
+  /**
+   * `void MouseDown(HHTMLBrowser unBrowserHandle, ISteamHTMLSurface::EHTMLMouseButton eMouseButton)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_MouseDown`
+   * @param eMouseButton `ISteamHTMLSurface::EHTMLMouseButton` is enum `EHTMLMouseButton`; values on `flat.EHTMLMouseButton`.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#MouseDown
+   */
   MouseDown(unBrowserHandle: number, eMouseButton: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_MouseDown', 'void', ['void *', 'uint32', 'int32'])(this.ptr, unBrowserHandle, eMouseButton);
   }
 
+  /**
+   * `void MouseDoubleClick(HHTMLBrowser unBrowserHandle, ISteamHTMLSurface::EHTMLMouseButton eMouseButton)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_MouseDoubleClick`
+   * @param eMouseButton `ISteamHTMLSurface::EHTMLMouseButton` is enum `EHTMLMouseButton`; values on `flat.EHTMLMouseButton`.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#MouseDoubleClick
+   */
   MouseDoubleClick(unBrowserHandle: number, eMouseButton: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_MouseDoubleClick', 'void', ['void *', 'uint32', 'int32'])(this.ptr, unBrowserHandle, eMouseButton);
   }
 
+  /**
+   * `void MouseMove(HHTMLBrowser unBrowserHandle, int x, int y)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_MouseMove`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#MouseMove
+   */
   MouseMove(unBrowserHandle: number, x: number, y: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_MouseMove', 'void', ['void *', 'uint32', 'int32', 'int32'])(this.ptr, unBrowserHandle, x, y);
   }
 
+  /**
+   * `void MouseWheel(HHTMLBrowser unBrowserHandle, int32 nDelta)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_MouseWheel`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#MouseWheel
+   */
   MouseWheel(unBrowserHandle: number, nDelta: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_MouseWheel', 'void', ['void *', 'uint32', 'int32'])(this.ptr, unBrowserHandle, nDelta);
   }
 
+  /**
+   * `void KeyDown(HHTMLBrowser unBrowserHandle, uint32 nNativeKeyCode, ISteamHTMLSurface::EHTMLKeyModifiers eHTMLKeyModifiers, bool bIsSystemKey)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_KeyDown`
+   * @param eHTMLKeyModifiers `ISteamHTMLSurface::EHTMLKeyModifiers` is enum `EHTMLKeyModifiers`; values on `flat.EHTMLKeyModifiers`.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#KeyDown
+   */
   KeyDown(unBrowserHandle: number, nNativeKeyCode: number, eHTMLKeyModifiers: number, bIsSystemKey: boolean): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_KeyDown', 'void', ['void *', 'uint32', 'uint32', 'int32', 'bool'])(this.ptr, unBrowserHandle, nNativeKeyCode, eHTMLKeyModifiers, bIsSystemKey);
   }
 
+  /**
+   * `void KeyUp(HHTMLBrowser unBrowserHandle, uint32 nNativeKeyCode, ISteamHTMLSurface::EHTMLKeyModifiers eHTMLKeyModifiers)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_KeyUp`
+   * @param eHTMLKeyModifiers `ISteamHTMLSurface::EHTMLKeyModifiers` is enum `EHTMLKeyModifiers`; values on `flat.EHTMLKeyModifiers`.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#KeyUp
+   */
   KeyUp(unBrowserHandle: number, nNativeKeyCode: number, eHTMLKeyModifiers: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_KeyUp', 'void', ['void *', 'uint32', 'uint32', 'int32'])(this.ptr, unBrowserHandle, nNativeKeyCode, eHTMLKeyModifiers);
   }
 
+  /**
+   * `void KeyChar(HHTMLBrowser unBrowserHandle, uint32 cUnicodeChar, ISteamHTMLSurface::EHTMLKeyModifiers eHTMLKeyModifiers)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_KeyChar`
+   * @param eHTMLKeyModifiers `ISteamHTMLSurface::EHTMLKeyModifiers` is enum `EHTMLKeyModifiers`; values on `flat.EHTMLKeyModifiers`.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#KeyChar
+   */
   KeyChar(unBrowserHandle: number, cUnicodeChar: number, eHTMLKeyModifiers: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_KeyChar', 'void', ['void *', 'uint32', 'uint32', 'int32'])(this.ptr, unBrowserHandle, cUnicodeChar, eHTMLKeyModifiers);
   }
 
+  /**
+   * `void SetHorizontalScroll(HHTMLBrowser unBrowserHandle, uint32 nAbsolutePixelScroll)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_SetHorizontalScroll`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#SetHorizontalScroll
+   */
   SetHorizontalScroll(unBrowserHandle: number, nAbsolutePixelScroll: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_SetHorizontalScroll', 'void', ['void *', 'uint32', 'uint32'])(this.ptr, unBrowserHandle, nAbsolutePixelScroll);
   }
 
+  /**
+   * `void SetVerticalScroll(HHTMLBrowser unBrowserHandle, uint32 nAbsolutePixelScroll)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_SetVerticalScroll`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#SetVerticalScroll
+   */
   SetVerticalScroll(unBrowserHandle: number, nAbsolutePixelScroll: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_SetVerticalScroll', 'void', ['void *', 'uint32', 'uint32'])(this.ptr, unBrowserHandle, nAbsolutePixelScroll);
   }
 
+  /**
+   * `void SetKeyFocus(HHTMLBrowser unBrowserHandle, bool bHasKeyFocus)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_SetKeyFocus`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#SetKeyFocus
+   */
   SetKeyFocus(unBrowserHandle: number, bHasKeyFocus: boolean): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_SetKeyFocus', 'void', ['void *', 'uint32', 'bool'])(this.ptr, unBrowserHandle, bHasKeyFocus);
   }
 
+  /**
+   * `void ViewSource(HHTMLBrowser unBrowserHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_ViewSource`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#ViewSource
+   */
   ViewSource(unBrowserHandle: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_ViewSource', 'void', ['void *', 'uint32'])(this.ptr, unBrowserHandle);
   }
 
+  /**
+   * `void CopyToClipboard(HHTMLBrowser unBrowserHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_CopyToClipboard`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#CopyToClipboard
+   */
   CopyToClipboard(unBrowserHandle: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_CopyToClipboard', 'void', ['void *', 'uint32'])(this.ptr, unBrowserHandle);
   }
 
+  /**
+   * `void PasteFromClipboard(HHTMLBrowser unBrowserHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_PasteFromClipboard`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#PasteFromClipboard
+   */
   PasteFromClipboard(unBrowserHandle: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_PasteFromClipboard', 'void', ['void *', 'uint32'])(this.ptr, unBrowserHandle);
   }
 
+  /**
+   * `void Find(HHTMLBrowser unBrowserHandle, const char *pchSearchStr, bool bCurrentlyInFind, bool bReverse)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_Find`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#Find
+   */
   Find(unBrowserHandle: number, pchSearchStr: string, bCurrentlyInFind: boolean, bReverse: boolean): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_Find', 'void', ['void *', 'uint32', 'str', 'bool', 'bool'])(this.ptr, unBrowserHandle, pchSearchStr, bCurrentlyInFind, bReverse);
   }
 
+  /**
+   * `void StopFind(HHTMLBrowser unBrowserHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_StopFind`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#StopFind
+   */
   StopFind(unBrowserHandle: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_StopFind', 'void', ['void *', 'uint32'])(this.ptr, unBrowserHandle);
   }
 
+  /**
+   * `void GetLinkAtPosition(HHTMLBrowser unBrowserHandle, int x, int y)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_GetLinkAtPosition`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#GetLinkAtPosition
+   */
   GetLinkAtPosition(unBrowserHandle: number, x: number, y: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_GetLinkAtPosition', 'void', ['void *', 'uint32', 'int32', 'int32'])(this.ptr, unBrowserHandle, x, y);
   }
 
+  /**
+   * `void SetCookie(const char *pchHostname, const char *pchKey, const char *pchValue, const char *pchPath, RTime32 nExpires, bool bSecure, bool bHTTPOnly)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_SetCookie`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#SetCookie
+   */
   SetCookie(pchHostname: string, pchKey: string, pchValue: string, pchPath: string, nExpires: number, bSecure: boolean, bHTTPOnly: boolean): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_SetCookie', 'void', ['void *', 'str', 'str', 'str', 'str', 'uint32', 'bool', 'bool'])(this.ptr, pchHostname, pchKey, pchValue, pchPath, nExpires, bSecure, bHTTPOnly);
   }
 
+  /**
+   * `void SetPageScaleFactor(HHTMLBrowser unBrowserHandle, float flZoom, int nPointX, int nPointY)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_SetPageScaleFactor`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#SetPageScaleFactor
+   */
   SetPageScaleFactor(unBrowserHandle: number, flZoom: number, nPointX: number, nPointY: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_SetPageScaleFactor', 'void', ['void *', 'uint32', 'float', 'int32', 'int32'])(this.ptr, unBrowserHandle, flZoom, nPointX, nPointY);
   }
 
+  /**
+   * `void SetBackgroundMode(HHTMLBrowser unBrowserHandle, bool bBackgroundMode)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_SetBackgroundMode`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#SetBackgroundMode
+   */
   SetBackgroundMode(unBrowserHandle: number, bBackgroundMode: boolean): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_SetBackgroundMode', 'void', ['void *', 'uint32', 'bool'])(this.ptr, unBrowserHandle, bBackgroundMode);
   }
 
+  /**
+   * `void SetDPIScalingFactor(HHTMLBrowser unBrowserHandle, float flDPIScaling)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_SetDPIScalingFactor`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#SetDPIScalingFactor
+   */
   SetDPIScalingFactor(unBrowserHandle: number, flDPIScaling: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_SetDPIScalingFactor', 'void', ['void *', 'uint32', 'float'])(this.ptr, unBrowserHandle, flDPIScaling);
   }
 
+  /**
+   * `void OpenDeveloperTools(HHTMLBrowser unBrowserHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_OpenDeveloperTools`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#OpenDeveloperTools
+   */
   OpenDeveloperTools(unBrowserHandle: number): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_OpenDeveloperTools', 'void', ['void *', 'uint32'])(this.ptr, unBrowserHandle);
   }
 
+  /**
+   * `void AllowStartRequest(HHTMLBrowser unBrowserHandle, bool bAllowed)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_AllowStartRequest`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#AllowStartRequest
+   */
   AllowStartRequest(unBrowserHandle: number, bAllowed: boolean): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_AllowStartRequest', 'void', ['void *', 'uint32', 'bool'])(this.ptr, unBrowserHandle, bAllowed);
   }
 
+  /**
+   * `void JSDialogResponse(HHTMLBrowser unBrowserHandle, bool bResult)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_JSDialogResponse`
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#JSDialogResponse
+   */
   JSDialogResponse(unBrowserHandle: number, bResult: boolean): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_JSDialogResponse', 'void', ['void *', 'uint32', 'bool'])(this.ptr, unBrowserHandle, bResult);
   }
 
+  /**
+   * `void FileLoadDialogResponse(HHTMLBrowser unBrowserHandle, const char **pchSelectedFiles)`
+   *
+   * Flat symbol: `SteamAPI_ISteamHTMLSurface_FileLoadDialogResponse`
+   * @param pchSelectedFiles Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#FileLoadDialogResponse
+   */
   FileLoadDialogResponse(unBrowserHandle: number, pchSelectedFiles: Buffer | null): void {
     this.nat.func('SteamAPI_ISteamHTMLSurface_FileLoadDialogResponse', 'void', ['void *', 'uint32', 'void *'])(this.ptr, unBrowserHandle, pchSelectedFiles);
   }

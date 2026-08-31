@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamScreenshots (accessor SteamAPI_SteamScreenshots_v003) */
+/**
+ * ISteamScreenshots (accessor SteamAPI_SteamScreenshots_v003)
+ * @see https://partner.steamgames.com/doc/api/ISteamScreenshots
+ */
 export class ISteamScreenshots {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,38 +14,96 @@ export class ISteamScreenshots {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamScreenshots_v003 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `ScreenshotHandle WriteScreenshot(void *pubRGB, uint32 cubRGB, int nWidth, int nHeight)`
+   *
+   * Flat symbol: `SteamAPI_ISteamScreenshots_WriteScreenshot`
+   * @param pubRGB Buffer you allocate for `void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#WriteScreenshot
+   */
   WriteScreenshot(pubRGB: Buffer | null, cubRGB: number, nWidth: number, nHeight: number): number {
     return this.nat.func('SteamAPI_ISteamScreenshots_WriteScreenshot', 'uint32', ['void *', 'void *', 'uint32', 'int32', 'int32'])(this.ptr, pubRGB, cubRGB, nWidth, nHeight) as number;
   }
 
+  /**
+   * `ScreenshotHandle AddScreenshotToLibrary(const char *pchFilename, const char *pchThumbnailFilename, int nWidth, int nHeight)`
+   *
+   * Flat symbol: `SteamAPI_ISteamScreenshots_AddScreenshotToLibrary`
+   * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#AddScreenshotToLibrary
+   */
   AddScreenshotToLibrary(pchFilename: string, pchThumbnailFilename: string, nWidth: number, nHeight: number): number {
     return this.nat.func('SteamAPI_ISteamScreenshots_AddScreenshotToLibrary', 'uint32', ['void *', 'str', 'str', 'int32', 'int32'])(this.ptr, pchFilename, pchThumbnailFilename, nWidth, nHeight) as number;
   }
 
+  /**
+   * `void TriggerScreenshot()`
+   *
+   * Flat symbol: `SteamAPI_ISteamScreenshots_TriggerScreenshot`
+   * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#TriggerScreenshot
+   */
   TriggerScreenshot(): void {
     this.nat.func('SteamAPI_ISteamScreenshots_TriggerScreenshot', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `void HookScreenshots(bool bHook)`
+   *
+   * Flat symbol: `SteamAPI_ISteamScreenshots_HookScreenshots`
+   * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#HookScreenshots
+   */
   HookScreenshots(bHook: boolean): void {
     this.nat.func('SteamAPI_ISteamScreenshots_HookScreenshots', 'void', ['void *', 'bool'])(this.ptr, bHook);
   }
 
+  /**
+   * `bool SetLocation(ScreenshotHandle hScreenshot, const char *pchLocation)`
+   *
+   * Flat symbol: `SteamAPI_ISteamScreenshots_SetLocation`
+   * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#SetLocation
+   */
   SetLocation(hScreenshot: number, pchLocation: string): boolean {
     return this.nat.func('SteamAPI_ISteamScreenshots_SetLocation', 'bool', ['void *', 'uint32', 'str'])(this.ptr, hScreenshot, pchLocation) as boolean;
   }
 
+  /**
+   * `bool TagUser(ScreenshotHandle hScreenshot, CSteamID steamID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamScreenshots_TagUser`
+   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#TagUser
+   */
   TagUser(hScreenshot: number, steamID: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamScreenshots_TagUser', 'bool', ['void *', 'uint32', 'uint64'])(this.ptr, hScreenshot, steamID) as boolean;
   }
 
+  /**
+   * `bool TagPublishedFile(ScreenshotHandle hScreenshot, PublishedFileId_t unPublishedFileID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamScreenshots_TagPublishedFile`
+   * @param unPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#TagPublishedFile
+   */
   TagPublishedFile(hScreenshot: number, unPublishedFileID: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamScreenshots_TagPublishedFile', 'bool', ['void *', 'uint32', 'uint64'])(this.ptr, hScreenshot, unPublishedFileID) as boolean;
   }
 
+  /**
+   * `bool IsScreenshotsHooked()`
+   *
+   * Flat symbol: `SteamAPI_ISteamScreenshots_IsScreenshotsHooked`
+   * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#IsScreenshotsHooked
+   */
   IsScreenshotsHooked(): boolean {
     return this.nat.func('SteamAPI_ISteamScreenshots_IsScreenshotsHooked', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `ScreenshotHandle AddVRScreenshotToLibrary(EVRScreenshotType eType, const char *pchFilename, const char *pchVRFilename)`
+   *
+   * Flat symbol: `SteamAPI_ISteamScreenshots_AddVRScreenshotToLibrary`
+   * @param eType enum `EVRScreenshotType`; values on `flat.EVRScreenshotType`.
+   * @see https://partner.steamgames.com/doc/api/ISteamScreenshots#AddVRScreenshotToLibrary
+   */
   AddVRScreenshotToLibrary(eType: number, pchFilename: string, pchVRFilename: string): number {
     return this.nat.func('SteamAPI_ISteamScreenshots_AddVRScreenshotToLibrary', 'uint32', ['void *', 'int32', 'str', 'str'])(this.ptr, eType, pchFilename, pchVRFilename) as number;
   }

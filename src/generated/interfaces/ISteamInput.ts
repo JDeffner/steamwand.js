@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamInput (accessor SteamAPI_SteamInput_v007) */
+/**
+ * ISteamInput (accessor SteamAPI_SteamInput_v007)
+ * @see https://partner.steamgames.com/doc/api/ISteamInput
+ */
 export class ISteamInput {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,179 +14,495 @@ export class ISteamInput {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamInput_v007 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `bool Init(bool bExplicitlyCallRunFrame)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_Init`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#Init
+   */
   Init(bExplicitlyCallRunFrame: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamInput_Init', 'bool', ['void *', 'bool'])(this.ptr, bExplicitlyCallRunFrame) as boolean;
   }
 
+  /**
+   * `bool Shutdown()`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_Shutdown`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#Shutdown
+   */
   Shutdown(): boolean {
     return this.nat.func('SteamAPI_ISteamInput_Shutdown', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool SetInputActionManifestFilePath(const char *pchInputActionManifestAbsolutePath)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_SetInputActionManifestFilePath`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#SetInputActionManifestFilePath
+   */
   SetInputActionManifestFilePath(pchInputActionManifestAbsolutePath: string): boolean {
     return this.nat.func('SteamAPI_ISteamInput_SetInputActionManifestFilePath', 'bool', ['void *', 'str'])(this.ptr, pchInputActionManifestAbsolutePath) as boolean;
   }
 
+  /**
+   * `void RunFrame(bool bReservedValue)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_RunFrame`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#RunFrame
+   */
   RunFrame(bReservedValue: boolean): void {
     this.nat.func('SteamAPI_ISteamInput_RunFrame', 'void', ['void *', 'bool'])(this.ptr, bReservedValue);
   }
 
+  /**
+   * `bool BWaitForData(bool bWaitForever, uint32 unTimeout)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_BWaitForData`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#BWaitForData
+   */
   BWaitForData(bWaitForever: boolean, unTimeout: number): boolean {
     return this.nat.func('SteamAPI_ISteamInput_BWaitForData', 'bool', ['void *', 'bool', 'uint32'])(this.ptr, bWaitForever, unTimeout) as boolean;
   }
 
+  /**
+   * `bool BNewDataAvailable()`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_BNewDataAvailable`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#BNewDataAvailable
+   */
   BNewDataAvailable(): boolean {
     return this.nat.func('SteamAPI_ISteamInput_BNewDataAvailable', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `int GetConnectedControllers(InputHandle_t *handlesOut)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetConnectedControllers`
+   * @param handlesOut Buffer you allocate for `InputHandle_t *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetConnectedControllers
+   */
   GetConnectedControllers(handlesOut: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamInput_GetConnectedControllers', 'int32', ['void *', 'void *'])(this.ptr, handlesOut) as number;
   }
 
-  /** Callback: SteamInputConfigurationLoaded_t */
+  /**
+   * `void EnableDeviceCallbacks()`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_EnableDeviceCallbacks`
+   * @remarks Fires the `SteamInputConfigurationLoaded_t` callback: `steam.on('SteamInputConfigurationLoaded_t', cb)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#EnableDeviceCallbacks
+   */
   EnableDeviceCallbacks(): void {
     this.nat.func('SteamAPI_ISteamInput_EnableDeviceCallbacks', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `InputActionSetHandle_t GetActionSetHandle(const char *pszActionSetName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetActionSetHandle`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetActionSetHandle
+   */
   GetActionSetHandle(pszActionSetName: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInput_GetActionSetHandle', 'uint64', ['void *', 'str'])(this.ptr, pszActionSetName) as number | bigint);
   }
 
+  /**
+   * `void ActivateActionSet(InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_ActivateActionSet`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param actionSetHandle `InputActionSetHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#ActivateActionSet
+   */
   ActivateActionSet(inputHandle: bigint | number, actionSetHandle: bigint | number): void {
     this.nat.func('SteamAPI_ISteamInput_ActivateActionSet', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, actionSetHandle);
   }
 
+  /**
+   * `InputActionSetHandle_t GetCurrentActionSet(InputHandle_t inputHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetCurrentActionSet`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetCurrentActionSet
+   */
   GetCurrentActionSet(inputHandle: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInput_GetCurrentActionSet', 'uint64', ['void *', 'uint64'])(this.ptr, inputHandle) as number | bigint);
   }
 
+  /**
+   * `void ActivateActionSetLayer(InputHandle_t inputHandle, InputActionSetHandle_t actionSetLayerHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_ActivateActionSetLayer`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param actionSetLayerHandle `InputActionSetHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#ActivateActionSetLayer
+   */
   ActivateActionSetLayer(inputHandle: bigint | number, actionSetLayerHandle: bigint | number): void {
     this.nat.func('SteamAPI_ISteamInput_ActivateActionSetLayer', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, actionSetLayerHandle);
   }
 
+  /**
+   * `void DeactivateActionSetLayer(InputHandle_t inputHandle, InputActionSetHandle_t actionSetLayerHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_DeactivateActionSetLayer`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param actionSetLayerHandle `InputActionSetHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#DeactivateActionSetLayer
+   */
   DeactivateActionSetLayer(inputHandle: bigint | number, actionSetLayerHandle: bigint | number): void {
     this.nat.func('SteamAPI_ISteamInput_DeactivateActionSetLayer', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, actionSetLayerHandle);
   }
 
+  /**
+   * `void DeactivateAllActionSetLayers(InputHandle_t inputHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_DeactivateAllActionSetLayers`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#DeactivateAllActionSetLayers
+   */
   DeactivateAllActionSetLayers(inputHandle: bigint | number): void {
     this.nat.func('SteamAPI_ISteamInput_DeactivateAllActionSetLayers', 'void', ['void *', 'uint64'])(this.ptr, inputHandle);
   }
 
+  /**
+   * `int GetActiveActionSetLayers(InputHandle_t inputHandle, InputActionSetHandle_t *handlesOut)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetActiveActionSetLayers`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param handlesOut Buffer you allocate for `InputActionSetHandle_t *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetActiveActionSetLayers
+   */
   GetActiveActionSetLayers(inputHandle: bigint | number, handlesOut: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamInput_GetActiveActionSetLayers', 'int32', ['void *', 'uint64', 'void *'])(this.ptr, inputHandle, handlesOut) as number;
   }
 
+  /**
+   * `InputDigitalActionHandle_t GetDigitalActionHandle(const char *pszActionName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetDigitalActionHandle`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetDigitalActionHandle
+   */
   GetDigitalActionHandle(pszActionName: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInput_GetDigitalActionHandle', 'uint64', ['void *', 'str'])(this.ptr, pszActionName) as number | bigint);
   }
 
+  /**
+   * `int GetDigitalActionOrigins(InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle, InputDigitalActionHandle_t digitalActionHandle, EInputActionOrigin *originsOut)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetDigitalActionOrigins`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param actionSetHandle `InputActionSetHandle_t`, 64-bit: bigint or number.
+   * @param digitalActionHandle `InputDigitalActionHandle_t`, 64-bit: bigint or number.
+   * @param originsOut Buffer you allocate for `EInputActionOrigin *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetDigitalActionOrigins
+   */
   GetDigitalActionOrigins(inputHandle: bigint | number, actionSetHandle: bigint | number, digitalActionHandle: bigint | number, originsOut: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamInput_GetDigitalActionOrigins', 'int32', ['void *', 'uint64', 'uint64', 'uint64', 'void *'])(this.ptr, inputHandle, actionSetHandle, digitalActionHandle, originsOut) as number;
   }
 
+  /**
+   * `const char * GetStringForDigitalActionName(InputDigitalActionHandle_t eActionHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetStringForDigitalActionName`
+   * @param eActionHandle `InputDigitalActionHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetStringForDigitalActionName
+   */
   GetStringForDigitalActionName(eActionHandle: bigint | number): string {
     return this.nat.func('SteamAPI_ISteamInput_GetStringForDigitalActionName', 'str', ['void *', 'uint64'])(this.ptr, eActionHandle) as string;
   }
 
+  /**
+   * `InputAnalogActionHandle_t GetAnalogActionHandle(const char *pszActionName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetAnalogActionHandle`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetAnalogActionHandle
+   */
   GetAnalogActionHandle(pszActionName: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInput_GetAnalogActionHandle', 'uint64', ['void *', 'str'])(this.ptr, pszActionName) as number | bigint);
   }
 
+  /**
+   * `int GetAnalogActionOrigins(InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle, InputAnalogActionHandle_t analogActionHandle, EInputActionOrigin *originsOut)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetAnalogActionOrigins`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param actionSetHandle `InputActionSetHandle_t`, 64-bit: bigint or number.
+   * @param analogActionHandle `InputAnalogActionHandle_t`, 64-bit: bigint or number.
+   * @param originsOut Buffer you allocate for `EInputActionOrigin *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetAnalogActionOrigins
+   */
   GetAnalogActionOrigins(inputHandle: bigint | number, actionSetHandle: bigint | number, analogActionHandle: bigint | number, originsOut: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamInput_GetAnalogActionOrigins', 'int32', ['void *', 'uint64', 'uint64', 'uint64', 'void *'])(this.ptr, inputHandle, actionSetHandle, analogActionHandle, originsOut) as number;
   }
 
+  /**
+   * `const char * GetGlyphPNGForActionOrigin(EInputActionOrigin eOrigin, ESteamInputGlyphSize eSize, uint32 unFlags)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetGlyphPNGForActionOrigin`
+   * @param eOrigin enum `EInputActionOrigin`; values on `flat.EInputActionOrigin`.
+   * @param eSize enum `ESteamInputGlyphSize`; values on `flat.ESteamInputGlyphSize`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetGlyphPNGForActionOrigin
+   */
   GetGlyphPNGForActionOrigin(eOrigin: number, eSize: number, unFlags: number): string {
     return this.nat.func('SteamAPI_ISteamInput_GetGlyphPNGForActionOrigin', 'str', ['void *', 'int32', 'int32', 'uint32'])(this.ptr, eOrigin, eSize, unFlags) as string;
   }
 
+  /**
+   * `const char * GetGlyphSVGForActionOrigin(EInputActionOrigin eOrigin, uint32 unFlags)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetGlyphSVGForActionOrigin`
+   * @param eOrigin enum `EInputActionOrigin`; values on `flat.EInputActionOrigin`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetGlyphSVGForActionOrigin
+   */
   GetGlyphSVGForActionOrigin(eOrigin: number, unFlags: number): string {
     return this.nat.func('SteamAPI_ISteamInput_GetGlyphSVGForActionOrigin', 'str', ['void *', 'int32', 'uint32'])(this.ptr, eOrigin, unFlags) as string;
   }
 
+  /**
+   * `const char * GetGlyphForActionOrigin_Legacy(EInputActionOrigin eOrigin)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetGlyphForActionOrigin_Legacy`
+   * @param eOrigin enum `EInputActionOrigin`; values on `flat.EInputActionOrigin`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetGlyphForActionOrigin_Legacy
+   */
   GetGlyphForActionOrigin_Legacy(eOrigin: number): string {
     return this.nat.func('SteamAPI_ISteamInput_GetGlyphForActionOrigin_Legacy', 'str', ['void *', 'int32'])(this.ptr, eOrigin) as string;
   }
 
+  /**
+   * `const char * GetStringForActionOrigin(EInputActionOrigin eOrigin)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetStringForActionOrigin`
+   * @param eOrigin enum `EInputActionOrigin`; values on `flat.EInputActionOrigin`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetStringForActionOrigin
+   */
   GetStringForActionOrigin(eOrigin: number): string {
     return this.nat.func('SteamAPI_ISteamInput_GetStringForActionOrigin', 'str', ['void *', 'int32'])(this.ptr, eOrigin) as string;
   }
 
+  /**
+   * `const char * GetStringForAnalogActionName(InputAnalogActionHandle_t eActionHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetStringForAnalogActionName`
+   * @param eActionHandle `InputAnalogActionHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetStringForAnalogActionName
+   */
   GetStringForAnalogActionName(eActionHandle: bigint | number): string {
     return this.nat.func('SteamAPI_ISteamInput_GetStringForAnalogActionName', 'str', ['void *', 'uint64'])(this.ptr, eActionHandle) as string;
   }
 
+  /**
+   * `void StopAnalogActionMomentum(InputHandle_t inputHandle, InputAnalogActionHandle_t eAction)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_StopAnalogActionMomentum`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param eAction `InputAnalogActionHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#StopAnalogActionMomentum
+   */
   StopAnalogActionMomentum(inputHandle: bigint | number, eAction: bigint | number): void {
     this.nat.func('SteamAPI_ISteamInput_StopAnalogActionMomentum', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, eAction);
   }
 
+  /**
+   * `void TriggerVibration(InputHandle_t inputHandle, unsigned short usLeftSpeed, unsigned short usRightSpeed)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_TriggerVibration`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#TriggerVibration
+   */
   TriggerVibration(inputHandle: bigint | number, usLeftSpeed: number, usRightSpeed: number): void {
     this.nat.func('SteamAPI_ISteamInput_TriggerVibration', 'void', ['void *', 'uint64', 'uint16', 'uint16'])(this.ptr, inputHandle, usLeftSpeed, usRightSpeed);
   }
 
+  /**
+   * `void TriggerVibrationExtended(InputHandle_t inputHandle, unsigned short usLeftSpeed, unsigned short usRightSpeed, unsigned short usLeftTriggerSpeed, unsigned short usRightTriggerSpeed)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_TriggerVibrationExtended`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#TriggerVibrationExtended
+   */
   TriggerVibrationExtended(inputHandle: bigint | number, usLeftSpeed: number, usRightSpeed: number, usLeftTriggerSpeed: number, usRightTriggerSpeed: number): void {
     this.nat.func('SteamAPI_ISteamInput_TriggerVibrationExtended', 'void', ['void *', 'uint64', 'uint16', 'uint16', 'uint16', 'uint16'])(this.ptr, inputHandle, usLeftSpeed, usRightSpeed, usLeftTriggerSpeed, usRightTriggerSpeed);
   }
 
+  /**
+   * `void TriggerSimpleHapticEvent(InputHandle_t inputHandle, EControllerHapticLocation eHapticLocation, uint8 nIntensity, char nGainDB, uint8 nOtherIntensity, char nOtherGainDB)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_TriggerSimpleHapticEvent`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param eHapticLocation enum `EControllerHapticLocation`; values on `flat.EControllerHapticLocation`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#TriggerSimpleHapticEvent
+   */
   TriggerSimpleHapticEvent(inputHandle: bigint | number, eHapticLocation: number, nIntensity: number, nGainDB: number, nOtherIntensity: number, nOtherGainDB: number): void {
     this.nat.func('SteamAPI_ISteamInput_TriggerSimpleHapticEvent', 'void', ['void *', 'uint64', 'int32', 'uint8', 'int8', 'uint8', 'int8'])(this.ptr, inputHandle, eHapticLocation, nIntensity, nGainDB, nOtherIntensity, nOtherGainDB);
   }
 
+  /**
+   * `void SetLEDColor(InputHandle_t inputHandle, uint8 nColorR, uint8 nColorG, uint8 nColorB, unsigned int nFlags)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_SetLEDColor`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#SetLEDColor
+   */
   SetLEDColor(inputHandle: bigint | number, nColorR: number, nColorG: number, nColorB: number, nFlags: number): void {
     this.nat.func('SteamAPI_ISteamInput_SetLEDColor', 'void', ['void *', 'uint64', 'uint8', 'uint8', 'uint8', 'uint32'])(this.ptr, inputHandle, nColorR, nColorG, nColorB, nFlags);
   }
 
+  /**
+   * `void Legacy_TriggerHapticPulse(InputHandle_t inputHandle, ESteamControllerPad eTargetPad, unsigned short usDurationMicroSec)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_Legacy_TriggerHapticPulse`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param eTargetPad enum `ESteamControllerPad`; values on `flat.ESteamControllerPad`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#Legacy_TriggerHapticPulse
+   */
   Legacy_TriggerHapticPulse(inputHandle: bigint | number, eTargetPad: number, usDurationMicroSec: number): void {
     this.nat.func('SteamAPI_ISteamInput_Legacy_TriggerHapticPulse', 'void', ['void *', 'uint64', 'int32', 'uint16'])(this.ptr, inputHandle, eTargetPad, usDurationMicroSec);
   }
 
+  /**
+   * `void Legacy_TriggerRepeatedHapticPulse(InputHandle_t inputHandle, ESteamControllerPad eTargetPad, unsigned short usDurationMicroSec, unsigned short usOffMicroSec, unsigned short unRepeat, unsigned int nFlags)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_Legacy_TriggerRepeatedHapticPulse`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param eTargetPad enum `ESteamControllerPad`; values on `flat.ESteamControllerPad`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#Legacy_TriggerRepeatedHapticPulse
+   */
   Legacy_TriggerRepeatedHapticPulse(inputHandle: bigint | number, eTargetPad: number, usDurationMicroSec: number, usOffMicroSec: number, unRepeat: number, nFlags: number): void {
     this.nat.func('SteamAPI_ISteamInput_Legacy_TriggerRepeatedHapticPulse', 'void', ['void *', 'uint64', 'int32', 'uint16', 'uint16', 'uint16', 'uint32'])(this.ptr, inputHandle, eTargetPad, usDurationMicroSec, usOffMicroSec, unRepeat, nFlags);
   }
 
+  /**
+   * `bool ShowBindingPanel(InputHandle_t inputHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_ShowBindingPanel`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#ShowBindingPanel
+   */
   ShowBindingPanel(inputHandle: bigint | number): boolean {
     return this.nat.func('SteamAPI_ISteamInput_ShowBindingPanel', 'bool', ['void *', 'uint64'])(this.ptr, inputHandle) as boolean;
   }
 
+  /**
+   * `ESteamInputType GetInputTypeForHandle(InputHandle_t inputHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetInputTypeForHandle`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetInputTypeForHandle
+   */
   GetInputTypeForHandle(inputHandle: bigint | number): number {
     return this.nat.func('SteamAPI_ISteamInput_GetInputTypeForHandle', 'int32', ['void *', 'uint64'])(this.ptr, inputHandle) as number;
   }
 
+  /**
+   * `InputHandle_t GetControllerForGamepadIndex(int nIndex)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetControllerForGamepadIndex`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetControllerForGamepadIndex
+   */
   GetControllerForGamepadIndex(nIndex: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInput_GetControllerForGamepadIndex', 'uint64', ['void *', 'int32'])(this.ptr, nIndex) as number | bigint);
   }
 
+  /**
+   * `int GetGamepadIndexForController(InputHandle_t ulinputHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetGamepadIndexForController`
+   * @param ulinputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetGamepadIndexForController
+   */
   GetGamepadIndexForController(ulinputHandle: bigint | number): number {
     return this.nat.func('SteamAPI_ISteamInput_GetGamepadIndexForController', 'int32', ['void *', 'uint64'])(this.ptr, ulinputHandle) as number;
   }
 
+  /**
+   * `const char * GetStringForXboxOrigin(EXboxOrigin eOrigin)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetStringForXboxOrigin`
+   * @param eOrigin enum `EXboxOrigin`; values on `flat.EXboxOrigin`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetStringForXboxOrigin
+   */
   GetStringForXboxOrigin(eOrigin: number): string {
     return this.nat.func('SteamAPI_ISteamInput_GetStringForXboxOrigin', 'str', ['void *', 'int32'])(this.ptr, eOrigin) as string;
   }
 
+  /**
+   * `const char * GetGlyphForXboxOrigin(EXboxOrigin eOrigin)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetGlyphForXboxOrigin`
+   * @param eOrigin enum `EXboxOrigin`; values on `flat.EXboxOrigin`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetGlyphForXboxOrigin
+   */
   GetGlyphForXboxOrigin(eOrigin: number): string {
     return this.nat.func('SteamAPI_ISteamInput_GetGlyphForXboxOrigin', 'str', ['void *', 'int32'])(this.ptr, eOrigin) as string;
   }
 
+  /**
+   * `EInputActionOrigin GetActionOriginFromXboxOrigin(InputHandle_t inputHandle, EXboxOrigin eOrigin)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetActionOriginFromXboxOrigin`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param eOrigin enum `EXboxOrigin`; values on `flat.EXboxOrigin`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetActionOriginFromXboxOrigin
+   */
   GetActionOriginFromXboxOrigin(inputHandle: bigint | number, eOrigin: number): number {
     return this.nat.func('SteamAPI_ISteamInput_GetActionOriginFromXboxOrigin', 'int32', ['void *', 'uint64', 'int32'])(this.ptr, inputHandle, eOrigin) as number;
   }
 
+  /**
+   * `EInputActionOrigin TranslateActionOrigin(ESteamInputType eDestinationInputType, EInputActionOrigin eSourceOrigin)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_TranslateActionOrigin`
+   * @param eDestinationInputType enum `ESteamInputType`; values on `flat.ESteamInputType`.
+   * @param eSourceOrigin enum `EInputActionOrigin`; values on `flat.EInputActionOrigin`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#TranslateActionOrigin
+   */
   TranslateActionOrigin(eDestinationInputType: number, eSourceOrigin: number): number {
     return this.nat.func('SteamAPI_ISteamInput_TranslateActionOrigin', 'int32', ['void *', 'int32', 'int32'])(this.ptr, eDestinationInputType, eSourceOrigin) as number;
   }
 
+  /**
+   * `bool GetDeviceBindingRevision(InputHandle_t inputHandle, int *pMajor, int *pMinor)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetDeviceBindingRevision`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param pMajor Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
+   * @param pMinor Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetDeviceBindingRevision
+   */
   GetDeviceBindingRevision(inputHandle: bigint | number, pMajor: Buffer | null, pMinor: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInput_GetDeviceBindingRevision', 'bool', ['void *', 'uint64', 'void *', 'void *'])(this.ptr, inputHandle, pMajor, pMinor) as boolean;
   }
 
+  /**
+   * `uint32 GetRemotePlaySessionID(InputHandle_t inputHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetRemotePlaySessionID`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetRemotePlaySessionID
+   */
   GetRemotePlaySessionID(inputHandle: bigint | number): number {
     return this.nat.func('SteamAPI_ISteamInput_GetRemotePlaySessionID', 'uint32', ['void *', 'uint64'])(this.ptr, inputHandle) as number;
   }
 
+  /**
+   * `uint16 GetSessionInputConfigurationSettings()`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetSessionInputConfigurationSettings`
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetSessionInputConfigurationSettings
+   */
   GetSessionInputConfigurationSettings(): number {
     return this.nat.func('SteamAPI_ISteamInput_GetSessionInputConfigurationSettings', 'uint16', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `void SetDualSenseTriggerEffect(InputHandle_t inputHandle, const ScePadTriggerEffectParam *pParam)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_SetDualSenseTriggerEffect`
+   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param pParam Buffer you allocate for `const ScePadTriggerEffectParam *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#SetDualSenseTriggerEffect
+   */
   SetDualSenseTriggerEffect(inputHandle: bigint | number, pParam: Buffer | null): void {
     this.nat.func('SteamAPI_ISteamInput_SetDualSenseTriggerEffect', 'void', ['void *', 'uint64', 'void *'])(this.ptr, inputHandle, pParam);
   }

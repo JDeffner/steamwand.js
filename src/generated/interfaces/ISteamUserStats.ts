@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamUserStats (accessor SteamAPI_SteamUserStats_v013) */
+/**
+ * ISteamUserStats (accessor SteamAPI_SteamUserStats_v013)
+ * @see https://partner.steamgames.com/doc/api/ISteamUserStats
+ */
 export class ISteamUserStats {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,188 +14,500 @@ export class ISteamUserStats {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamUserStats_v013 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `bool GetStat(const char *pchName, int32 *pData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetStatInt32`
+   * @param pData Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat
+   */
   GetStatInt32(pchName: string, pData: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetStatInt32', 'bool', ['void *', 'str', 'void *'])(this.ptr, pchName, pData) as boolean;
   }
 
+  /**
+   * `bool GetStat(const char *pchName, float *pData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetStatFloat`
+   * @param pData Buffer you allocate for `float *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat
+   */
   GetStatFloat(pchName: string, pData: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetStatFloat', 'bool', ['void *', 'str', 'void *'])(this.ptr, pchName, pData) as boolean;
   }
 
+  /**
+   * `bool SetStat(const char *pchName, int32 nData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_SetStatInt32`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat
+   */
   SetStatInt32(pchName: string, nData: number): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_SetStatInt32', 'bool', ['void *', 'str', 'int32'])(this.ptr, pchName, nData) as boolean;
   }
 
+  /**
+   * `bool SetStat(const char *pchName, float fData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_SetStatFloat`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat
+   */
   SetStatFloat(pchName: string, fData: number): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_SetStatFloat', 'bool', ['void *', 'str', 'float'])(this.ptr, pchName, fData) as boolean;
   }
 
+  /**
+   * `bool UpdateAvgRateStat(const char *pchName, float flCountThisSession, double dSessionLength)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_UpdateAvgRateStat`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#UpdateAvgRateStat
+   */
   UpdateAvgRateStat(pchName: string, flCountThisSession: number, dSessionLength: number): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_UpdateAvgRateStat', 'bool', ['void *', 'str', 'float', 'double'])(this.ptr, pchName, flCountThisSession, dSessionLength) as boolean;
   }
 
+  /**
+   * `bool GetAchievement(const char *pchName, bool *pbAchieved)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetAchievement`
+   * @param pbAchieved Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievement
+   */
   GetAchievement(pchName: string, pbAchieved: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetAchievement', 'bool', ['void *', 'str', 'void *'])(this.ptr, pchName, pbAchieved) as boolean;
   }
 
+  /**
+   * `bool SetAchievement(const char *pchName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_SetAchievement`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#SetAchievement
+   */
   SetAchievement(pchName: string): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_SetAchievement', 'bool', ['void *', 'str'])(this.ptr, pchName) as boolean;
   }
 
+  /**
+   * `bool ClearAchievement(const char *pchName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_ClearAchievement`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#ClearAchievement
+   */
   ClearAchievement(pchName: string): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_ClearAchievement', 'bool', ['void *', 'str'])(this.ptr, pchName) as boolean;
   }
 
+  /**
+   * `bool GetAchievementAndUnlockTime(const char *pchName, bool *pbAchieved, uint32 *punUnlockTime)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetAchievementAndUnlockTime`
+   * @param pbAchieved Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
+   * @param punUnlockTime Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAndUnlockTime
+   */
   GetAchievementAndUnlockTime(pchName: string, pbAchieved: Buffer | null, punUnlockTime: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetAchievementAndUnlockTime', 'bool', ['void *', 'str', 'void *', 'void *'])(this.ptr, pchName, pbAchieved, punUnlockTime) as boolean;
   }
 
+  /**
+   * `bool StoreStats()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_StoreStats`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#StoreStats
+   */
   StoreStats(): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_StoreStats', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `int GetAchievementIcon(const char *pchName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetAchievementIcon`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementIcon
+   */
   GetAchievementIcon(pchName: string): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetAchievementIcon', 'int32', ['void *', 'str'])(this.ptr, pchName) as number;
   }
 
+  /**
+   * `const char * GetAchievementDisplayAttribute(const char *pchName, const char *pchKey)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetAchievementDisplayAttribute`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementDisplayAttribute
+   */
   GetAchievementDisplayAttribute(pchName: string, pchKey: string): string {
     return this.nat.func('SteamAPI_ISteamUserStats_GetAchievementDisplayAttribute', 'str', ['void *', 'str', 'str'])(this.ptr, pchName, pchKey) as string;
   }
 
+  /**
+   * `bool IndicateAchievementProgress(const char *pchName, uint32 nCurProgress, uint32 nMaxProgress)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_IndicateAchievementProgress`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#IndicateAchievementProgress
+   */
   IndicateAchievementProgress(pchName: string, nCurProgress: number, nMaxProgress: number): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_IndicateAchievementProgress', 'bool', ['void *', 'str', 'uint32', 'uint32'])(this.ptr, pchName, nCurProgress, nMaxProgress) as boolean;
   }
 
+  /**
+   * `uint32 GetNumAchievements()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetNumAchievements`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumAchievements
+   */
   GetNumAchievements(): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetNumAchievements', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `const char * GetAchievementName(uint32 iAchievement)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetAchievementName`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementName
+   */
   GetAchievementName(iAchievement: number): string {
     return this.nat.func('SteamAPI_ISteamUserStats_GetAchievementName', 'str', ['void *', 'uint32'])(this.ptr, iAchievement) as string;
   }
 
-  /** Call result: UserStatsReceived_t */
+  /**
+   * `SteamAPICall_t RequestUserStats(CSteamID steamIDUser)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_RequestUserStats`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<UserStatsReceived_t>(handle, layoutOf('UserStatsReceived_t'))`.
+   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#RequestUserStats
+   */
   RequestUserStats(steamIDUser: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_RequestUserStats', 'uint64', ['void *', 'uint64'])(this.ptr, steamIDUser) as number | bigint);
   }
 
+  /**
+   * `bool GetUserStat(CSteamID steamIDUser, const char *pchName, int32 *pData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetUserStatInt32`
+   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param pData Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat
+   */
   GetUserStatInt32(steamIDUser: bigint | number, pchName: string, pData: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetUserStatInt32', 'bool', ['void *', 'uint64', 'str', 'void *'])(this.ptr, steamIDUser, pchName, pData) as boolean;
   }
 
+  /**
+   * `bool GetUserStat(CSteamID steamIDUser, const char *pchName, float *pData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetUserStatFloat`
+   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param pData Buffer you allocate for `float *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat
+   */
   GetUserStatFloat(steamIDUser: bigint | number, pchName: string, pData: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetUserStatFloat', 'bool', ['void *', 'uint64', 'str', 'void *'])(this.ptr, steamIDUser, pchName, pData) as boolean;
   }
 
+  /**
+   * `bool GetUserAchievement(CSteamID steamIDUser, const char *pchName, bool *pbAchieved)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetUserAchievement`
+   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param pbAchieved Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievement
+   */
   GetUserAchievement(steamIDUser: bigint | number, pchName: string, pbAchieved: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetUserAchievement', 'bool', ['void *', 'uint64', 'str', 'void *'])(this.ptr, steamIDUser, pchName, pbAchieved) as boolean;
   }
 
+  /**
+   * `bool GetUserAchievementAndUnlockTime(CSteamID steamIDUser, const char *pchName, bool *pbAchieved, uint32 *punUnlockTime)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetUserAchievementAndUnlockTime`
+   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param pbAchieved Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
+   * @param punUnlockTime Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievementAndUnlockTime
+   */
   GetUserAchievementAndUnlockTime(steamIDUser: bigint | number, pchName: string, pbAchieved: Buffer | null, punUnlockTime: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetUserAchievementAndUnlockTime', 'bool', ['void *', 'uint64', 'str', 'void *', 'void *'])(this.ptr, steamIDUser, pchName, pbAchieved, punUnlockTime) as boolean;
   }
 
+  /**
+   * `bool ResetAllStats(bool bAchievementsToo)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_ResetAllStats`
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#ResetAllStats
+   */
   ResetAllStats(bAchievementsToo: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_ResetAllStats', 'bool', ['void *', 'bool'])(this.ptr, bAchievementsToo) as boolean;
   }
 
-  /** Call result: LeaderboardFindResult_t */
+  /**
+   * `SteamAPICall_t FindOrCreateLeaderboard(const char *pchLeaderboardName, ELeaderboardSortMethod eLeaderboardSortMethod, ELeaderboardDisplayType eLeaderboardDisplayType)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_FindOrCreateLeaderboard`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardFindResult_t>(handle, layoutOf('LeaderboardFindResult_t'))`.
+   * @param eLeaderboardSortMethod enum `ELeaderboardSortMethod`; values on `flat.ELeaderboardSortMethod`.
+   * @param eLeaderboardDisplayType enum `ELeaderboardDisplayType`; values on `flat.ELeaderboardDisplayType`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#FindOrCreateLeaderboard
+   */
   FindOrCreateLeaderboard(pchLeaderboardName: string, eLeaderboardSortMethod: number, eLeaderboardDisplayType: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_FindOrCreateLeaderboard', 'uint64', ['void *', 'str', 'int32', 'int32'])(this.ptr, pchLeaderboardName, eLeaderboardSortMethod, eLeaderboardDisplayType) as number | bigint);
   }
 
-  /** Call result: LeaderboardFindResult_t */
+  /**
+   * `SteamAPICall_t FindLeaderboard(const char *pchLeaderboardName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_FindLeaderboard`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardFindResult_t>(handle, layoutOf('LeaderboardFindResult_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#FindLeaderboard
+   */
   FindLeaderboard(pchLeaderboardName: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_FindLeaderboard', 'uint64', ['void *', 'str'])(this.ptr, pchLeaderboardName) as number | bigint);
   }
 
+  /**
+   * `const char * GetLeaderboardName(SteamLeaderboard_t hSteamLeaderboard)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetLeaderboardName`
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardName
+   */
   GetLeaderboardName(hSteamLeaderboard: bigint | number): string {
     return this.nat.func('SteamAPI_ISteamUserStats_GetLeaderboardName', 'str', ['void *', 'uint64'])(this.ptr, hSteamLeaderboard) as string;
   }
 
+  /**
+   * `int GetLeaderboardEntryCount(SteamLeaderboard_t hSteamLeaderboard)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetLeaderboardEntryCount`
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardEntryCount
+   */
   GetLeaderboardEntryCount(hSteamLeaderboard: bigint | number): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetLeaderboardEntryCount', 'int32', ['void *', 'uint64'])(this.ptr, hSteamLeaderboard) as number;
   }
 
+  /**
+   * `ELeaderboardSortMethod GetLeaderboardSortMethod(SteamLeaderboard_t hSteamLeaderboard)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetLeaderboardSortMethod`
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardSortMethod
+   */
   GetLeaderboardSortMethod(hSteamLeaderboard: bigint | number): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetLeaderboardSortMethod', 'int32', ['void *', 'uint64'])(this.ptr, hSteamLeaderboard) as number;
   }
 
+  /**
+   * `ELeaderboardDisplayType GetLeaderboardDisplayType(SteamLeaderboard_t hSteamLeaderboard)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetLeaderboardDisplayType`
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardDisplayType
+   */
   GetLeaderboardDisplayType(hSteamLeaderboard: bigint | number): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetLeaderboardDisplayType', 'int32', ['void *', 'uint64'])(this.ptr, hSteamLeaderboard) as number;
   }
 
-  /** Call result: LeaderboardScoresDownloaded_t */
+  /**
+   * `SteamAPICall_t DownloadLeaderboardEntries(SteamLeaderboard_t hSteamLeaderboard, ELeaderboardDataRequest eLeaderboardDataRequest, int nRangeStart, int nRangeEnd)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_DownloadLeaderboardEntries`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardScoresDownloaded_t>(handle, layoutOf('LeaderboardScoresDownloaded_t'))`.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param eLeaderboardDataRequest enum `ELeaderboardDataRequest`; values on `flat.ELeaderboardDataRequest`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntries
+   */
   DownloadLeaderboardEntries(hSteamLeaderboard: bigint | number, eLeaderboardDataRequest: number, nRangeStart: number, nRangeEnd: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_DownloadLeaderboardEntries', 'uint64', ['void *', 'uint64', 'int32', 'int32', 'int32'])(this.ptr, hSteamLeaderboard, eLeaderboardDataRequest, nRangeStart, nRangeEnd) as number | bigint);
   }
 
-  /** Call result: LeaderboardScoresDownloaded_t */
+  /**
+   * `SteamAPICall_t DownloadLeaderboardEntriesForUsers(SteamLeaderboard_t hSteamLeaderboard, CSteamID *prgUsers, int cUsers)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardScoresDownloaded_t>(handle, layoutOf('LeaderboardScoresDownloaded_t'))`.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param prgUsers Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntriesForUsers
+   */
   DownloadLeaderboardEntriesForUsers(hSteamLeaderboard: bigint | number, prgUsers: Buffer | null, cUsers: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers', 'uint64', ['void *', 'uint64', 'void *', 'int32'])(this.ptr, hSteamLeaderboard, prgUsers, cUsers) as number | bigint);
   }
 
+  /**
+   * `bool GetDownloadedLeaderboardEntry(SteamLeaderboardEntries_t hSteamLeaderboardEntries, int index, LeaderboardEntry_t *pLeaderboardEntry, int32 *pDetails, int cDetailsMax)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetDownloadedLeaderboardEntry`
+   * @param hSteamLeaderboardEntries `SteamLeaderboardEntries_t`, 64-bit: bigint or number.
+   * @param pLeaderboardEntry Buffer you allocate for `LeaderboardEntry_t *`: `Buffer.alloc(layoutOf('LeaderboardEntry_t').size)`.
+   * @param pDetails Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetDownloadedLeaderboardEntry
+   */
   GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries: bigint | number, index: number, pLeaderboardEntry: Buffer | null, pDetails: Buffer | null, cDetailsMax: number): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetDownloadedLeaderboardEntry', 'bool', ['void *', 'uint64', 'int32', 'void *', 'void *', 'int32'])(this.ptr, hSteamLeaderboardEntries, index, pLeaderboardEntry, pDetails, cDetailsMax) as boolean;
   }
 
-  /** Call result: LeaderboardScoreUploaded_t */
+  /**
+   * `SteamAPICall_t UploadLeaderboardScore(SteamLeaderboard_t hSteamLeaderboard, ELeaderboardUploadScoreMethod eLeaderboardUploadScoreMethod, int32 nScore, const int32 *pScoreDetails, int cScoreDetailsCount)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_UploadLeaderboardScore`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardScoreUploaded_t>(handle, layoutOf('LeaderboardScoreUploaded_t'))`.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param eLeaderboardUploadScoreMethod enum `ELeaderboardUploadScoreMethod`; values on `flat.ELeaderboardUploadScoreMethod`.
+   * @param pScoreDetails Buffer you allocate for `const int32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#UploadLeaderboardScore
+   */
   UploadLeaderboardScore(hSteamLeaderboard: bigint | number, eLeaderboardUploadScoreMethod: number, nScore: number, pScoreDetails: Buffer | null, cScoreDetailsCount: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_UploadLeaderboardScore', 'uint64', ['void *', 'uint64', 'int32', 'int32', 'void *', 'int32'])(this.ptr, hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, pScoreDetails, cScoreDetailsCount) as number | bigint);
   }
 
-  /** Call result: LeaderboardUGCSet_t */
+  /**
+   * `SteamAPICall_t AttachLeaderboardUGC(SteamLeaderboard_t hSteamLeaderboard, UGCHandle_t hUGC)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_AttachLeaderboardUGC`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardUGCSet_t>(handle, layoutOf('LeaderboardUGCSet_t'))`.
+   * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: bigint or number.
+   * @param hUGC `UGCHandle_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#AttachLeaderboardUGC
+   */
   AttachLeaderboardUGC(hSteamLeaderboard: bigint | number, hUGC: bigint | number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_AttachLeaderboardUGC', 'uint64', ['void *', 'uint64', 'uint64'])(this.ptr, hSteamLeaderboard, hUGC) as number | bigint);
   }
 
-  /** Call result: NumberOfCurrentPlayers_t */
+  /**
+   * `SteamAPICall_t GetNumberOfCurrentPlayers()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetNumberOfCurrentPlayers`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<NumberOfCurrentPlayers_t>(handle, layoutOf('NumberOfCurrentPlayers_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumberOfCurrentPlayers
+   */
   GetNumberOfCurrentPlayers(): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_GetNumberOfCurrentPlayers', 'uint64', ['void *'])(this.ptr) as number | bigint);
   }
 
-  /** Call result: GlobalAchievementPercentagesReady_t */
+  /**
+   * `SteamAPICall_t RequestGlobalAchievementPercentages()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_RequestGlobalAchievementPercentages`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<GlobalAchievementPercentagesReady_t>(handle, layoutOf('GlobalAchievementPercentagesReady_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalAchievementPercentages
+   */
   RequestGlobalAchievementPercentages(): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_RequestGlobalAchievementPercentages', 'uint64', ['void *'])(this.ptr) as number | bigint);
   }
 
+  /**
+   * `int GetMostAchievedAchievementInfo(char *pchName, uint32 unNameBufLen, float *pflPercent, bool *pbAchieved)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetMostAchievedAchievementInfo`
+   * @param pchName Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @param pflPercent Buffer you allocate for `float *`: `Buffer.alloc(4)` per element.
+   * @param pbAchieved Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetMostAchievedAchievementInfo
+   */
   GetMostAchievedAchievementInfo(pchName: Buffer | null, unNameBufLen: number, pflPercent: Buffer | null, pbAchieved: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetMostAchievedAchievementInfo', 'int32', ['void *', 'void *', 'uint32', 'void *', 'void *'])(this.ptr, pchName, unNameBufLen, pflPercent, pbAchieved) as number;
   }
 
+  /**
+   * `int GetNextMostAchievedAchievementInfo(int iIteratorPrevious, char *pchName, uint32 unNameBufLen, float *pflPercent, bool *pbAchieved)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetNextMostAchievedAchievementInfo`
+   * @param pchName Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @param pflPercent Buffer you allocate for `float *`: `Buffer.alloc(4)` per element.
+   * @param pbAchieved Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetNextMostAchievedAchievementInfo
+   */
   GetNextMostAchievedAchievementInfo(iIteratorPrevious: number, pchName: Buffer | null, unNameBufLen: number, pflPercent: Buffer | null, pbAchieved: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetNextMostAchievedAchievementInfo', 'int32', ['void *', 'int32', 'void *', 'uint32', 'void *', 'void *'])(this.ptr, iIteratorPrevious, pchName, unNameBufLen, pflPercent, pbAchieved) as number;
   }
 
+  /**
+   * `bool GetAchievementAchievedPercent(const char *pchName, float *pflPercent)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetAchievementAchievedPercent`
+   * @param pflPercent Buffer you allocate for `float *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAchievedPercent
+   */
   GetAchievementAchievedPercent(pchName: string, pflPercent: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetAchievementAchievedPercent', 'bool', ['void *', 'str', 'void *'])(this.ptr, pchName, pflPercent) as boolean;
   }
 
-  /** Call result: GlobalStatsReceived_t */
+  /**
+   * `SteamAPICall_t RequestGlobalStats(int nHistoryDays)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_RequestGlobalStats`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<GlobalStatsReceived_t>(handle, layoutOf('GlobalStatsReceived_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalStats
+   */
   RequestGlobalStats(nHistoryDays: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUserStats_RequestGlobalStats', 'uint64', ['void *', 'int32'])(this.ptr, nHistoryDays) as number | bigint);
   }
 
+  /**
+   * `bool GetGlobalStat(const char *pchStatName, int64 *pData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetGlobalStatInt64`
+   * @param pData Buffer you allocate for `int64 *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat
+   */
   GetGlobalStatInt64(pchStatName: string, pData: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetGlobalStatInt64', 'bool', ['void *', 'str', 'void *'])(this.ptr, pchStatName, pData) as boolean;
   }
 
+  /**
+   * `bool GetGlobalStat(const char *pchStatName, double *pData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetGlobalStatDouble`
+   * @param pData Buffer you allocate for `double *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat
+   */
   GetGlobalStatDouble(pchStatName: string, pData: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetGlobalStatDouble', 'bool', ['void *', 'str', 'void *'])(this.ptr, pchStatName, pData) as boolean;
   }
 
+  /**
+   * `int32 GetGlobalStatHistory(const char *pchStatName, int64 *pData, uint32 cubData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetGlobalStatHistoryInt64`
+   * @param pData Buffer you allocate for `int64 *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory
+   */
   GetGlobalStatHistoryInt64(pchStatName: string, pData: Buffer | null, cubData: number): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetGlobalStatHistoryInt64', 'int32', ['void *', 'str', 'void *', 'uint32'])(this.ptr, pchStatName, pData, cubData) as number;
   }
 
+  /**
+   * `int32 GetGlobalStatHistory(const char *pchStatName, double *pData, uint32 cubData)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetGlobalStatHistoryDouble`
+   * @param pData Buffer you allocate for `double *`: `Buffer.alloc(8)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory
+   */
   GetGlobalStatHistoryDouble(pchStatName: string, pData: Buffer | null, cubData: number): number {
     return this.nat.func('SteamAPI_ISteamUserStats_GetGlobalStatHistoryDouble', 'int32', ['void *', 'str', 'void *', 'uint32'])(this.ptr, pchStatName, pData, cubData) as number;
   }
 
+  /**
+   * `bool GetAchievementProgressLimits(const char *pchName, int32 *pnMinProgress, int32 *pnMaxProgress)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetAchievementProgressLimitsInt32`
+   * @param pnMinProgress Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
+   * @param pnMaxProgress Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementProgressLimits
+   */
   GetAchievementProgressLimitsInt32(pchName: string, pnMinProgress: Buffer | null, pnMaxProgress: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetAchievementProgressLimitsInt32', 'bool', ['void *', 'str', 'void *', 'void *'])(this.ptr, pchName, pnMinProgress, pnMaxProgress) as boolean;
   }
 
+  /**
+   * `bool GetAchievementProgressLimits(const char *pchName, float *pfMinProgress, float *pfMaxProgress)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUserStats_GetAchievementProgressLimitsFloat`
+   * @param pfMinProgress Buffer you allocate for `float *`: `Buffer.alloc(4)` per element.
+   * @param pfMaxProgress Buffer you allocate for `float *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementProgressLimits
+   */
   GetAchievementProgressLimitsFloat(pchName: string, pfMinProgress: Buffer | null, pfMaxProgress: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUserStats_GetAchievementProgressLimitsFloat', 'bool', ['void *', 'str', 'void *', 'void *'])(this.ptr, pchName, pfMinProgress, pfMaxProgress) as boolean;
   }

@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamNetworkingMessages (accessor SteamAPI_SteamNetworkingMessages_SteamAPI_v002) */
+/**
+ * ISteamNetworkingMessages (accessor SteamAPI_SteamNetworkingMessages_SteamAPI_v002)
+ * @see https://partner.steamgames.com/doc/api/ISteamNetworkingMessages
+ */
 export class ISteamNetworkingMessages {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,26 +14,71 @@ export class ISteamNetworkingMessages {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamNetworkingMessages_SteamAPI_v002 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `EResult SendMessageToUser(const SteamNetworkingIdentity &identityRemote, const void *pubData, uint32 cubData, int nSendFlags, int nRemoteChannel)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingMessages_SendMessageToUser`
+   * @param identityRemote Buffer you allocate for `const SteamNetworkingIdentity &`.
+   * @param pubData Buffer you allocate for `const void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingMessages#SendMessageToUser
+   */
   SendMessageToUser(identityRemote: Buffer | null, pubData: Buffer | null, cubData: number, nSendFlags: number, nRemoteChannel: number): number {
     return this.nat.func('SteamAPI_ISteamNetworkingMessages_SendMessageToUser', 'int32', ['void *', 'void *', 'void *', 'uint32', 'int32', 'int32'])(this.ptr, identityRemote, pubData, cubData, nSendFlags, nRemoteChannel) as number;
   }
 
+  /**
+   * `int ReceiveMessagesOnChannel(int nLocalChannel, SteamNetworkingMessage_t **ppOutMessages, int nMaxMessages)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingMessages_ReceiveMessagesOnChannel`
+   * @param ppOutMessages Buffer you allocate for `SteamNetworkingMessage_t **`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingMessages#ReceiveMessagesOnChannel
+   */
   ReceiveMessagesOnChannel(nLocalChannel: number, ppOutMessages: Buffer | null, nMaxMessages: number): number {
     return this.nat.func('SteamAPI_ISteamNetworkingMessages_ReceiveMessagesOnChannel', 'int32', ['void *', 'int32', 'void *', 'int32'])(this.ptr, nLocalChannel, ppOutMessages, nMaxMessages) as number;
   }
 
+  /**
+   * `bool AcceptSessionWithUser(const SteamNetworkingIdentity &identityRemote)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingMessages_AcceptSessionWithUser`
+   * @param identityRemote Buffer you allocate for `const SteamNetworkingIdentity &`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingMessages#AcceptSessionWithUser
+   */
   AcceptSessionWithUser(identityRemote: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingMessages_AcceptSessionWithUser', 'bool', ['void *', 'void *'])(this.ptr, identityRemote) as boolean;
   }
 
+  /**
+   * `bool CloseSessionWithUser(const SteamNetworkingIdentity &identityRemote)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingMessages_CloseSessionWithUser`
+   * @param identityRemote Buffer you allocate for `const SteamNetworkingIdentity &`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingMessages#CloseSessionWithUser
+   */
   CloseSessionWithUser(identityRemote: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingMessages_CloseSessionWithUser', 'bool', ['void *', 'void *'])(this.ptr, identityRemote) as boolean;
   }
 
+  /**
+   * `bool CloseChannelWithUser(const SteamNetworkingIdentity &identityRemote, int nLocalChannel)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingMessages_CloseChannelWithUser`
+   * @param identityRemote Buffer you allocate for `const SteamNetworkingIdentity &`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingMessages#CloseChannelWithUser
+   */
   CloseChannelWithUser(identityRemote: Buffer | null, nLocalChannel: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingMessages_CloseChannelWithUser', 'bool', ['void *', 'void *', 'int32'])(this.ptr, identityRemote, nLocalChannel) as boolean;
   }
 
+  /**
+   * `ESteamNetworkingConnectionState GetSessionConnectionInfo(const SteamNetworkingIdentity &identityRemote, SteamNetConnectionInfo_t *pConnectionInfo, SteamNetConnectionRealTimeStatus_t *pQuickStatus)`
+   *
+   * Flat symbol: `SteamAPI_ISteamNetworkingMessages_GetSessionConnectionInfo`
+   * @param identityRemote Buffer you allocate for `const SteamNetworkingIdentity &`.
+   * @param pConnectionInfo Buffer you allocate for `SteamNetConnectionInfo_t *`.
+   * @param pQuickStatus Buffer you allocate for `SteamNetConnectionRealTimeStatus_t *`: `Buffer.alloc(layoutOf('SteamNetConnectionRealTimeStatus_t').size)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamNetworkingMessages#GetSessionConnectionInfo
+   */
   GetSessionConnectionInfo(identityRemote: Buffer | null, pConnectionInfo: Buffer | null, pQuickStatus: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamNetworkingMessages_GetSessionConnectionInfo', 'int32', ['void *', 'void *', 'void *', 'void *'])(this.ptr, identityRemote, pConnectionInfo, pQuickStatus) as number;
   }

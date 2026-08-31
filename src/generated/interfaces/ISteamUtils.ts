@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamUtils (accessor SteamAPI_SteamUtils_v011) */
+/**
+ * ISteamUtils (accessor SteamAPI_SteamUtils_v011)
+ * @see https://partner.steamgames.com/doc/api/ISteamUtils
+ */
 export class ISteamUtils {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,155 +14,401 @@ export class ISteamUtils {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamUtils_v011 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `uint32 GetSecondsSinceAppActive()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetSecondsSinceAppActive`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceAppActive
+   */
   GetSecondsSinceAppActive(): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetSecondsSinceAppActive', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `uint32 GetSecondsSinceComputerActive()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetSecondsSinceComputerActive`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceComputerActive
+   */
   GetSecondsSinceComputerActive(): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetSecondsSinceComputerActive', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `EUniverse GetConnectedUniverse()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetConnectedUniverse`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetConnectedUniverse
+   */
   GetConnectedUniverse(): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetConnectedUniverse', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `uint32 GetServerRealTime()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetServerRealTime`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetServerRealTime
+   */
   GetServerRealTime(): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetServerRealTime', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `const char * GetIPCountry()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetIPCountry`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCountry
+   */
   GetIPCountry(): string {
     return this.nat.func('SteamAPI_ISteamUtils_GetIPCountry', 'str', ['void *'])(this.ptr) as string;
   }
 
+  /**
+   * `bool GetImageSize(int iImage, uint32 *pnWidth, uint32 *pnHeight)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetImageSize`
+   * @param pnWidth Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @param pnHeight Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetImageSize
+   */
   GetImageSize(iImage: number, pnWidth: Buffer | null, pnHeight: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_GetImageSize', 'bool', ['void *', 'int32', 'void *', 'void *'])(this.ptr, iImage, pnWidth, pnHeight) as boolean;
   }
 
+  /**
+   * `bool GetImageRGBA(int iImage, uint8 *pubDest, int nDestBufferSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetImageRGBA`
+   * @param pubDest Buffer you allocate for `uint8 *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetImageRGBA
+   */
   GetImageRGBA(iImage: number, pubDest: Buffer | null, nDestBufferSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_GetImageRGBA', 'bool', ['void *', 'int32', 'void *', 'int32'])(this.ptr, iImage, pubDest, nDestBufferSize) as boolean;
   }
 
+  /**
+   * `uint8 GetCurrentBatteryPower()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetCurrentBatteryPower`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetCurrentBatteryPower
+   */
   GetCurrentBatteryPower(): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetCurrentBatteryPower', 'uint8', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `uint32 GetAppID()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetAppID`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetAppID
+   */
   GetAppID(): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetAppID', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `void SetOverlayNotificationPosition(ENotificationPosition eNotificationPosition)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_SetOverlayNotificationPosition`
+   * @param eNotificationPosition enum `ENotificationPosition`; values on `flat.ENotificationPosition`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#SetOverlayNotificationPosition
+   */
   SetOverlayNotificationPosition(eNotificationPosition: number): void {
     this.nat.func('SteamAPI_ISteamUtils_SetOverlayNotificationPosition', 'void', ['void *', 'int32'])(this.ptr, eNotificationPosition);
   }
 
+  /**
+   * `bool IsAPICallCompleted(SteamAPICall_t hSteamAPICall, bool *pbFailed)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_IsAPICallCompleted`
+   * @param hSteamAPICall `SteamAPICall_t`, 64-bit: bigint or number.
+   * @param pbFailed Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#IsAPICallCompleted
+   */
   IsAPICallCompleted(hSteamAPICall: bigint | number, pbFailed: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_IsAPICallCompleted', 'bool', ['void *', 'uint64', 'void *'])(this.ptr, hSteamAPICall, pbFailed) as boolean;
   }
 
+  /**
+   * `ESteamAPICallFailure GetAPICallFailureReason(SteamAPICall_t hSteamAPICall)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetAPICallFailureReason`
+   * @param hSteamAPICall `SteamAPICall_t`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallFailureReason
+   */
   GetAPICallFailureReason(hSteamAPICall: bigint | number): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetAPICallFailureReason', 'int32', ['void *', 'uint64'])(this.ptr, hSteamAPICall) as number;
   }
 
+  /**
+   * `bool GetAPICallResult(SteamAPICall_t hSteamAPICall, void *pCallback, int cubCallback, int iCallbackExpected, bool *pbFailed)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetAPICallResult`
+   * @param hSteamAPICall `SteamAPICall_t`, 64-bit: bigint or number.
+   * @param pCallback Buffer you allocate for `void *`.
+   * @param pbFailed Buffer you allocate for `bool *`: `Buffer.alloc(1)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallResult
+   */
   GetAPICallResult(hSteamAPICall: bigint | number, pCallback: Buffer | null, cubCallback: number, iCallbackExpected: number, pbFailed: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_GetAPICallResult', 'bool', ['void *', 'uint64', 'void *', 'int32', 'int32', 'void *'])(this.ptr, hSteamAPICall, pCallback, cubCallback, iCallbackExpected, pbFailed) as boolean;
   }
 
+  /**
+   * `uint32 GetIPCCallCount()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetIPCCallCount`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCCallCount
+   */
   GetIPCCallCount(): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetIPCCallCount', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `bool IsOverlayEnabled()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_IsOverlayEnabled`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#IsOverlayEnabled
+   */
   IsOverlayEnabled(): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_IsOverlayEnabled', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BOverlayNeedsPresent()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_BOverlayNeedsPresent`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#BOverlayNeedsPresent
+   */
   BOverlayNeedsPresent(): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_BOverlayNeedsPresent', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
-  /** Call result: CheckFileSignature_t */
+  /**
+   * `SteamAPICall_t CheckFileSignature(const char *szFileName)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_CheckFileSignature`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<CheckFileSignature_t>(handle, layoutOf('CheckFileSignature_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#CheckFileSignature
+   */
   CheckFileSignature(szFileName: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUtils_CheckFileSignature', 'uint64', ['void *', 'str'])(this.ptr, szFileName) as number | bigint);
   }
 
+  /**
+   * `bool ShowGamepadTextInput(EGamepadTextInputMode eInputMode, EGamepadTextInputLineMode eLineInputMode, const char *pchDescription, uint32 unCharMax, const char *pchExistingText)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_ShowGamepadTextInput`
+   * @param eInputMode enum `EGamepadTextInputMode`; values on `flat.EGamepadTextInputMode`.
+   * @param eLineInputMode enum `EGamepadTextInputLineMode`; values on `flat.EGamepadTextInputLineMode`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#ShowGamepadTextInput
+   */
   ShowGamepadTextInput(eInputMode: number, eLineInputMode: number, pchDescription: string, unCharMax: number, pchExistingText: string): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_ShowGamepadTextInput', 'bool', ['void *', 'int32', 'int32', 'str', 'uint32', 'str'])(this.ptr, eInputMode, eLineInputMode, pchDescription, unCharMax, pchExistingText) as boolean;
   }
 
+  /**
+   * `uint32 GetEnteredGamepadTextLength()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetEnteredGamepadTextLength`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextLength
+   */
   GetEnteredGamepadTextLength(): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetEnteredGamepadTextLength', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `bool GetEnteredGamepadTextInput(char *pchText, uint32 cchText)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetEnteredGamepadTextInput`
+   * @param pchText Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextInput
+   */
   GetEnteredGamepadTextInput(pchText: Buffer | null, cchText: number): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_GetEnteredGamepadTextInput', 'bool', ['void *', 'void *', 'uint32'])(this.ptr, pchText, cchText) as boolean;
   }
 
+  /**
+   * `const char * GetSteamUILanguage()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetSteamUILanguage`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetSteamUILanguage
+   */
   GetSteamUILanguage(): string {
     return this.nat.func('SteamAPI_ISteamUtils_GetSteamUILanguage', 'str', ['void *'])(this.ptr) as string;
   }
 
+  /**
+   * `bool IsSteamRunningInVR()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_IsSteamRunningInVR`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamRunningInVR
+   */
   IsSteamRunningInVR(): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_IsSteamRunningInVR', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `void SetOverlayNotificationInset(int nHorizontalInset, int nVerticalInset)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_SetOverlayNotificationInset`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#SetOverlayNotificationInset
+   */
   SetOverlayNotificationInset(nHorizontalInset: number, nVerticalInset: number): void {
     this.nat.func('SteamAPI_ISteamUtils_SetOverlayNotificationInset', 'void', ['void *', 'int32', 'int32'])(this.ptr, nHorizontalInset, nVerticalInset);
   }
 
+  /**
+   * `bool IsSteamInBigPictureMode()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_IsSteamInBigPictureMode`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamInBigPictureMode
+   */
   IsSteamInBigPictureMode(): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_IsSteamInBigPictureMode', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `void StartVRDashboard()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_StartVRDashboard`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#StartVRDashboard
+   */
   StartVRDashboard(): void {
     this.nat.func('SteamAPI_ISteamUtils_StartVRDashboard', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `bool IsVRHeadsetStreamingEnabled()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_IsVRHeadsetStreamingEnabled`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#IsVRHeadsetStreamingEnabled
+   */
   IsVRHeadsetStreamingEnabled(): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_IsVRHeadsetStreamingEnabled', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `void SetVRHeadsetStreamingEnabled(bool bEnabled)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_SetVRHeadsetStreamingEnabled`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#SetVRHeadsetStreamingEnabled
+   */
   SetVRHeadsetStreamingEnabled(bEnabled: boolean): void {
     this.nat.func('SteamAPI_ISteamUtils_SetVRHeadsetStreamingEnabled', 'void', ['void *', 'bool'])(this.ptr, bEnabled);
   }
 
+  /**
+   * `bool IsSteamChinaLauncher()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_IsSteamChinaLauncher`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamChinaLauncher
+   */
   IsSteamChinaLauncher(): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_IsSteamChinaLauncher', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool InitFilterText(uint32 unFilterOptions)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_InitFilterText`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#InitFilterText
+   */
   InitFilterText(unFilterOptions: number): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_InitFilterText', 'bool', ['void *', 'uint32'])(this.ptr, unFilterOptions) as boolean;
   }
 
+  /**
+   * `int FilterText(ETextFilteringContext eContext, CSteamID sourceSteamID, const char *pchInputMessage, char *pchOutFilteredText, uint32 nByteSizeOutFilteredText)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_FilterText`
+   * @param eContext enum `ETextFilteringContext`; values on `flat.ETextFilteringContext`.
+   * @param sourceSteamID `CSteamID`, 64-bit: bigint or number.
+   * @param pchOutFilteredText Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#FilterText
+   */
   FilterText(eContext: number, sourceSteamID: bigint | number, pchInputMessage: string, pchOutFilteredText: Buffer | null, nByteSizeOutFilteredText: number): number {
     return this.nat.func('SteamAPI_ISteamUtils_FilterText', 'int32', ['void *', 'int32', 'uint64', 'str', 'void *', 'uint32'])(this.ptr, eContext, sourceSteamID, pchInputMessage, pchOutFilteredText, nByteSizeOutFilteredText) as number;
   }
 
+  /**
+   * `ESteamIPv6ConnectivityState GetIPv6ConnectivityState(ESteamIPv6ConnectivityProtocol eProtocol)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetIPv6ConnectivityState`
+   * @param eProtocol enum `ESteamIPv6ConnectivityProtocol`; values on `flat.ESteamIPv6ConnectivityProtocol`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetIPv6ConnectivityState
+   */
   GetIPv6ConnectivityState(eProtocol: number): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetIPv6ConnectivityState', 'int32', ['void *', 'int32'])(this.ptr, eProtocol) as number;
   }
 
+  /**
+   * `bool ShowFloatingGamepadTextInput(EFloatingGamepadTextInputMode eKeyboardMode, int nTextFieldXPosition, int nTextFieldYPosition, int nTextFieldWidth, int nTextFieldHeight)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_ShowFloatingGamepadTextInput`
+   * @param eKeyboardMode enum `EFloatingGamepadTextInputMode`; values on `flat.EFloatingGamepadTextInputMode`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#ShowFloatingGamepadTextInput
+   */
   ShowFloatingGamepadTextInput(eKeyboardMode: number, nTextFieldXPosition: number, nTextFieldYPosition: number, nTextFieldWidth: number, nTextFieldHeight: number): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_ShowFloatingGamepadTextInput', 'bool', ['void *', 'int32', 'int32', 'int32', 'int32', 'int32'])(this.ptr, eKeyboardMode, nTextFieldXPosition, nTextFieldYPosition, nTextFieldWidth, nTextFieldHeight) as boolean;
   }
 
+  /**
+   * `void SetGameLauncherMode(bool bLauncherMode)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_SetGameLauncherMode`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#SetGameLauncherMode
+   */
   SetGameLauncherMode(bLauncherMode: boolean): void {
     this.nat.func('SteamAPI_ISteamUtils_SetGameLauncherMode', 'void', ['void *', 'bool'])(this.ptr, bLauncherMode);
   }
 
+  /**
+   * `bool DismissFloatingGamepadTextInput()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_DismissFloatingGamepadTextInput`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#DismissFloatingGamepadTextInput
+   */
   DismissFloatingGamepadTextInput(): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_DismissFloatingGamepadTextInput', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool DismissGamepadTextInput()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_DismissGamepadTextInput`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#DismissGamepadTextInput
+   */
   DismissGamepadTextInput(): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_DismissGamepadTextInput', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `ESteamHardwareType IsRunningOnSteamHardware()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_IsRunningOnSteamHardware`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#IsRunningOnSteamHardware
+   */
   IsRunningOnSteamHardware(): number {
     return this.nat.func('SteamAPI_ISteamUtils_IsRunningOnSteamHardware', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `ESteamHardwareDefaultConfig GetSteamHardwareDefaultConfig()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_GetSteamHardwareDefaultConfig`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#GetSteamHardwareDefaultConfig
+   */
   GetSteamHardwareDefaultConfig(): number {
     return this.nat.func('SteamAPI_ISteamUtils_GetSteamHardwareDefaultConfig', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `bool IsRunningUnderProton()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUtils_IsRunningUnderProton`
+   * @see https://partner.steamgames.com/doc/api/ISteamUtils#IsRunningUnderProton
+   */
   IsRunningUnderProton(): boolean {
     return this.nat.func('SteamAPI_ISteamUtils_IsRunningUnderProton', 'bool', ['void *'])(this.ptr) as boolean;
   }

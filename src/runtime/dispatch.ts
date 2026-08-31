@@ -28,7 +28,20 @@ interface PendingCall {
   reject: (err: Error) => void;
 }
 
+/**
+ * An async Steam call could not be completed: the handle was invalid, the
+ * result could not be read, or Steam reported an IO failure.
+ *
+ * A call that completes with a non-OK `EResult` is not this error. The high
+ * level API throws {@link SteamResultError} for that.
+ *
+ * @see SteamDispatch.callResult
+ */
 export class SteamApiCallError extends Error {
+  /**
+   * @param message - What failed.
+   * @param callbackId - Id of the expected result struct, or 0 if the handle was already invalid.
+   */
   constructor(
     message: string,
     readonly callbackId: number,
@@ -42,6 +55,12 @@ export class SteamApiCallError extends Error {
  * Valve's manual dispatch pump. One per process; never combine with
  * SteamAPI_RunCallbacks. Resolves call-result promises and fans plain
  * callbacks out to listeners.
+ *
+ * `init()` creates and starts one, reachable as `steam.dispatch`. Mixing this
+ * pump with SteamAPI_RunCallbacks makes both miss callbacks.
+ *
+ * @see init
+ * @see Steam.dispatch
  */
 export class SteamDispatch {
   private readonly getNextCallback: koffi.KoffiFunction;
@@ -49,6 +68,10 @@ export class SteamDispatch {
   private readonly pending = new Map<bigint, PendingCall>();
   private readonly listeners = new Map<number, Set<(buf: Buffer) => void>>();
 
+  /**
+   * @param nat - Loaded library. `SteamAPI_ManualDispatch_Init` must already have run on it.
+   * @param pipe - Pipe handle from `nat.getHSteamPipe()`.
+   */
   constructor(
     private readonly nat: SteamNative,
     private readonly pipe: number,
@@ -61,12 +84,31 @@ export class SteamDispatch {
     ]);
   }
 
+  /**
+   * Starts the pump interval. Does nothing if it is already running.
+   *
+   * The timer is unref'd, so it never keeps an idle process alive. It is ref'd
+   * again while a call is in flight, so an awaited call cannot let the process
+   * exit.
+   *
+   * @param intervalMs - Milliseconds between frames.
+   * @defaultValue 50
+   * @see stop
+   */
   start(intervalMs = 50): void {
     if (this.timer) return;
     this.timer = setInterval(() => this.runFrame(), intervalMs);
     this.timer.unref();
   }
 
+  /**
+   * Stops the pump and rejects every call that is still in flight.
+   *
+   * Safe to call more than once. Listeners stay registered, so a later
+   * `start()` resumes them.
+   *
+   * @see Steam.close
+   */
   stop(): void {
     if (this.timer) clearInterval(this.timer);
     this.timer = undefined;
@@ -76,7 +118,18 @@ export class SteamDispatch {
     this.pending.clear();
   }
 
-  /** Await the raw bytes of a call result. */
+  /**
+   * Awaits the raw bytes of a call result.
+   *
+   * Flat methods that start an async call return a 64-bit call handle as a
+   * `bigint`. Pass that handle here to wait for its result struct.
+   *
+   * @param call - Call handle from a flat method. `0n` means Steam refused the call.
+   * @returns The result struct bytes. Decode them with {@link decodeStruct}.
+   * @throws SteamApiCallError if the handle is `0n`, if the result cannot be read, or if Steam reports an IO failure.
+   * @throws Error if `stop()` runs while the call is in flight.
+   * @see callResultStruct
+   */
   callResult(call: bigint): Promise<Buffer> {
     if (call === 0n) {
       return Promise.reject(new SteamApiCallError('Steam returned an invalid API call handle', 0));
@@ -88,8 +141,11 @@ export class SteamDispatch {
   }
 
   /**
+   * Re-evaluates whether the pump timer keeps the event loop alive.
+   *
    * The pump must not keep an idle process alive, but a pending Steam call
    * must: ref the interval while calls are in flight, unref when drained.
+   * Called on every add to and removal from the pending map.
    */
   private updateRef(): void {
     if (!this.timer) return;
@@ -97,13 +153,45 @@ export class SteamDispatch {
     else this.timer.unref();
   }
 
-  /** Await a call result and decode it with the given layout. */
+  /**
+   * Awaits a call result and decodes it with the given layout.
+   *
+   * @param call - Call handle from a flat method.
+   * @param layout - Layout of the expected result struct, from `layoutOf(name)`.
+   * @typeParam T - Generated struct interface to type the result as.
+   * @returns The decoded result struct. 64-bit fields are `bigint`.
+   * @throws SteamApiCallError if the call cannot be completed.
+   * @throws Error if the returned bytes are shorter than `layout.size`.
+   * @example
+   * ```ts
+   * import { init, flat } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const call = steam.ugc.CreateItem(480, flat.EWorkshopFileType.k_EWorkshopFileTypeCommunity);
+   * const r = await steam.dispatch.callResultStruct<flat.CreateItemResult_t>(
+   *   call,
+   *   flat.layoutOf('CreateItemResult_t'),
+   * );
+   * console.log(r.m_nPublishedFileId); // bigint
+   * ```
+   * @see callResult
+   */
   async callResultStruct<T>(call: bigint, layout: StructLayout): Promise<T> {
     const buf = await this.callResult(call);
     return decodeStruct<T>(buf, layout);
   }
 
-  /** Subscribe to a plain callback by id; returns an unsubscribe function. */
+  /**
+   * Subscribes to a plain callback by id.
+   *
+   * The listener gets the raw struct bytes. `Steam.on` wraps this and decodes
+   * them for you.
+   *
+   * @param callbackId - Numeric callback id, for example from `callbacksById`.
+   * @param listener - Runs on every matching callback, inside the pump frame. Keep it short and do not let it throw.
+   * @returns Unsubscribe function. Calling it more than once is harmless.
+   * @see Steam.on
+   */
   on(callbackId: number, listener: (buf: Buffer) => void): () => void {
     let set = this.listeners.get(callbackId);
     if (!set) {
@@ -114,7 +202,13 @@ export class SteamDispatch {
     return () => set.delete(listener);
   }
 
-  /** Drain everything Steam has queued. Called by the interval; callable directly in tests. */
+  /**
+   * Drains everything Steam has queued: resolves finished calls, then fans the
+   * remaining callbacks out to their listeners.
+   *
+   * Called by the interval. Call it directly to pump on your own schedule, for
+   * example from a game loop or a test.
+   */
   runFrame(): void {
     this.nat.manualDispatchRunFrame(this.pipe);
     const msg: Partial<CallbackMsgJs> = {};
@@ -137,12 +231,31 @@ export class SteamDispatch {
     }
   }
 
-  /** Copy the callback param bytes before FreeLastCallback invalidates them. */
+  /**
+   * Copies the callback param bytes out of Steam's memory.
+   *
+   * The pointer is only valid until `FreeLastCallback`, so the bytes must be
+   * copied inside the same loop turn.
+   *
+   * @param msg - The message `GetNextCallback` just filled in.
+   * @returns An owned copy of `m_cubParam` bytes.
+   */
   private readParam(msg: CallbackMsgJs): Buffer {
     const decoded = koffi.decode(msg.m_pubParam, koffi.array('uint8', msg.m_cubParam)) as Uint8Array;
     return Buffer.from(decoded);
   }
 
+  /**
+   * Settles the promise for one finished async call.
+   *
+   * The fields come from the `SteamAPICallCompleted_t` payload. A handle that
+   * nobody awaits is ignored, which also covers a second completion for a call
+   * that was already settled.
+   *
+   * @param call - The completed call handle.
+   * @param callbackId - Id of the result struct, passed to `GetAPICallResult` as the expected id.
+   * @param size - Size of the result struct in bytes.
+   */
   private completeCall(call: bigint, callbackId: number, size: number): void {
     const pending = this.pending.get(call);
     if (!pending) return; // not ours (or already handled)

@@ -3,11 +3,13 @@
 
 import type { StructLayout } from '../runtime/struct';
 
+/** `SteamIPAddress_t` (Steamworks struct). Layout: `layoutOf('SteamIPAddress_t')`. */
 export interface SteamIPAddress_t {
   m_rgubIPv6: Buffer;
   m_eType: number;
 }
 
+/** `FriendGameInfo_t` (Steamworks struct). Layout: `layoutOf('FriendGameInfo_t')`. */
 export interface FriendGameInfo_t {
   m_gameID: bigint;
   m_unGameIP: number;
@@ -16,17 +18,20 @@ export interface FriendGameInfo_t {
   m_steamIDLobby: bigint;
 }
 
+/** `MatchMakingKeyValuePair_t` (Steamworks struct). Layout: `layoutOf('MatchMakingKeyValuePair_t')`. */
 export interface MatchMakingKeyValuePair_t {
   m_szKey: string;
   m_szValue: string;
 }
 
+/** `servernetadr_t` (Steamworks struct). Layout: `layoutOf('servernetadr_t')`. */
 export interface servernetadr_t {
   m_usConnectionPort: number;
   m_usQueryPort: number;
   m_unIP: number;
 }
 
+/** `gameserveritem_t` (Steamworks struct). Layout: `layoutOf('gameserveritem_t')`. */
 export interface gameserveritem_t {
   m_NetAdr: Buffer;
   m_nPing: number;
@@ -50,16 +55,19 @@ export interface gameserveritem_t {
   m_nTotalFriendCount: number;
 }
 
+/** `SteamPartyBeaconLocation_t` (Steamworks struct). Layout: `layoutOf('SteamPartyBeaconLocation_t')`. */
 export interface SteamPartyBeaconLocation_t {
   m_eType: number;
   m_ulLocationID: bigint;
 }
 
+/** `SteamParamStringArray_t` (Steamworks struct). Layout: `layoutOf('SteamParamStringArray_t')`. */
 export interface SteamParamStringArray_t {
   m_ppStrings: bigint;
   m_nNumStrings: number;
 }
 
+/** `LeaderboardEntry_t` (Steamworks struct). Layout: `layoutOf('LeaderboardEntry_t')`. */
 export interface LeaderboardEntry_t {
   m_steamIDUser: bigint;
   m_nGlobalRank: number;
@@ -68,6 +76,7 @@ export interface LeaderboardEntry_t {
   m_hUGC: bigint;
 }
 
+/** `P2PSessionState_t` (Steamworks struct). Layout: `layoutOf('P2PSessionState_t')`. */
 export interface P2PSessionState_t {
   m_bConnectionActive: number;
   m_bConnecting: number;
@@ -79,6 +88,7 @@ export interface P2PSessionState_t {
   m_nRemotePort: number;
 }
 
+/** `InputAnalogActionData_t` (Steamworks struct). Layout: `layoutOf('InputAnalogActionData_t')`. */
 export interface InputAnalogActionData_t {
   eMode: number;
   x: number;
@@ -86,11 +96,13 @@ export interface InputAnalogActionData_t {
   bActive: boolean;
 }
 
+/** `InputDigitalActionData_t` (Steamworks struct). Layout: `layoutOf('InputDigitalActionData_t')`. */
 export interface InputDigitalActionData_t {
   bState: boolean;
   bActive: boolean;
 }
 
+/** `InputMotionData_t` (Steamworks struct). Layout: `layoutOf('InputMotionData_t')`. */
 export interface InputMotionData_t {
   rotQuatX: number;
   rotQuatY: number;
@@ -104,6 +116,7 @@ export interface InputMotionData_t {
   rotVelZ: number;
 }
 
+/** `SteamUGCDetails_t` (Steamworks struct). Layout: `layoutOf('SteamUGCDetails_t')`. */
 export interface SteamUGCDetails_t {
   m_nPublishedFileId: bigint;
   m_eResult: number;
@@ -134,6 +147,7 @@ export interface SteamUGCDetails_t {
   m_ulTotalFilesSize: bigint;
 }
 
+/** `SteamItemDetails_t` (Steamworks struct). Layout: `layoutOf('SteamItemDetails_t')`. */
 export interface SteamItemDetails_t {
   m_itemId: bigint;
   m_iDefinition: number;
@@ -141,6 +155,7 @@ export interface SteamItemDetails_t {
   m_unFlags: number;
 }
 
+/** `RemotePlayInputMouseMotion_t` (Steamworks struct). Layout: `layoutOf('RemotePlayInputMouseMotion_t')`. */
 export interface RemotePlayInputMouseMotion_t {
   m_bAbsolute: boolean;
   m_flNormalizedX: number;
@@ -149,23 +164,27 @@ export interface RemotePlayInputMouseMotion_t {
   m_nDeltaY: number;
 }
 
+/** `RemotePlayInputMouseWheel_t` (Steamworks struct). Layout: `layoutOf('RemotePlayInputMouseWheel_t')`. */
 export interface RemotePlayInputMouseWheel_t {
   m_eDirection: number;
   m_flAmount: number;
 }
 
+/** `RemotePlayInputKey_t` (Steamworks struct). Layout: `layoutOf('RemotePlayInputKey_t')`. */
 export interface RemotePlayInputKey_t {
   m_eScancode: number;
   m_unModifiers: number;
   m_unKeycode: number;
 }
 
+/** `RemotePlayInput_t` (Steamworks struct). Layout: `layoutOf('RemotePlayInput_t')`. */
 export interface RemotePlayInput_t {
   m_unSessionID: number;
   m_eType: number;
   padding: string;
 }
 
+/** `SteamNetConnectionRealTimeStatus_t` (Steamworks struct). Layout: `layoutOf('SteamNetConnectionRealTimeStatus_t')`. */
 export interface SteamNetConnectionRealTimeStatus_t {
   m_eState: number;
   m_nPing: number;
@@ -184,6 +203,7 @@ export interface SteamNetConnectionRealTimeStatus_t {
   reserved: Buffer;
 }
 
+/** `SteamNetConnectionRealTimeLaneStatus_t` (Steamworks struct). Layout: `layoutOf('SteamNetConnectionRealTimeLaneStatus_t')`. */
 export interface SteamNetConnectionRealTimeLaneStatus_t {
   m_cbPendingUnreliable: number;
   m_cbPendingReliable: number;
@@ -193,33 +213,40 @@ export interface SteamNetConnectionRealTimeLaneStatus_t {
   reserved: Buffer;
 }
 
+/** `SteamNetworkPingLocation_t` (Steamworks struct). Layout: `layoutOf('SteamNetworkPingLocation_t')`. */
 export interface SteamNetworkPingLocation_t {
   m_data: Buffer;
 }
 
+/** `SteamNetworkingConfigValue_t` (Steamworks struct). Layout: `layoutOf('SteamNetworkingConfigValue_t')`. */
 export interface SteamNetworkingConfigValue_t {
   m_eValue: number;
   m_eDataType: number;
   m_int64: bigint;
 }
 
+/** `SteamDatagramHostedAddress` (Steamworks struct). Layout: `layoutOf('SteamDatagramHostedAddress')`. */
 export interface SteamDatagramHostedAddress {
   m_cbSize: number;
   m_data: string;
 }
 
+/** `SteamServersConnected_t` (Steam callback, id 101). Layout: `layoutOf('SteamServersConnected_t')`. */
 export interface SteamServersConnected_t {
 }
 
+/** `SteamServerConnectFailure_t` (Steam callback, id 102). Layout: `layoutOf('SteamServerConnectFailure_t')`. */
 export interface SteamServerConnectFailure_t {
   m_eResult: number;
   m_bStillRetrying: boolean;
 }
 
+/** `SteamServersDisconnected_t` (Steam callback, id 103). Layout: `layoutOf('SteamServersDisconnected_t')`. */
 export interface SteamServersDisconnected_t {
   m_eResult: number;
 }
 
+/** `ClientGameServerDeny_t` (Steam callback, id 113). Layout: `layoutOf('ClientGameServerDeny_t')`. */
 export interface ClientGameServerDeny_t {
   m_uAppID: number;
   m_unGameServerIP: number;
@@ -228,42 +255,51 @@ export interface ClientGameServerDeny_t {
   m_uReason: number;
 }
 
+/** `IPCFailure_t` (Steam callback, id 117). Layout: `layoutOf('IPCFailure_t')`. */
 export interface IPCFailure_t {
   m_eFailureType: number;
 }
 
+/** `LicensesUpdated_t` (Steam callback, id 125). Layout: `layoutOf('LicensesUpdated_t')`. */
 export interface LicensesUpdated_t {
 }
 
+/** `ValidateAuthTicketResponse_t` (Steam callback, id 143). Layout: `layoutOf('ValidateAuthTicketResponse_t')`. */
 export interface ValidateAuthTicketResponse_t {
   m_SteamID: bigint;
   m_eAuthSessionResponse: number;
   m_OwnerSteamID: bigint;
 }
 
+/** `MicroTxnAuthorizationResponse_t` (Steam callback, id 152). Layout: `layoutOf('MicroTxnAuthorizationResponse_t')`. */
 export interface MicroTxnAuthorizationResponse_t {
   m_unAppID: number;
   m_ulOrderID: bigint;
   m_bAuthorized: number;
 }
 
+/** `EncryptedAppTicketResponse_t` (Steam callback, id 154). Layout: `layoutOf('EncryptedAppTicketResponse_t')`. */
 export interface EncryptedAppTicketResponse_t {
   m_eResult: number;
 }
 
+/** `GetAuthSessionTicketResponse_t` (Steam callback, id 163). Layout: `layoutOf('GetAuthSessionTicketResponse_t')`. */
 export interface GetAuthSessionTicketResponse_t {
   m_hAuthTicket: number;
   m_eResult: number;
 }
 
+/** `GameWebCallback_t` (Steam callback, id 164). Layout: `layoutOf('GameWebCallback_t')`. */
 export interface GameWebCallback_t {
   m_szURL: string;
 }
 
+/** `StoreAuthURLResponse_t` (Steam callback, id 165). Layout: `layoutOf('StoreAuthURLResponse_t')`. */
 export interface StoreAuthURLResponse_t {
   m_szURL: string;
 }
 
+/** `MarketEligibilityResponse_t` (Steam callback, id 166). Layout: `layoutOf('MarketEligibilityResponse_t')`. */
 export interface MarketEligibilityResponse_t {
   m_bAllowed: boolean;
   m_eNotAllowedReason: number;
@@ -272,6 +308,7 @@ export interface MarketEligibilityResponse_t {
   m_cdayNewDeviceCooldown: number;
 }
 
+/** `DurationControl_t` (Steam callback, id 167). Layout: `layoutOf('DurationControl_t')`. */
 export interface DurationControl_t {
   m_eResult: number;
   m_appid: number;
@@ -283,6 +320,7 @@ export interface DurationControl_t {
   m_csecsRemaining: number;
 }
 
+/** `GetTicketForWebApiResponse_t` (Steam callback, id 168). Layout: `layoutOf('GetTicketForWebApiResponse_t')`. */
 export interface GetTicketForWebApiResponse_t {
   m_hAuthTicket: number;
   m_eResult: number;
@@ -290,11 +328,13 @@ export interface GetTicketForWebApiResponse_t {
   m_rgubTicket: Buffer;
 }
 
+/** `PersonaStateChange_t` (Steam callback, id 304). Layout: `layoutOf('PersonaStateChange_t')`. */
 export interface PersonaStateChange_t {
   m_ulSteamID: bigint;
   m_nChangeFlags: number;
 }
 
+/** `GameOverlayActivated_t` (Steam callback, id 331). Layout: `layoutOf('GameOverlayActivated_t')`. */
 export interface GameOverlayActivated_t {
   m_bActive: number;
   m_bUserInitiated: boolean;
@@ -302,16 +342,19 @@ export interface GameOverlayActivated_t {
   m_dwOverlayPID: number;
 }
 
+/** `GameServerChangeRequested_t` (Steam callback, id 332). Layout: `layoutOf('GameServerChangeRequested_t')`. */
 export interface GameServerChangeRequested_t {
   m_rgchServer: string;
   m_rgchPassword: string;
 }
 
+/** `GameLobbyJoinRequested_t` (Steam callback, id 333). Layout: `layoutOf('GameLobbyJoinRequested_t')`. */
 export interface GameLobbyJoinRequested_t {
   m_steamIDLobby: bigint;
   m_steamIDFriend: bigint;
 }
 
+/** `AvatarImageLoaded_t` (Steam callback, id 334). Layout: `layoutOf('AvatarImageLoaded_t')`. */
 export interface AvatarImageLoaded_t {
   m_steamID: bigint;
   m_iImage: number;
@@ -319,33 +362,39 @@ export interface AvatarImageLoaded_t {
   m_iTall: number;
 }
 
+/** `ClanOfficerListResponse_t` (Steam callback, id 335). Layout: `layoutOf('ClanOfficerListResponse_t')`. */
 export interface ClanOfficerListResponse_t {
   m_steamIDClan: bigint;
   m_cOfficers: number;
   m_bSuccess: number;
 }
 
+/** `FriendRichPresenceUpdate_t` (Steam callback, id 336). Layout: `layoutOf('FriendRichPresenceUpdate_t')`. */
 export interface FriendRichPresenceUpdate_t {
   m_steamIDFriend: bigint;
   m_nAppID: number;
 }
 
+/** `GameRichPresenceJoinRequested_t` (Steam callback, id 337). Layout: `layoutOf('GameRichPresenceJoinRequested_t')`. */
 export interface GameRichPresenceJoinRequested_t {
   m_steamIDFriend: bigint;
   m_rgchConnect: string;
 }
 
+/** `GameConnectedClanChatMsg_t` (Steam callback, id 338). Layout: `layoutOf('GameConnectedClanChatMsg_t')`. */
 export interface GameConnectedClanChatMsg_t {
   m_steamIDClanChat: bigint;
   m_steamIDUser: bigint;
   m_iMessageID: number;
 }
 
+/** `GameConnectedChatJoin_t` (Steam callback, id 339). Layout: `layoutOf('GameConnectedChatJoin_t')`. */
 export interface GameConnectedChatJoin_t {
   m_steamIDClanChat: bigint;
   m_steamIDUser: bigint;
 }
 
+/** `GameConnectedChatLeave_t` (Steam callback, id 340). Layout: `layoutOf('GameConnectedChatLeave_t')`. */
 export interface GameConnectedChatLeave_t {
   m_steamIDClanChat: bigint;
   m_steamIDUser: bigint;
@@ -353,32 +402,38 @@ export interface GameConnectedChatLeave_t {
   m_bDropped: boolean;
 }
 
+/** `DownloadClanActivityCountsResult_t` (Steam callback, id 341). Layout: `layoutOf('DownloadClanActivityCountsResult_t')`. */
 export interface DownloadClanActivityCountsResult_t {
   m_bSuccess: boolean;
 }
 
+/** `JoinClanChatRoomCompletionResult_t` (Steam callback, id 342). Layout: `layoutOf('JoinClanChatRoomCompletionResult_t')`. */
 export interface JoinClanChatRoomCompletionResult_t {
   m_steamIDClanChat: bigint;
   m_eChatRoomEnterResponse: number;
 }
 
+/** `GameConnectedFriendChatMsg_t` (Steam callback, id 343). Layout: `layoutOf('GameConnectedFriendChatMsg_t')`. */
 export interface GameConnectedFriendChatMsg_t {
   m_steamIDUser: bigint;
   m_iMessageID: number;
 }
 
+/** `FriendsGetFollowerCount_t` (Steam callback, id 344). Layout: `layoutOf('FriendsGetFollowerCount_t')`. */
 export interface FriendsGetFollowerCount_t {
   m_eResult: number;
   m_steamID: bigint;
   m_nCount: number;
 }
 
+/** `FriendsIsFollowing_t` (Steam callback, id 345). Layout: `layoutOf('FriendsIsFollowing_t')`. */
 export interface FriendsIsFollowing_t {
   m_eResult: number;
   m_steamID: bigint;
   m_bIsFollowing: boolean;
 }
 
+/** `FriendsEnumerateFollowingList_t` (Steam callback, id 346). Layout: `layoutOf('FriendsEnumerateFollowingList_t')`. */
 export interface FriendsEnumerateFollowingList_t {
   m_eResult: number;
   m_rgSteamID: Buffer;
@@ -386,17 +441,21 @@ export interface FriendsEnumerateFollowingList_t {
   m_nTotalResultCount: number;
 }
 
+/** `UnreadChatMessagesChanged_t` (Steam callback, id 348). Layout: `layoutOf('UnreadChatMessagesChanged_t')`. */
 export interface UnreadChatMessagesChanged_t {
 }
 
+/** `OverlayBrowserProtocolNavigation_t` (Steam callback, id 349). Layout: `layoutOf('OverlayBrowserProtocolNavigation_t')`. */
 export interface OverlayBrowserProtocolNavigation_t {
   rgchURI: string;
 }
 
+/** `EquippedProfileItemsChanged_t` (Steam callback, id 350). Layout: `layoutOf('EquippedProfileItemsChanged_t')`. */
 export interface EquippedProfileItemsChanged_t {
   m_steamID: bigint;
 }
 
+/** `EquippedProfileItems_t` (Steam callback, id 351). Layout: `layoutOf('EquippedProfileItems_t')`. */
 export interface EquippedProfileItems_t {
   m_eResult: number;
   m_steamID: bigint;
@@ -408,42 +467,52 @@ export interface EquippedProfileItems_t {
   m_bFromCache: boolean;
 }
 
+/** `IPCountry_t` (Steam callback, id 701). Layout: `layoutOf('IPCountry_t')`. */
 export interface IPCountry_t {
 }
 
+/** `LowBatteryPower_t` (Steam callback, id 702). Layout: `layoutOf('LowBatteryPower_t')`. */
 export interface LowBatteryPower_t {
   m_nMinutesBatteryLeft: number;
 }
 
+/** `SteamAPICallCompleted_t` (Steam callback, id 703). Layout: `layoutOf('SteamAPICallCompleted_t')`. */
 export interface SteamAPICallCompleted_t {
   m_hAsyncCall: bigint;
   m_iCallback: number;
   m_cubParam: number;
 }
 
+/** `SteamShutdown_t` (Steam callback, id 704). Layout: `layoutOf('SteamShutdown_t')`. */
 export interface SteamShutdown_t {
 }
 
+/** `CheckFileSignature_t` (Steam callback, id 705). Layout: `layoutOf('CheckFileSignature_t')`. */
 export interface CheckFileSignature_t {
   m_eCheckFileSignature: number;
 }
 
+/** `GamepadTextInputDismissed_t` (Steam callback, id 714). Layout: `layoutOf('GamepadTextInputDismissed_t')`. */
 export interface GamepadTextInputDismissed_t {
   m_bSubmitted: boolean;
   m_unSubmittedText: number;
   m_unAppID: number;
 }
 
+/** `AppResumingFromSuspend_t` (Steam callback, id 736). Layout: `layoutOf('AppResumingFromSuspend_t')`. */
 export interface AppResumingFromSuspend_t {
 }
 
+/** `FloatingGamepadTextInputDismissed_t` (Steam callback, id 738). Layout: `layoutOf('FloatingGamepadTextInputDismissed_t')`. */
 export interface FloatingGamepadTextInputDismissed_t {
 }
 
+/** `FilterTextDictionaryChanged_t` (Steam callback, id 739). Layout: `layoutOf('FilterTextDictionaryChanged_t')`. */
 export interface FilterTextDictionaryChanged_t {
   m_eLanguage: number;
 }
 
+/** `FavoritesListChanged_t` (Steam callback, id 502). Layout: `layoutOf('FavoritesListChanged_t')`. */
 export interface FavoritesListChanged_t {
   m_nIP: number;
   m_nQueryPort: number;
@@ -454,12 +523,14 @@ export interface FavoritesListChanged_t {
   m_unAccountId: number;
 }
 
+/** `LobbyInvite_t` (Steam callback, id 503). Layout: `layoutOf('LobbyInvite_t')`. */
 export interface LobbyInvite_t {
   m_ulSteamIDUser: bigint;
   m_ulSteamIDLobby: bigint;
   m_ulGameID: bigint;
 }
 
+/** `LobbyEnter_t` (Steam callback, id 504). Layout: `layoutOf('LobbyEnter_t')`. */
 export interface LobbyEnter_t {
   m_ulSteamIDLobby: bigint;
   m_rgfChatPermissions: number;
@@ -467,12 +538,14 @@ export interface LobbyEnter_t {
   m_EChatRoomEnterResponse: number;
 }
 
+/** `LobbyDataUpdate_t` (Steam callback, id 505). Layout: `layoutOf('LobbyDataUpdate_t')`. */
 export interface LobbyDataUpdate_t {
   m_ulSteamIDLobby: bigint;
   m_ulSteamIDMember: bigint;
   m_bSuccess: number;
 }
 
+/** `LobbyChatUpdate_t` (Steam callback, id 506). Layout: `layoutOf('LobbyChatUpdate_t')`. */
 export interface LobbyChatUpdate_t {
   m_ulSteamIDLobby: bigint;
   m_ulSteamIDUserChanged: bigint;
@@ -480,6 +553,7 @@ export interface LobbyChatUpdate_t {
   m_rgfChatMemberStateChange: number;
 }
 
+/** `LobbyChatMsg_t` (Steam callback, id 507). Layout: `layoutOf('LobbyChatMsg_t')`. */
 export interface LobbyChatMsg_t {
   m_ulSteamIDLobby: bigint;
   m_ulSteamIDUser: bigint;
@@ -487,6 +561,7 @@ export interface LobbyChatMsg_t {
   m_iChatID: number;
 }
 
+/** `LobbyGameCreated_t` (Steam callback, id 509). Layout: `layoutOf('LobbyGameCreated_t')`. */
 export interface LobbyGameCreated_t {
   m_ulSteamIDLobby: bigint;
   m_ulSteamIDGameServer: bigint;
@@ -494,25 +569,30 @@ export interface LobbyGameCreated_t {
   m_usPort: number;
 }
 
+/** `LobbyMatchList_t` (Steam callback, id 510). Layout: `layoutOf('LobbyMatchList_t')`. */
 export interface LobbyMatchList_t {
   m_nLobbiesMatching: number;
 }
 
+/** `LobbyKicked_t` (Steam callback, id 512). Layout: `layoutOf('LobbyKicked_t')`. */
 export interface LobbyKicked_t {
   m_ulSteamIDLobby: bigint;
   m_ulSteamIDAdmin: bigint;
   m_bKickedDueToDisconnect: number;
 }
 
+/** `LobbyCreated_t` (Steam callback, id 513). Layout: `layoutOf('LobbyCreated_t')`. */
 export interface LobbyCreated_t {
   m_eResult: number;
   m_ulSteamIDLobby: bigint;
 }
 
+/** `FavoritesListAccountsUpdated_t` (Steam callback, id 516). Layout: `layoutOf('FavoritesListAccountsUpdated_t')`. */
 export interface FavoritesListAccountsUpdated_t {
   m_eResult: number;
 }
 
+/** `JoinPartyCallback_t` (Steam callback, id 5301). Layout: `layoutOf('JoinPartyCallback_t')`. */
 export interface JoinPartyCallback_t {
   m_eResult: number;
   m_ulBeaconID: bigint;
@@ -520,43 +600,52 @@ export interface JoinPartyCallback_t {
   m_rgchConnectString: string;
 }
 
+/** `CreateBeaconCallback_t` (Steam callback, id 5302). Layout: `layoutOf('CreateBeaconCallback_t')`. */
 export interface CreateBeaconCallback_t {
   m_eResult: number;
   m_ulBeaconID: bigint;
 }
 
+/** `ReservationNotificationCallback_t` (Steam callback, id 5303). Layout: `layoutOf('ReservationNotificationCallback_t')`. */
 export interface ReservationNotificationCallback_t {
   m_ulBeaconID: bigint;
   m_steamIDJoiner: bigint;
 }
 
+/** `ChangeNumOpenSlotsCallback_t` (Steam callback, id 5304). Layout: `layoutOf('ChangeNumOpenSlotsCallback_t')`. */
 export interface ChangeNumOpenSlotsCallback_t {
   m_eResult: number;
 }
 
+/** `AvailableBeaconLocationsUpdated_t` (Steam callback, id 5305). Layout: `layoutOf('AvailableBeaconLocationsUpdated_t')`. */
 export interface AvailableBeaconLocationsUpdated_t {
 }
 
+/** `ActiveBeaconsUpdated_t` (Steam callback, id 5306). Layout: `layoutOf('ActiveBeaconsUpdated_t')`. */
 export interface ActiveBeaconsUpdated_t {
 }
 
+/** `RemoteStorageFileShareResult_t` (Steam callback, id 1307). Layout: `layoutOf('RemoteStorageFileShareResult_t')`. */
 export interface RemoteStorageFileShareResult_t {
   m_eResult: number;
   m_hFile: bigint;
   m_rgchFilename: string;
 }
 
+/** `RemoteStoragePublishFileResult_t` (Steam callback, id 1309). Layout: `layoutOf('RemoteStoragePublishFileResult_t')`. */
 export interface RemoteStoragePublishFileResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
 }
 
+/** `RemoteStorageDeletePublishedFileResult_t` (Steam callback, id 1311). Layout: `layoutOf('RemoteStorageDeletePublishedFileResult_t')`. */
 export interface RemoteStorageDeletePublishedFileResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
 }
 
+/** `RemoteStorageEnumerateUserPublishedFilesResult_t` (Steam callback, id 1312). Layout: `layoutOf('RemoteStorageEnumerateUserPublishedFilesResult_t')`. */
 export interface RemoteStorageEnumerateUserPublishedFilesResult_t {
   m_eResult: number;
   m_nResultsReturned: number;
@@ -564,11 +653,13 @@ export interface RemoteStorageEnumerateUserPublishedFilesResult_t {
   m_rgPublishedFileId: Buffer;
 }
 
+/** `RemoteStorageSubscribePublishedFileResult_t` (Steam callback, id 1313). Layout: `layoutOf('RemoteStorageSubscribePublishedFileResult_t')`. */
 export interface RemoteStorageSubscribePublishedFileResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
 }
 
+/** `RemoteStorageEnumerateUserSubscribedFilesResult_t` (Steam callback, id 1314). Layout: `layoutOf('RemoteStorageEnumerateUserSubscribedFilesResult_t')`. */
 export interface RemoteStorageEnumerateUserSubscribedFilesResult_t {
   m_eResult: number;
   m_nResultsReturned: number;
@@ -577,17 +668,20 @@ export interface RemoteStorageEnumerateUserSubscribedFilesResult_t {
   m_rgRTimeSubscribed: Buffer;
 }
 
+/** `RemoteStorageUnsubscribePublishedFileResult_t` (Steam callback, id 1315). Layout: `layoutOf('RemoteStorageUnsubscribePublishedFileResult_t')`. */
 export interface RemoteStorageUnsubscribePublishedFileResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
 }
 
+/** `RemoteStorageUpdatePublishedFileResult_t` (Steam callback, id 1316). Layout: `layoutOf('RemoteStorageUpdatePublishedFileResult_t')`. */
 export interface RemoteStorageUpdatePublishedFileResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
 }
 
+/** `RemoteStorageDownloadUGCResult_t` (Steam callback, id 1317). Layout: `layoutOf('RemoteStorageDownloadUGCResult_t')`. */
 export interface RemoteStorageDownloadUGCResult_t {
   m_eResult: number;
   m_hFile: bigint;
@@ -597,6 +691,7 @@ export interface RemoteStorageDownloadUGCResult_t {
   m_ulSteamIDOwner: bigint;
 }
 
+/** `RemoteStorageGetPublishedFileDetailsResult_t` (Steam callback, id 1318). Layout: `layoutOf('RemoteStorageGetPublishedFileDetailsResult_t')`. */
 export interface RemoteStorageGetPublishedFileDetailsResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
@@ -621,6 +716,7 @@ export interface RemoteStorageGetPublishedFileDetailsResult_t {
   m_bAcceptedForUse: boolean;
 }
 
+/** `RemoteStorageEnumerateWorkshopFilesResult_t` (Steam callback, id 1319). Layout: `layoutOf('RemoteStorageEnumerateWorkshopFilesResult_t')`. */
 export interface RemoteStorageEnumerateWorkshopFilesResult_t {
   m_eResult: number;
   m_nResultsReturned: number;
@@ -631,6 +727,7 @@ export interface RemoteStorageEnumerateWorkshopFilesResult_t {
   m_unStartIndex: number;
 }
 
+/** `RemoteStorageGetPublishedItemVoteDetailsResult_t` (Steam callback, id 1320). Layout: `layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t')`. */
 export interface RemoteStorageGetPublishedItemVoteDetailsResult_t {
   m_eResult: number;
   m_unPublishedFileId: bigint;
@@ -640,32 +737,38 @@ export interface RemoteStorageGetPublishedItemVoteDetailsResult_t {
   m_fScore: number;
 }
 
+/** `RemoteStoragePublishedFileSubscribed_t` (Steam callback, id 1321). Layout: `layoutOf('RemoteStoragePublishedFileSubscribed_t')`. */
 export interface RemoteStoragePublishedFileSubscribed_t {
   m_nPublishedFileId: bigint;
   m_nAppID: number;
 }
 
+/** `RemoteStoragePublishedFileUnsubscribed_t` (Steam callback, id 1322). Layout: `layoutOf('RemoteStoragePublishedFileUnsubscribed_t')`. */
 export interface RemoteStoragePublishedFileUnsubscribed_t {
   m_nPublishedFileId: bigint;
   m_nAppID: number;
 }
 
+/** `RemoteStoragePublishedFileDeleted_t` (Steam callback, id 1323). Layout: `layoutOf('RemoteStoragePublishedFileDeleted_t')`. */
 export interface RemoteStoragePublishedFileDeleted_t {
   m_nPublishedFileId: bigint;
   m_nAppID: number;
 }
 
+/** `RemoteStorageUpdateUserPublishedItemVoteResult_t` (Steam callback, id 1324). Layout: `layoutOf('RemoteStorageUpdateUserPublishedItemVoteResult_t')`. */
 export interface RemoteStorageUpdateUserPublishedItemVoteResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
 }
 
+/** `RemoteStorageUserVoteDetails_t` (Steam callback, id 1325). Layout: `layoutOf('RemoteStorageUserVoteDetails_t')`. */
 export interface RemoteStorageUserVoteDetails_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
   m_eVote: number;
 }
 
+/** `RemoteStorageEnumerateUserSharedWorkshopFilesResult_t` (Steam callback, id 1326). Layout: `layoutOf('RemoteStorageEnumerateUserSharedWorkshopFilesResult_t')`. */
 export interface RemoteStorageEnumerateUserSharedWorkshopFilesResult_t {
   m_eResult: number;
   m_nResultsReturned: number;
@@ -673,12 +776,14 @@ export interface RemoteStorageEnumerateUserSharedWorkshopFilesResult_t {
   m_rgPublishedFileId: Buffer;
 }
 
+/** `RemoteStorageSetUserPublishedFileActionResult_t` (Steam callback, id 1327). Layout: `layoutOf('RemoteStorageSetUserPublishedFileActionResult_t')`. */
 export interface RemoteStorageSetUserPublishedFileActionResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
   m_eAction: number;
 }
 
+/** `RemoteStorageEnumeratePublishedFilesByUserActionResult_t` (Steam callback, id 1328). Layout: `layoutOf('RemoteStorageEnumeratePublishedFilesByUserActionResult_t')`. */
 export interface RemoteStorageEnumeratePublishedFilesByUserActionResult_t {
   m_eResult: number;
   m_eAction: number;
@@ -688,21 +793,25 @@ export interface RemoteStorageEnumeratePublishedFilesByUserActionResult_t {
   m_rgRTimeUpdated: Buffer;
 }
 
+/** `RemoteStoragePublishFileProgress_t` (Steam callback, id 1329). Layout: `layoutOf('RemoteStoragePublishFileProgress_t')`. */
 export interface RemoteStoragePublishFileProgress_t {
   m_dPercentFile: number;
   m_bPreview: boolean;
 }
 
+/** `RemoteStoragePublishedFileUpdated_t` (Steam callback, id 1330). Layout: `layoutOf('RemoteStoragePublishedFileUpdated_t')`. */
 export interface RemoteStoragePublishedFileUpdated_t {
   m_nPublishedFileId: bigint;
   m_nAppID: number;
   m_ulUnused: bigint;
 }
 
+/** `RemoteStorageFileWriteAsyncComplete_t` (Steam callback, id 1331). Layout: `layoutOf('RemoteStorageFileWriteAsyncComplete_t')`. */
 export interface RemoteStorageFileWriteAsyncComplete_t {
   m_eResult: number;
 }
 
+/** `RemoteStorageFileReadAsyncComplete_t` (Steam callback, id 1332). Layout: `layoutOf('RemoteStorageFileReadAsyncComplete_t')`. */
 export interface RemoteStorageFileReadAsyncComplete_t {
   m_hFileReadAsync: bigint;
   m_eResult: number;
@@ -710,20 +819,24 @@ export interface RemoteStorageFileReadAsyncComplete_t {
   m_cubRead: number;
 }
 
+/** `RemoteStorageLocalFileChange_t` (Steam callback, id 1333). Layout: `layoutOf('RemoteStorageLocalFileChange_t')`. */
 export interface RemoteStorageLocalFileChange_t {
 }
 
+/** `UserStatsReceived_t` (Steam callback, id 1101). Layout: `layoutOf('UserStatsReceived_t')`. */
 export interface UserStatsReceived_t {
   m_nGameID: bigint;
   m_eResult: number;
   m_steamIDUser: bigint;
 }
 
+/** `UserStatsStored_t` (Steam callback, id 1102). Layout: `layoutOf('UserStatsStored_t')`. */
 export interface UserStatsStored_t {
   m_nGameID: bigint;
   m_eResult: number;
 }
 
+/** `UserAchievementStored_t` (Steam callback, id 1103). Layout: `layoutOf('UserAchievementStored_t')`. */
 export interface UserAchievementStored_t {
   m_nGameID: bigint;
   m_bGroupAchievement: boolean;
@@ -732,17 +845,20 @@ export interface UserAchievementStored_t {
   m_nMaxProgress: number;
 }
 
+/** `LeaderboardFindResult_t` (Steam callback, id 1104). Layout: `layoutOf('LeaderboardFindResult_t')`. */
 export interface LeaderboardFindResult_t {
   m_hSteamLeaderboard: bigint;
   m_bLeaderboardFound: number;
 }
 
+/** `LeaderboardScoresDownloaded_t` (Steam callback, id 1105). Layout: `layoutOf('LeaderboardScoresDownloaded_t')`. */
 export interface LeaderboardScoresDownloaded_t {
   m_hSteamLeaderboard: bigint;
   m_hSteamLeaderboardEntries: bigint;
   m_cEntryCount: number;
 }
 
+/** `LeaderboardScoreUploaded_t` (Steam callback, id 1106). Layout: `layoutOf('LeaderboardScoreUploaded_t')`. */
 export interface LeaderboardScoreUploaded_t {
   m_bSuccess: number;
   m_hSteamLeaderboard: bigint;
@@ -752,15 +868,18 @@ export interface LeaderboardScoreUploaded_t {
   m_nGlobalRankPrevious: number;
 }
 
+/** `NumberOfCurrentPlayers_t` (Steam callback, id 1107). Layout: `layoutOf('NumberOfCurrentPlayers_t')`. */
 export interface NumberOfCurrentPlayers_t {
   m_bSuccess: number;
   m_cPlayers: number;
 }
 
+/** `UserStatsUnloaded_t` (Steam callback, id 1108). Layout: `layoutOf('UserStatsUnloaded_t')`. */
 export interface UserStatsUnloaded_t {
   m_steamIDUser: bigint;
 }
 
+/** `UserAchievementIconFetched_t` (Steam callback, id 1109). Layout: `layoutOf('UserAchievementIconFetched_t')`. */
 export interface UserAchievementIconFetched_t {
   m_nGameID: bigint;
   m_rgchAchievementName: string;
@@ -768,28 +887,34 @@ export interface UserAchievementIconFetched_t {
   m_nIconHandle: number;
 }
 
+/** `GlobalAchievementPercentagesReady_t` (Steam callback, id 1110). Layout: `layoutOf('GlobalAchievementPercentagesReady_t')`. */
 export interface GlobalAchievementPercentagesReady_t {
   m_nGameID: bigint;
   m_eResult: number;
 }
 
+/** `LeaderboardUGCSet_t` (Steam callback, id 1111). Layout: `layoutOf('LeaderboardUGCSet_t')`. */
 export interface LeaderboardUGCSet_t {
   m_eResult: number;
   m_hSteamLeaderboard: bigint;
 }
 
+/** `GlobalStatsReceived_t` (Steam callback, id 1112). Layout: `layoutOf('GlobalStatsReceived_t')`. */
 export interface GlobalStatsReceived_t {
   m_nGameID: bigint;
   m_eResult: number;
 }
 
+/** `DlcInstalled_t` (Steam callback, id 1005). Layout: `layoutOf('DlcInstalled_t')`. */
 export interface DlcInstalled_t {
   m_nAppID: number;
 }
 
+/** `NewUrlLaunchParameters_t` (Steam callback, id 1014). Layout: `layoutOf('NewUrlLaunchParameters_t')`. */
 export interface NewUrlLaunchParameters_t {
 }
 
+/** `AppProofOfPurchaseKeyResponse_t` (Steam callback, id 1021). Layout: `layoutOf('AppProofOfPurchaseKeyResponse_t')`. */
 export interface AppProofOfPurchaseKeyResponse_t {
   m_eResult: number;
   m_nAppID: number;
@@ -797,6 +922,7 @@ export interface AppProofOfPurchaseKeyResponse_t {
   m_rgchKey: string;
 }
 
+/** `FileDetailsResult_t` (Steam callback, id 1023). Layout: `layoutOf('FileDetailsResult_t')`. */
 export interface FileDetailsResult_t {
   m_eResult: number;
   m_ulFileSize: bigint;
@@ -804,6 +930,7 @@ export interface FileDetailsResult_t {
   m_unFlags: number;
 }
 
+/** `TimedTrialStatus_t` (Steam callback, id 1030). Layout: `layoutOf('TimedTrialStatus_t')`. */
 export interface TimedTrialStatus_t {
   m_unAppID: number;
   m_bIsOffline: boolean;
@@ -811,15 +938,18 @@ export interface TimedTrialStatus_t {
   m_unSecondsPlayed: number;
 }
 
+/** `P2PSessionRequest_t` (Steam callback, id 1202). Layout: `layoutOf('P2PSessionRequest_t')`. */
 export interface P2PSessionRequest_t {
   m_steamIDRemote: bigint;
 }
 
+/** `P2PSessionConnectFail_t` (Steam callback, id 1203). Layout: `layoutOf('P2PSessionConnectFail_t')`. */
 export interface P2PSessionConnectFail_t {
   m_steamIDRemote: bigint;
   m_eP2PSessionError: number;
 }
 
+/** `SocketStatusCallback_t` (Steam callback, id 1201). Layout: `layoutOf('SocketStatusCallback_t')`. */
 export interface SocketStatusCallback_t {
   m_hSocket: number;
   m_hListenSocket: number;
@@ -827,21 +957,26 @@ export interface SocketStatusCallback_t {
   m_eSNetSocketState: number;
 }
 
+/** `ScreenshotReady_t` (Steam callback, id 2301). Layout: `layoutOf('ScreenshotReady_t')`. */
 export interface ScreenshotReady_t {
   m_hLocal: number;
   m_eResult: number;
 }
 
+/** `ScreenshotRequested_t` (Steam callback, id 2302). Layout: `layoutOf('ScreenshotRequested_t')`. */
 export interface ScreenshotRequested_t {
 }
 
+/** `PlaybackStatusHasChanged_t` (Steam callback, id 4001). Layout: `layoutOf('PlaybackStatusHasChanged_t')`. */
 export interface PlaybackStatusHasChanged_t {
 }
 
+/** `VolumeHasChanged_t` (Steam callback, id 4002). Layout: `layoutOf('VolumeHasChanged_t')`. */
 export interface VolumeHasChanged_t {
   m_flNewVolume: number;
 }
 
+/** `HTTPRequestCompleted_t` (Steam callback, id 2101). Layout: `layoutOf('HTTPRequestCompleted_t')`. */
 export interface HTTPRequestCompleted_t {
   m_hRequest: number;
   m_ulContextValue: bigint;
@@ -850,11 +985,13 @@ export interface HTTPRequestCompleted_t {
   m_unBodySize: number;
 }
 
+/** `HTTPRequestHeadersReceived_t` (Steam callback, id 2102). Layout: `layoutOf('HTTPRequestHeadersReceived_t')`. */
 export interface HTTPRequestHeadersReceived_t {
   m_hRequest: number;
   m_ulContextValue: bigint;
 }
 
+/** `HTTPRequestDataReceived_t` (Steam callback, id 2103). Layout: `layoutOf('HTTPRequestDataReceived_t')`. */
 export interface HTTPRequestDataReceived_t {
   m_hRequest: number;
   m_ulContextValue: bigint;
@@ -862,14 +999,17 @@ export interface HTTPRequestDataReceived_t {
   m_cBytesReceived: number;
 }
 
+/** `SteamInputDeviceConnected_t` (Steam callback, id 2801). Layout: `layoutOf('SteamInputDeviceConnected_t')`. */
 export interface SteamInputDeviceConnected_t {
   m_ulConnectedDeviceHandle: bigint;
 }
 
+/** `SteamInputDeviceDisconnected_t` (Steam callback, id 2802). Layout: `layoutOf('SteamInputDeviceDisconnected_t')`. */
 export interface SteamInputDeviceDisconnected_t {
   m_ulDisconnectedDeviceHandle: bigint;
 }
 
+/** `SteamInputConfigurationLoaded_t` (Steam callback, id 2803). Layout: `layoutOf('SteamInputConfigurationLoaded_t')`. */
 export interface SteamInputConfigurationLoaded_t {
   m_unAppID: number;
   m_ulDeviceHandle: bigint;
@@ -880,6 +1020,7 @@ export interface SteamInputConfigurationLoaded_t {
   m_bUsesGamepadAPI: boolean;
 }
 
+/** `SteamInputGamepadSlotChange_t` (Steam callback, id 2804). Layout: `layoutOf('SteamInputGamepadSlotChange_t')`. */
 export interface SteamInputGamepadSlotChange_t {
   m_unAppID: number;
   m_ulDeviceHandle: bigint;
@@ -888,6 +1029,7 @@ export interface SteamInputGamepadSlotChange_t {
   m_nNewGamepadSlot: number;
 }
 
+/** `SteamUGCQueryCompleted_t` (Steam callback, id 3401). Layout: `layoutOf('SteamUGCQueryCompleted_t')`. */
 export interface SteamUGCQueryCompleted_t {
   m_handle: bigint;
   m_eResult: number;
@@ -897,23 +1039,27 @@ export interface SteamUGCQueryCompleted_t {
   m_rgchNextCursor: string;
 }
 
+/** `SteamUGCRequestUGCDetailsResult_t` (Steam callback, id 3402). Layout: `layoutOf('SteamUGCRequestUGCDetailsResult_t')`. */
 export interface SteamUGCRequestUGCDetailsResult_t {
   m_details: Buffer;
   m_bCachedData: boolean;
 }
 
+/** `CreateItemResult_t` (Steam callback, id 3403). Layout: `layoutOf('CreateItemResult_t')`. */
 export interface CreateItemResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
 }
 
+/** `SubmitItemUpdateResult_t` (Steam callback, id 3404). Layout: `layoutOf('SubmitItemUpdateResult_t')`. */
 export interface SubmitItemUpdateResult_t {
   m_eResult: number;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
   m_nPublishedFileId: bigint;
 }
 
+/** `ItemInstalled_t` (Steam callback, id 3405). Layout: `layoutOf('ItemInstalled_t')`. */
 export interface ItemInstalled_t {
   m_unAppID: number;
   m_nPublishedFileId: bigint;
@@ -921,24 +1067,28 @@ export interface ItemInstalled_t {
   m_unManifestID: bigint;
 }
 
+/** `DownloadItemResult_t` (Steam callback, id 3406). Layout: `layoutOf('DownloadItemResult_t')`. */
 export interface DownloadItemResult_t {
   m_unAppID: number;
   m_nPublishedFileId: bigint;
   m_eResult: number;
 }
 
+/** `UserFavoriteItemsListChanged_t` (Steam callback, id 3407). Layout: `layoutOf('UserFavoriteItemsListChanged_t')`. */
 export interface UserFavoriteItemsListChanged_t {
   m_nPublishedFileId: bigint;
   m_eResult: number;
   m_bWasAddRequest: boolean;
 }
 
+/** `SetUserItemVoteResult_t` (Steam callback, id 3408). Layout: `layoutOf('SetUserItemVoteResult_t')`. */
 export interface SetUserItemVoteResult_t {
   m_nPublishedFileId: bigint;
   m_eResult: number;
   m_bVoteUp: boolean;
 }
 
+/** `GetUserItemVoteResult_t` (Steam callback, id 3409). Layout: `layoutOf('GetUserItemVoteResult_t')`. */
 export interface GetUserItemVoteResult_t {
   m_nPublishedFileId: bigint;
   m_eResult: number;
@@ -947,38 +1097,45 @@ export interface GetUserItemVoteResult_t {
   m_bVoteSkipped: boolean;
 }
 
+/** `StartPlaytimeTrackingResult_t` (Steam callback, id 3410). Layout: `layoutOf('StartPlaytimeTrackingResult_t')`. */
 export interface StartPlaytimeTrackingResult_t {
   m_eResult: number;
 }
 
+/** `StopPlaytimeTrackingResult_t` (Steam callback, id 3411). Layout: `layoutOf('StopPlaytimeTrackingResult_t')`. */
 export interface StopPlaytimeTrackingResult_t {
   m_eResult: number;
 }
 
+/** `AddUGCDependencyResult_t` (Steam callback, id 3412). Layout: `layoutOf('AddUGCDependencyResult_t')`. */
 export interface AddUGCDependencyResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
   m_nChildPublishedFileId: bigint;
 }
 
+/** `RemoveUGCDependencyResult_t` (Steam callback, id 3413). Layout: `layoutOf('RemoveUGCDependencyResult_t')`. */
 export interface RemoveUGCDependencyResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
   m_nChildPublishedFileId: bigint;
 }
 
+/** `AddAppDependencyResult_t` (Steam callback, id 3414). Layout: `layoutOf('AddAppDependencyResult_t')`. */
 export interface AddAppDependencyResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
   m_nAppID: number;
 }
 
+/** `RemoveAppDependencyResult_t` (Steam callback, id 3415). Layout: `layoutOf('RemoveAppDependencyResult_t')`. */
 export interface RemoveAppDependencyResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
   m_nAppID: number;
 }
 
+/** `GetAppDependenciesResult_t` (Steam callback, id 3416). Layout: `layoutOf('GetAppDependenciesResult_t')`. */
 export interface GetAppDependenciesResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
@@ -987,15 +1144,18 @@ export interface GetAppDependenciesResult_t {
   m_nTotalNumAppDependencies: number;
 }
 
+/** `DeleteItemResult_t` (Steam callback, id 3417). Layout: `layoutOf('DeleteItemResult_t')`. */
 export interface DeleteItemResult_t {
   m_eResult: number;
   m_nPublishedFileId: bigint;
 }
 
+/** `UserSubscribedItemsListChanged_t` (Steam callback, id 3418). Layout: `layoutOf('UserSubscribedItemsListChanged_t')`. */
 export interface UserSubscribedItemsListChanged_t {
   m_nAppID: number;
 }
 
+/** `WorkshopEULAStatus_t` (Steam callback, id 3420). Layout: `layoutOf('WorkshopEULAStatus_t')`. */
 export interface WorkshopEULAStatus_t {
   m_eResult: number;
   m_nAppID: number;
@@ -1005,10 +1165,12 @@ export interface WorkshopEULAStatus_t {
   m_bNeedsAction: boolean;
 }
 
+/** `HTML_BrowserReady_t` (Steam callback, id 4501). Layout: `layoutOf('HTML_BrowserReady_t')`. */
 export interface HTML_BrowserReady_t {
   unBrowserHandle: number;
 }
 
+/** `HTML_NeedsPaint_t` (Steam callback, id 4502). Layout: `layoutOf('HTML_NeedsPaint_t')`. */
 export interface HTML_NeedsPaint_t {
   unBrowserHandle: number;
   pBGRA: bigint;
@@ -1024,6 +1186,7 @@ export interface HTML_NeedsPaint_t {
   unPageSerial: number;
 }
 
+/** `HTML_StartRequest_t` (Steam callback, id 4503). Layout: `layoutOf('HTML_StartRequest_t')`. */
 export interface HTML_StartRequest_t {
   unBrowserHandle: number;
   pchURL: bigint;
@@ -1032,10 +1195,12 @@ export interface HTML_StartRequest_t {
   bIsRedirect: boolean;
 }
 
+/** `HTML_CloseBrowser_t` (Steam callback, id 4504). Layout: `layoutOf('HTML_CloseBrowser_t')`. */
 export interface HTML_CloseBrowser_t {
   unBrowserHandle: number;
 }
 
+/** `HTML_URLChanged_t` (Steam callback, id 4505). Layout: `layoutOf('HTML_URLChanged_t')`. */
 export interface HTML_URLChanged_t {
   unBrowserHandle: number;
   pchURL: bigint;
@@ -1045,34 +1210,40 @@ export interface HTML_URLChanged_t {
   bNewNavigation: boolean;
 }
 
+/** `HTML_FinishedRequest_t` (Steam callback, id 4506). Layout: `layoutOf('HTML_FinishedRequest_t')`. */
 export interface HTML_FinishedRequest_t {
   unBrowserHandle: number;
   pchURL: bigint;
   pchPageTitle: bigint;
 }
 
+/** `HTML_OpenLinkInNewTab_t` (Steam callback, id 4507). Layout: `layoutOf('HTML_OpenLinkInNewTab_t')`. */
 export interface HTML_OpenLinkInNewTab_t {
   unBrowserHandle: number;
   pchURL: bigint;
 }
 
+/** `HTML_ChangedTitle_t` (Steam callback, id 4508). Layout: `layoutOf('HTML_ChangedTitle_t')`. */
 export interface HTML_ChangedTitle_t {
   unBrowserHandle: number;
   pchTitle: bigint;
 }
 
+/** `HTML_SearchResults_t` (Steam callback, id 4509). Layout: `layoutOf('HTML_SearchResults_t')`. */
 export interface HTML_SearchResults_t {
   unBrowserHandle: number;
   unResults: number;
   unCurrentMatch: number;
 }
 
+/** `HTML_CanGoBackAndForward_t` (Steam callback, id 4510). Layout: `layoutOf('HTML_CanGoBackAndForward_t')`. */
 export interface HTML_CanGoBackAndForward_t {
   unBrowserHandle: number;
   bCanGoBack: boolean;
   bCanGoForward: boolean;
 }
 
+/** `HTML_HorizontalScroll_t` (Steam callback, id 4511). Layout: `layoutOf('HTML_HorizontalScroll_t')`. */
 export interface HTML_HorizontalScroll_t {
   unBrowserHandle: number;
   unScrollMax: number;
@@ -1082,6 +1253,7 @@ export interface HTML_HorizontalScroll_t {
   unPageSize: number;
 }
 
+/** `HTML_VerticalScroll_t` (Steam callback, id 4512). Layout: `layoutOf('HTML_VerticalScroll_t')`. */
 export interface HTML_VerticalScroll_t {
   unBrowserHandle: number;
   unScrollMax: number;
@@ -1091,6 +1263,7 @@ export interface HTML_VerticalScroll_t {
   unPageSize: number;
 }
 
+/** `HTML_LinkAtPosition_t` (Steam callback, id 4513). Layout: `layoutOf('HTML_LinkAtPosition_t')`. */
 export interface HTML_LinkAtPosition_t {
   unBrowserHandle: number;
   x: number;
@@ -1100,22 +1273,26 @@ export interface HTML_LinkAtPosition_t {
   bLiveLink: boolean;
 }
 
+/** `HTML_JSAlert_t` (Steam callback, id 4514). Layout: `layoutOf('HTML_JSAlert_t')`. */
 export interface HTML_JSAlert_t {
   unBrowserHandle: number;
   pchMessage: bigint;
 }
 
+/** `HTML_JSConfirm_t` (Steam callback, id 4515). Layout: `layoutOf('HTML_JSConfirm_t')`. */
 export interface HTML_JSConfirm_t {
   unBrowserHandle: number;
   pchMessage: bigint;
 }
 
+/** `HTML_FileOpenDialog_t` (Steam callback, id 4516). Layout: `layoutOf('HTML_FileOpenDialog_t')`. */
 export interface HTML_FileOpenDialog_t {
   unBrowserHandle: number;
   pchTitle: bigint;
   pchInitialFile: bigint;
 }
 
+/** `HTML_NewWindow_t` (Steam callback, id 4521). Layout: `layoutOf('HTML_NewWindow_t')`. */
 export interface HTML_NewWindow_t {
   unBrowserHandle: number;
   pchURL: bigint;
@@ -1126,47 +1303,57 @@ export interface HTML_NewWindow_t {
   unNewWindow_BrowserHandle_IGNORE: number;
 }
 
+/** `HTML_SetCursor_t` (Steam callback, id 4522). Layout: `layoutOf('HTML_SetCursor_t')`. */
 export interface HTML_SetCursor_t {
   unBrowserHandle: number;
   eMouseCursor: number;
 }
 
+/** `HTML_StatusText_t` (Steam callback, id 4523). Layout: `layoutOf('HTML_StatusText_t')`. */
 export interface HTML_StatusText_t {
   unBrowserHandle: number;
   pchMsg: bigint;
 }
 
+/** `HTML_ShowToolTip_t` (Steam callback, id 4524). Layout: `layoutOf('HTML_ShowToolTip_t')`. */
 export interface HTML_ShowToolTip_t {
   unBrowserHandle: number;
   pchMsg: bigint;
 }
 
+/** `HTML_UpdateToolTip_t` (Steam callback, id 4525). Layout: `layoutOf('HTML_UpdateToolTip_t')`. */
 export interface HTML_UpdateToolTip_t {
   unBrowserHandle: number;
   pchMsg: bigint;
 }
 
+/** `HTML_HideToolTip_t` (Steam callback, id 4526). Layout: `layoutOf('HTML_HideToolTip_t')`. */
 export interface HTML_HideToolTip_t {
   unBrowserHandle: number;
 }
 
+/** `HTML_BrowserRestarted_t` (Steam callback, id 4527). Layout: `layoutOf('HTML_BrowserRestarted_t')`. */
 export interface HTML_BrowserRestarted_t {
   unBrowserHandle: number;
   unOldBrowserHandle: number;
 }
 
+/** `SteamInventoryResultReady_t` (Steam callback, id 4700). Layout: `layoutOf('SteamInventoryResultReady_t')`. */
 export interface SteamInventoryResultReady_t {
   m_handle: number;
   m_result: number;
 }
 
+/** `SteamInventoryFullUpdate_t` (Steam callback, id 4701). Layout: `layoutOf('SteamInventoryFullUpdate_t')`. */
 export interface SteamInventoryFullUpdate_t {
   m_handle: number;
 }
 
+/** `SteamInventoryDefinitionUpdate_t` (Steam callback, id 4702). Layout: `layoutOf('SteamInventoryDefinitionUpdate_t')`. */
 export interface SteamInventoryDefinitionUpdate_t {
 }
 
+/** `SteamInventoryEligiblePromoItemDefIDs_t` (Steam callback, id 4703). Layout: `layoutOf('SteamInventoryEligiblePromoItemDefIDs_t')`. */
 export interface SteamInventoryEligiblePromoItemDefIDs_t {
   m_result: number;
   m_steamID: bigint;
@@ -1174,17 +1361,20 @@ export interface SteamInventoryEligiblePromoItemDefIDs_t {
   m_bCachedData: boolean;
 }
 
+/** `SteamInventoryStartPurchaseResult_t` (Steam callback, id 4704). Layout: `layoutOf('SteamInventoryStartPurchaseResult_t')`. */
 export interface SteamInventoryStartPurchaseResult_t {
   m_result: number;
   m_ulOrderID: bigint;
   m_ulTransID: bigint;
 }
 
+/** `SteamInventoryRequestPricesResult_t` (Steam callback, id 4705). Layout: `layoutOf('SteamInventoryRequestPricesResult_t')`. */
 export interface SteamInventoryRequestPricesResult_t {
   m_result: number;
   m_rgchCurrency: string;
 }
 
+/** `SteamTimelineGamePhaseRecordingExists_t` (Steam callback, id 6001). Layout: `layoutOf('SteamTimelineGamePhaseRecordingExists_t')`. */
 export interface SteamTimelineGamePhaseRecordingExists_t {
   m_rgchPhaseID: string;
   m_ulRecordingMS: bigint;
@@ -1193,45 +1383,55 @@ export interface SteamTimelineGamePhaseRecordingExists_t {
   m_unScreenshotCount: number;
 }
 
+/** `SteamTimelineEventRecordingExists_t` (Steam callback, id 6002). Layout: `layoutOf('SteamTimelineEventRecordingExists_t')`. */
 export interface SteamTimelineEventRecordingExists_t {
   m_ulEventID: bigint;
   m_bRecordingExists: boolean;
 }
 
+/** `GetVideoURLResult_t` (Steam callback, id 4611). Layout: `layoutOf('GetVideoURLResult_t')`. */
 export interface GetVideoURLResult_t {
   m_eResult: number;
   m_unVideoAppID: number;
   m_rgchURL: string;
 }
 
+/** `GetOPFSettingsResult_t` (Steam callback, id 4624). Layout: `layoutOf('GetOPFSettingsResult_t')`. */
 export interface GetOPFSettingsResult_t {
   m_eResult: number;
   m_unVideoAppID: number;
 }
 
+/** `BroadcastUploadStart_t` (Steam callback, id 4604). Layout: `layoutOf('BroadcastUploadStart_t')`. */
 export interface BroadcastUploadStart_t {
   m_bIsRTMP: boolean;
 }
 
+/** `BroadcastUploadStop_t` (Steam callback, id 4605). Layout: `layoutOf('BroadcastUploadStop_t')`. */
 export interface BroadcastUploadStop_t {
   m_eResult: number;
 }
 
+/** `SteamParentalSettingsChanged_t` (Steam callback, id 5001). Layout: `layoutOf('SteamParentalSettingsChanged_t')`. */
 export interface SteamParentalSettingsChanged_t {
 }
 
+/** `SteamRemotePlaySessionConnected_t` (Steam callback, id 5701). Layout: `layoutOf('SteamRemotePlaySessionConnected_t')`. */
 export interface SteamRemotePlaySessionConnected_t {
   m_unSessionID: number;
 }
 
+/** `SteamRemotePlaySessionDisconnected_t` (Steam callback, id 5702). Layout: `layoutOf('SteamRemotePlaySessionDisconnected_t')`. */
 export interface SteamRemotePlaySessionDisconnected_t {
   m_unSessionID: number;
 }
 
+/** `SteamRemotePlayTogetherGuestInvite_t` (Steam callback, id 5703). Layout: `layoutOf('SteamRemotePlayTogetherGuestInvite_t')`. */
 export interface SteamRemotePlayTogetherGuestInvite_t {
   m_szConnectURL: string;
 }
 
+/** `SteamRemotePlaySessionAvatarLoaded_t` (Steam callback, id 5704). Layout: `layoutOf('SteamRemotePlaySessionAvatarLoaded_t')`. */
 export interface SteamRemotePlaySessionAvatarLoaded_t {
   m_unSessionID: number;
   m_iImage: number;
@@ -1239,11 +1439,13 @@ export interface SteamRemotePlaySessionAvatarLoaded_t {
   m_iTall: number;
 }
 
+/** `SteamNetAuthenticationStatus_t` (Steam callback, id 1222). Layout: `layoutOf('SteamNetAuthenticationStatus_t')`. */
 export interface SteamNetAuthenticationStatus_t {
   m_eAvail: number;
   m_debugMsg: string;
 }
 
+/** `SteamRelayNetworkStatus_t` (Steam callback, id 1281). Layout: `layoutOf('SteamRelayNetworkStatus_t')`. */
 export interface SteamRelayNetworkStatus_t {
   m_eAvail: number;
   m_bPingMeasurementInProgress: number;
@@ -1252,32 +1454,38 @@ export interface SteamRelayNetworkStatus_t {
   m_debugMsg: string;
 }
 
+/** `GSClientApprove_t` (Steam callback, id 201). Layout: `layoutOf('GSClientApprove_t')`. */
 export interface GSClientApprove_t {
   m_SteamID: bigint;
   m_OwnerSteamID: bigint;
 }
 
+/** `GSClientDeny_t` (Steam callback, id 202). Layout: `layoutOf('GSClientDeny_t')`. */
 export interface GSClientDeny_t {
   m_SteamID: bigint;
   m_eDenyReason: number;
   m_rgchOptionalText: string;
 }
 
+/** `GSClientKick_t` (Steam callback, id 203). Layout: `layoutOf('GSClientKick_t')`. */
 export interface GSClientKick_t {
   m_SteamID: bigint;
   m_eDenyReason: number;
 }
 
+/** `GSClientAchievementStatus_t` (Steam callback, id 206). Layout: `layoutOf('GSClientAchievementStatus_t')`. */
 export interface GSClientAchievementStatus_t {
   m_SteamID: bigint;
   m_pchAchievement: string;
   m_bUnlocked: boolean;
 }
 
+/** `GSPolicyResponse_t` (Steam callback, id 115). Layout: `layoutOf('GSPolicyResponse_t')`. */
 export interface GSPolicyResponse_t {
   m_bSecure: number;
 }
 
+/** `GSGameplayStats_t` (Steam callback, id 207). Layout: `layoutOf('GSGameplayStats_t')`. */
 export interface GSGameplayStats_t {
   m_eResult: number;
   m_nRank: number;
@@ -1285,6 +1493,7 @@ export interface GSGameplayStats_t {
   m_unTotalMinutesPlayed: number;
 }
 
+/** `GSClientGroupStatus_t` (Steam callback, id 208). Layout: `layoutOf('GSClientGroupStatus_t')`. */
 export interface GSClientGroupStatus_t {
   m_SteamIDUser: bigint;
   m_SteamIDGroup: bigint;
@@ -1292,6 +1501,7 @@ export interface GSClientGroupStatus_t {
   m_bOfficer: boolean;
 }
 
+/** `GSReputation_t` (Steam callback, id 209). Layout: `layoutOf('GSReputation_t')`. */
 export interface GSReputation_t {
   m_eResult: number;
   m_unReputationScore: number;
@@ -1302,10 +1512,12 @@ export interface GSReputation_t {
   m_unBanExpires: number;
 }
 
+/** `AssociateWithClanResult_t` (Steam callback, id 210). Layout: `layoutOf('AssociateWithClanResult_t')`. */
 export interface AssociateWithClanResult_t {
   m_eResult: number;
 }
 
+/** `ComputeNewPlayerCompatibilityResult_t` (Steam callback, id 211). Layout: `layoutOf('ComputeNewPlayerCompatibilityResult_t')`. */
 export interface ComputeNewPlayerCompatibilityResult_t {
   m_eResult: number;
   m_cPlayersThatDontLikeCandidate: number;
@@ -1314,16 +1526,19 @@ export interface ComputeNewPlayerCompatibilityResult_t {
   m_SteamIDCandidate: bigint;
 }
 
+/** `GSStatsReceived_t` (Steam callback, id 1800). Layout: `layoutOf('GSStatsReceived_t')`. */
 export interface GSStatsReceived_t {
   m_eResult: number;
   m_steamIDUser: bigint;
 }
 
+/** `GSStatsStored_t` (Steam callback, id 1801). Layout: `layoutOf('GSStatsStored_t')`. */
 export interface GSStatsStored_t {
   m_eResult: number;
   m_steamIDUser: bigint;
 }
 
+/** `GSStatsUnloaded_t` (Steam callback, id 1108). Layout: `layoutOf('GSStatsUnloaded_t')`. */
 export interface GSStatsUnloaded_t {
   m_steamIDUser: bigint;
 }

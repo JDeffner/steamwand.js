@@ -14,7 +14,7 @@ workshop API. steamworks.js is solid but every contribution means Rust,
 napi-rs, and a three-platform build matrix; adding one setter
 (`SetItemUpdateLanguage`) took two forked repos and a patch file. steamwand
 has no native code of its own. One generic FFI dependency, one generated TS
-layer, and the whole flat API surface: 25 interfaces, about 1000 functions,
+layer, and the whole flat API surface: 25 interfaces, 801 functions,
 191 callback structs with per-platform offset tables.
 
 ## Install
@@ -25,6 +25,19 @@ pnpm add steamwand.js
 
 Node 18+. Windows x64, Linux x64, and macOS are wired up; the Steam client
 must be running. The `steam_api` redistributables ship in the package.
+
+## Documentation
+
+Full docs are in the [wiki](https://github.com/JDeffner/steamwand.js/wiki):
+[getting started](https://github.com/JDeffner/steamwand.js/wiki/Getting-Started),
+the [core API](https://github.com/JDeffner/steamwand.js/wiki/Core-API), the
+[workshop layer](https://github.com/JDeffner/steamwand.js/wiki/Workshop), the
+[raw flat API](https://github.com/JDeffner/steamwand.js/wiki/Flat-API),
+[recipes](https://github.com/JDeffner/steamwand.js/wiki/Recipes), and
+[troubleshooting](https://github.com/JDeffner/steamwand.js/wiki/Troubleshooting).
+Every generated function also carries its original C signature, its out-buffer
+sizes, and a link to Valve's documentation, so hovering it in an editor is
+usually enough.
 
 ## Use
 
@@ -88,7 +101,7 @@ is normal practice and allowed.
 
 ## Known limits
 
-- 18 of ~1000 flat functions are skipped: those taking C function pointers
+- 18 of the 819 flat functions are skipped: those taking C function pointers
   (debug hooks, netsockets status callbacks) or passing structs by value
   (Steam Input action data). The generator lists every skip when it runs.
 - Structs containing C unions (`SteamNetworkingIdentity` and relatives) get

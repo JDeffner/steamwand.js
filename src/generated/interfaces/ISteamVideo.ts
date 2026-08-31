@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamVideo (accessor SteamAPI_SteamVideo_v007) */
+/**
+ * ISteamVideo (accessor SteamAPI_SteamVideo_v007)
+ * @see https://partner.steamgames.com/doc/api/ISteamVideo
+ */
 export class ISteamVideo {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,19 +14,46 @@ export class ISteamVideo {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamVideo_v007 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `void GetVideoURL(AppId_t unVideoAppID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamVideo_GetVideoURL`
+   * @see https://partner.steamgames.com/doc/api/ISteamVideo#GetVideoURL
+   */
   GetVideoURL(unVideoAppID: number): void {
     this.nat.func('SteamAPI_ISteamVideo_GetVideoURL', 'void', ['void *', 'uint32'])(this.ptr, unVideoAppID);
   }
 
+  /**
+   * `bool IsBroadcasting(int *pnNumViewers)`
+   *
+   * Flat symbol: `SteamAPI_ISteamVideo_IsBroadcasting`
+   * @param pnNumViewers Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamVideo#IsBroadcasting
+   */
   IsBroadcasting(pnNumViewers: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamVideo_IsBroadcasting', 'bool', ['void *', 'void *'])(this.ptr, pnNumViewers) as boolean;
   }
 
-  /** Callback: GetOPFSettingsResult_t */
+  /**
+   * `void GetOPFSettings(AppId_t unVideoAppID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamVideo_GetOPFSettings`
+   * @remarks Fires the `GetOPFSettingsResult_t` callback: `steam.on('GetOPFSettingsResult_t', cb)`.
+   * @see https://partner.steamgames.com/doc/api/ISteamVideo#GetOPFSettings
+   */
   GetOPFSettings(unVideoAppID: number): void {
     this.nat.func('SteamAPI_ISteamVideo_GetOPFSettings', 'void', ['void *', 'uint32'])(this.ptr, unVideoAppID);
   }
 
+  /**
+   * `bool GetOPFStringForApp(AppId_t unVideoAppID, char *pchBuffer, int32 *pnBufferSize)`
+   *
+   * Flat symbol: `SteamAPI_ISteamVideo_GetOPFStringForApp`
+   * @param pchBuffer Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @param pnBufferSize Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamVideo#GetOPFStringForApp
+   */
   GetOPFStringForApp(unVideoAppID: number, pchBuffer: Buffer | null, pnBufferSize: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamVideo_GetOPFStringForApp', 'bool', ['void *', 'uint32', 'void *', 'void *'])(this.ptr, unVideoAppID, pchBuffer, pnBufferSize) as boolean;
   }

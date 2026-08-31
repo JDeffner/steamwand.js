@@ -3,7 +3,10 @@
 
 import type { SteamNative } from '../../runtime/native';
 
-/** ISteamUser (accessor SteamAPI_SteamUser_v023) */
+/**
+ * ISteamUser (accessor SteamAPI_SteamUser_v023)
+ * @see https://partner.steamgames.com/doc/api/ISteamUser
+ */
 export class ISteamUser {
   readonly ptr: unknown;
   constructor(private readonly nat: SteamNative) {
@@ -11,138 +14,361 @@ export class ISteamUser {
     if (this.ptr === null) throw new Error('steamwand: SteamAPI_SteamUser_v023 returned null (is Steam initialized?)');
   }
 
+  /**
+   * `HSteamUser GetHSteamUser()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetHSteamUser`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetHSteamUser
+   */
   GetHSteamUser(): number {
     return this.nat.func('SteamAPI_ISteamUser_GetHSteamUser', 'int32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `bool BLoggedOn()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_BLoggedOn`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#BLoggedOn
+   */
   BLoggedOn(): boolean {
     return this.nat.func('SteamAPI_ISteamUser_BLoggedOn', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `CSteamID GetSteamID()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetSteamID`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetSteamID
+   */
   GetSteamID(): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUser_GetSteamID', 'uint64', ['void *'])(this.ptr) as number | bigint);
   }
 
+  /**
+   * `int InitiateGameConnection_DEPRECATED(void *pAuthBlob, int cbMaxAuthBlob, CSteamID steamIDGameServer, uint32 unIPServer, uint16 usPortServer, bool bSecure)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_InitiateGameConnection_DEPRECATED`
+   * @param pAuthBlob Buffer you allocate for `void *`.
+   * @param steamIDGameServer `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#InitiateGameConnection_DEPRECATED
+   */
   InitiateGameConnection_DEPRECATED(pAuthBlob: Buffer | null, cbMaxAuthBlob: number, steamIDGameServer: bigint | number, unIPServer: number, usPortServer: number, bSecure: boolean): number {
     return this.nat.func('SteamAPI_ISteamUser_InitiateGameConnection_DEPRECATED', 'int32', ['void *', 'void *', 'int32', 'uint64', 'uint32', 'uint16', 'bool'])(this.ptr, pAuthBlob, cbMaxAuthBlob, steamIDGameServer, unIPServer, usPortServer, bSecure) as number;
   }
 
+  /**
+   * `void TerminateGameConnection_DEPRECATED(uint32 unIPServer, uint16 usPortServer)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_TerminateGameConnection_DEPRECATED`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#TerminateGameConnection_DEPRECATED
+   */
   TerminateGameConnection_DEPRECATED(unIPServer: number, usPortServer: number): void {
     this.nat.func('SteamAPI_ISteamUser_TerminateGameConnection_DEPRECATED', 'void', ['void *', 'uint32', 'uint16'])(this.ptr, unIPServer, usPortServer);
   }
 
+  /**
+   * `void TrackAppUsageEvent(CGameID gameID, int eAppUsageEvent, const char *pchExtraInfo)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_TrackAppUsageEvent`
+   * @param gameID `CGameID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#TrackAppUsageEvent
+   */
   TrackAppUsageEvent(gameID: bigint | number, eAppUsageEvent: number, pchExtraInfo: string): void {
     this.nat.func('SteamAPI_ISteamUser_TrackAppUsageEvent', 'void', ['void *', 'uint64', 'int32', 'str'])(this.ptr, gameID, eAppUsageEvent, pchExtraInfo);
   }
 
+  /**
+   * `bool GetUserDataFolder(char *pchBuffer, int cubBuffer)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetUserDataFolder`
+   * @param pchBuffer Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetUserDataFolder
+   */
   GetUserDataFolder(pchBuffer: Buffer | null, cubBuffer: number): boolean {
     return this.nat.func('SteamAPI_ISteamUser_GetUserDataFolder', 'bool', ['void *', 'void *', 'int32'])(this.ptr, pchBuffer, cubBuffer) as boolean;
   }
 
+  /**
+   * `void StartVoiceRecording()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_StartVoiceRecording`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#StartVoiceRecording
+   */
   StartVoiceRecording(): void {
     this.nat.func('SteamAPI_ISteamUser_StartVoiceRecording', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `void StopVoiceRecording()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_StopVoiceRecording`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#StopVoiceRecording
+   */
   StopVoiceRecording(): void {
     this.nat.func('SteamAPI_ISteamUser_StopVoiceRecording', 'void', ['void *'])(this.ptr);
   }
 
+  /**
+   * `EVoiceResult GetAvailableVoice(uint32 *pcbCompressed, uint32 *pcbUncompressed_Deprecated, uint32 nUncompressedVoiceDesiredSampleRate_Deprecated)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetAvailableVoice`
+   * @param pcbCompressed Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @param pcbUncompressed_Deprecated Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetAvailableVoice
+   */
   GetAvailableVoice(pcbCompressed: Buffer | null, pcbUncompressed_Deprecated: Buffer | null, nUncompressedVoiceDesiredSampleRate_Deprecated: number): number {
     return this.nat.func('SteamAPI_ISteamUser_GetAvailableVoice', 'int32', ['void *', 'void *', 'void *', 'uint32'])(this.ptr, pcbCompressed, pcbUncompressed_Deprecated, nUncompressedVoiceDesiredSampleRate_Deprecated) as number;
   }
 
+  /**
+   * `EVoiceResult GetVoice(bool bWantCompressed, void *pDestBuffer, uint32 cbDestBufferSize, uint32 *nBytesWritten, bool bWantUncompressed_Deprecated, void *pUncompressedDestBuffer_Deprecated, uint32 cbUncompressedDestBufferSize_Deprecated, uint32 *nUncompressBytesWritten_Deprecated, uint32 nUncompressedVoiceDesiredSampleRate_Deprecated)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetVoice`
+   * @param pDestBuffer Buffer you allocate for `void *`.
+   * @param nBytesWritten Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @param pUncompressedDestBuffer_Deprecated Buffer you allocate for `void *`.
+   * @param nUncompressBytesWritten_Deprecated Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetVoice
+   */
   GetVoice(bWantCompressed: boolean, pDestBuffer: Buffer | null, cbDestBufferSize: number, nBytesWritten: Buffer | null, bWantUncompressed_Deprecated: boolean, pUncompressedDestBuffer_Deprecated: Buffer | null, cbUncompressedDestBufferSize_Deprecated: number, nUncompressBytesWritten_Deprecated: Buffer | null, nUncompressedVoiceDesiredSampleRate_Deprecated: number): number {
     return this.nat.func('SteamAPI_ISteamUser_GetVoice', 'int32', ['void *', 'bool', 'void *', 'uint32', 'void *', 'bool', 'void *', 'uint32', 'void *', 'uint32'])(this.ptr, bWantCompressed, pDestBuffer, cbDestBufferSize, nBytesWritten, bWantUncompressed_Deprecated, pUncompressedDestBuffer_Deprecated, cbUncompressedDestBufferSize_Deprecated, nUncompressBytesWritten_Deprecated, nUncompressedVoiceDesiredSampleRate_Deprecated) as number;
   }
 
+  /**
+   * `EVoiceResult DecompressVoice(const void *pCompressed, uint32 cbCompressed, void *pDestBuffer, uint32 cbDestBufferSize, uint32 *nBytesWritten, uint32 nDesiredSampleRate)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_DecompressVoice`
+   * @param pCompressed Buffer you allocate for `const void *`.
+   * @param pDestBuffer Buffer you allocate for `void *`.
+   * @param nBytesWritten Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#DecompressVoice
+   */
   DecompressVoice(pCompressed: Buffer | null, cbCompressed: number, pDestBuffer: Buffer | null, cbDestBufferSize: number, nBytesWritten: Buffer | null, nDesiredSampleRate: number): number {
     return this.nat.func('SteamAPI_ISteamUser_DecompressVoice', 'int32', ['void *', 'void *', 'uint32', 'void *', 'uint32', 'void *', 'uint32'])(this.ptr, pCompressed, cbCompressed, pDestBuffer, cbDestBufferSize, nBytesWritten, nDesiredSampleRate) as number;
   }
 
+  /**
+   * `uint32 GetVoiceOptimalSampleRate()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetVoiceOptimalSampleRate`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetVoiceOptimalSampleRate
+   */
   GetVoiceOptimalSampleRate(): number {
     return this.nat.func('SteamAPI_ISteamUser_GetVoiceOptimalSampleRate', 'uint32', ['void *'])(this.ptr) as number;
   }
 
+  /**
+   * `HAuthTicket GetAuthSessionTicket(void *pTicket, int cbMaxTicket, uint32 *pcbTicket, const SteamNetworkingIdentity *pSteamNetworkingIdentity)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetAuthSessionTicket`
+   * @param pTicket Buffer you allocate for `void *`.
+   * @param pcbTicket Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @param pSteamNetworkingIdentity Buffer you allocate for `const SteamNetworkingIdentity *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetAuthSessionTicket
+   */
   GetAuthSessionTicket(pTicket: Buffer | null, cbMaxTicket: number, pcbTicket: Buffer | null, pSteamNetworkingIdentity: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamUser_GetAuthSessionTicket', 'uint32', ['void *', 'void *', 'int32', 'void *', 'void *'])(this.ptr, pTicket, cbMaxTicket, pcbTicket, pSteamNetworkingIdentity) as number;
   }
 
+  /**
+   * `HAuthTicket GetAuthTicketForWebApi(const char *pchIdentity)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetAuthTicketForWebApi`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetAuthTicketForWebApi
+   */
   GetAuthTicketForWebApi(pchIdentity: string): number {
     return this.nat.func('SteamAPI_ISteamUser_GetAuthTicketForWebApi', 'uint32', ['void *', 'str'])(this.ptr, pchIdentity) as number;
   }
 
+  /**
+   * `EBeginAuthSessionResult BeginAuthSession(const void *pAuthTicket, int cbAuthTicket, CSteamID steamID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_BeginAuthSession`
+   * @param pAuthTicket Buffer you allocate for `const void *`.
+   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#BeginAuthSession
+   */
   BeginAuthSession(pAuthTicket: Buffer | null, cbAuthTicket: number, steamID: bigint | number): number {
     return this.nat.func('SteamAPI_ISteamUser_BeginAuthSession', 'int32', ['void *', 'void *', 'int32', 'uint64'])(this.ptr, pAuthTicket, cbAuthTicket, steamID) as number;
   }
 
+  /**
+   * `void EndAuthSession(CSteamID steamID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_EndAuthSession`
+   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#EndAuthSession
+   */
   EndAuthSession(steamID: bigint | number): void {
     this.nat.func('SteamAPI_ISteamUser_EndAuthSession', 'void', ['void *', 'uint64'])(this.ptr, steamID);
   }
 
+  /**
+   * `void CancelAuthTicket(HAuthTicket hAuthTicket)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_CancelAuthTicket`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#CancelAuthTicket
+   */
   CancelAuthTicket(hAuthTicket: number): void {
     this.nat.func('SteamAPI_ISteamUser_CancelAuthTicket', 'void', ['void *', 'uint32'])(this.ptr, hAuthTicket);
   }
 
+  /**
+   * `EUserHasLicenseForAppResult UserHasLicenseForApp(CSteamID steamID, AppId_t appID)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_UserHasLicenseForApp`
+   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#UserHasLicenseForApp
+   */
   UserHasLicenseForApp(steamID: bigint | number, appID: number): number {
     return this.nat.func('SteamAPI_ISteamUser_UserHasLicenseForApp', 'int32', ['void *', 'uint64', 'uint32'])(this.ptr, steamID, appID) as number;
   }
 
+  /**
+   * `bool BIsBehindNAT()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_BIsBehindNAT`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#BIsBehindNAT
+   */
   BIsBehindNAT(): boolean {
     return this.nat.func('SteamAPI_ISteamUser_BIsBehindNAT', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `void AdvertiseGame(CSteamID steamIDGameServer, uint32 unIPServer, uint16 usPortServer)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_AdvertiseGame`
+   * @param steamIDGameServer `CSteamID`, 64-bit: bigint or number.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#AdvertiseGame
+   */
   AdvertiseGame(steamIDGameServer: bigint | number, unIPServer: number, usPortServer: number): void {
     this.nat.func('SteamAPI_ISteamUser_AdvertiseGame', 'void', ['void *', 'uint64', 'uint32', 'uint16'])(this.ptr, steamIDGameServer, unIPServer, usPortServer);
   }
 
-  /** Call result: EncryptedAppTicketResponse_t */
+  /**
+   * `SteamAPICall_t RequestEncryptedAppTicket(void *pDataToInclude, int cbDataToInclude)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_RequestEncryptedAppTicket`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<EncryptedAppTicketResponse_t>(handle, layoutOf('EncryptedAppTicketResponse_t'))`.
+   * @param pDataToInclude Buffer you allocate for `void *`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#RequestEncryptedAppTicket
+   */
   RequestEncryptedAppTicket(pDataToInclude: Buffer | null, cbDataToInclude: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUser_RequestEncryptedAppTicket', 'uint64', ['void *', 'void *', 'int32'])(this.ptr, pDataToInclude, cbDataToInclude) as number | bigint);
   }
 
+  /**
+   * `bool GetEncryptedAppTicket(void *pTicket, int cbMaxTicket, uint32 *pcbTicket)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetEncryptedAppTicket`
+   * @param pTicket Buffer you allocate for `void *`.
+   * @param pcbTicket Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetEncryptedAppTicket
+   */
   GetEncryptedAppTicket(pTicket: Buffer | null, cbMaxTicket: number, pcbTicket: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUser_GetEncryptedAppTicket', 'bool', ['void *', 'void *', 'int32', 'void *'])(this.ptr, pTicket, cbMaxTicket, pcbTicket) as boolean;
   }
 
+  /**
+   * `int GetGameBadgeLevel(int nSeries, bool bFoil)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetGameBadgeLevel`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetGameBadgeLevel
+   */
   GetGameBadgeLevel(nSeries: number, bFoil: boolean): number {
     return this.nat.func('SteamAPI_ISteamUser_GetGameBadgeLevel', 'int32', ['void *', 'int32', 'bool'])(this.ptr, nSeries, bFoil) as number;
   }
 
+  /**
+   * `int GetPlayerSteamLevel()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetPlayerSteamLevel`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetPlayerSteamLevel
+   */
   GetPlayerSteamLevel(): number {
     return this.nat.func('SteamAPI_ISteamUser_GetPlayerSteamLevel', 'int32', ['void *'])(this.ptr) as number;
   }
 
-  /** Call result: StoreAuthURLResponse_t */
+  /**
+   * `SteamAPICall_t RequestStoreAuthURL(const char *pchRedirectURL)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_RequestStoreAuthURL`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<StoreAuthURLResponse_t>(handle, layoutOf('StoreAuthURLResponse_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#RequestStoreAuthURL
+   */
   RequestStoreAuthURL(pchRedirectURL: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUser_RequestStoreAuthURL', 'uint64', ['void *', 'str'])(this.ptr, pchRedirectURL) as number | bigint);
   }
 
+  /**
+   * `bool BIsPhoneVerified()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_BIsPhoneVerified`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneVerified
+   */
   BIsPhoneVerified(): boolean {
     return this.nat.func('SteamAPI_ISteamUser_BIsPhoneVerified', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BIsTwoFactorEnabled()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_BIsTwoFactorEnabled`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#BIsTwoFactorEnabled
+   */
   BIsTwoFactorEnabled(): boolean {
     return this.nat.func('SteamAPI_ISteamUser_BIsTwoFactorEnabled', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BIsPhoneIdentifying()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_BIsPhoneIdentifying`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneIdentifying
+   */
   BIsPhoneIdentifying(): boolean {
     return this.nat.func('SteamAPI_ISteamUser_BIsPhoneIdentifying', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
+  /**
+   * `bool BIsPhoneRequiringVerification()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_BIsPhoneRequiringVerification`
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneRequiringVerification
+   */
   BIsPhoneRequiringVerification(): boolean {
     return this.nat.func('SteamAPI_ISteamUser_BIsPhoneRequiringVerification', 'bool', ['void *'])(this.ptr) as boolean;
   }
 
-  /** Call result: MarketEligibilityResponse_t */
+  /**
+   * `SteamAPICall_t GetMarketEligibility()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetMarketEligibility`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<MarketEligibilityResponse_t>(handle, layoutOf('MarketEligibilityResponse_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetMarketEligibility
+   */
   GetMarketEligibility(): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUser_GetMarketEligibility', 'uint64', ['void *'])(this.ptr) as number | bigint);
   }
 
-  /** Call result: DurationControl_t */
+  /**
+   * `SteamAPICall_t GetDurationControl()`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_GetDurationControl`
+   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<DurationControl_t>(handle, layoutOf('DurationControl_t'))`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#GetDurationControl
+   */
   GetDurationControl(): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUser_GetDurationControl', 'uint64', ['void *'])(this.ptr) as number | bigint);
   }
 
+  /**
+   * `bool BSetDurationControlOnlineState(EDurationControlOnlineState eNewState)`
+   *
+   * Flat symbol: `SteamAPI_ISteamUser_BSetDurationControlOnlineState`
+   * @param eNewState enum `EDurationControlOnlineState`; values on `flat.EDurationControlOnlineState`.
+   * @see https://partner.steamgames.com/doc/api/ISteamUser#BSetDurationControlOnlineState
+   */
   BSetDurationControlOnlineState(eNewState: number): boolean {
     return this.nat.func('SteamAPI_ISteamUser_BSetDurationControlOnlineState', 'bool', ['void *', 'int32'])(this.ptr, eNewState) as boolean;
   }
