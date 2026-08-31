@@ -1,0 +1,72 @@
+<!doctype html>
+<!-- Source for the 1280x640 GitHub social preview. Re-render: see assets/README.md -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --bg:#101418; --line:#2a3441; --fg:#cdd6e0; --dim:#7d8b9a; --acc:#5fb4a2; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1280px; height:640px; overflow:hidden; }
+  body {
+    background:var(--bg);
+    font-family:"Cascadia Code","Consolas",monospace;
+    color:var(--fg);
+    position:relative;
+  }
+  /* faint dot grid, keeps the flat background from reading as empty */
+  .grid {
+    position:absolute; inset:0;
+    background-image:radial-gradient(circle at center, #3d4d5e 1.6px, transparent 1.7px);
+    background-size:32px 32px;
+    opacity:.35;
+  }
+  /* soft pool of accent light behind the wordmark */
+  .glow {
+    position:absolute; left:-160px; top:-200px; width:900px; height:900px;
+    background:radial-gradient(circle, rgba(95,180,162,.14) 0%, rgba(95,180,162,0) 62%);
+  }
+  .frame { position:absolute; inset:0; border:1px solid var(--line); }
+  .bar { position:absolute; left:0; top:0; width:6px; height:100%; background:var(--acc); }
+
+  main { position:relative; padding:84px 84px 0 96px; height:100%; display:flex; flex-direction:column; }
+
+  h1 { font-size:132px; line-height:1; color:var(--acc); font-weight:700; letter-spacing:-.03em; }
+  .tag { margin-top:26px; font-size:40px; line-height:1.35; color:var(--fg); font-weight:400; }
+  .tag b { color:var(--acc); font-weight:700; }
+
+  .stats { margin-top:auto; margin-bottom:0; border-top:1px solid var(--line); display:flex; padding:34px 0 0; gap:74px; }
+  .stat .n { font-size:52px; line-height:1; color:var(--fg); font-weight:700; font-variant-numeric:tabular-nums; }
+  .stat .l { margin-top:8px; font-size:20px; color:var(--dim); letter-spacing:.06em; text-transform:uppercase; }
+
+  .foot { display:flex; align-items:center; justify-content:space-between; padding:34px 0 52px; }
+  .cmd { font-size:26px; color:var(--dim); }
+  .cmd .p { color:var(--acc); }
+  .repo { font-size:22px; color:var(--dim); }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="bar"></div>
+  <div class="frame"></div>
+  <main>
+    <h1>steamwand</h1>
+    <div class="tag">
+      TypeScript bindings for the Steamworks SDK.<br>
+      <b>No native build step.</b>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n">801</div><div class="l">methods</div></div>
+      <div class="stat"><div class="n">25</div><div class="l">interfaces</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">platforms</div></div>
+      <div class="stat"><div class="n">1</div><div class="l">dependency</div></div>
+    </div>
+
+    <div class="foot">
+      <div class="cmd"><span class="p">$</span> npm i steamwand.js</div>
+      <div class="repo">github.com/JDeffner/steamwand.js</div>
+    </div>
+  </main>
+</body>
+</html>

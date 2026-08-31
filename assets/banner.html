@@ -1,0 +1,65 @@
+<!doctype html>
+<!-- Source for the 1200x280 README banner. Re-render: see assets/README.md -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --bg:#101418; --line:#2a3441; --fg:#cdd6e0; --dim:#7d8b9a; --acc:#5fb4a2; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1200px; height:280px; overflow:hidden; }
+  body {
+    background:var(--bg);
+    font-family:"Cascadia Code","Consolas",monospace;
+    color:var(--fg);
+    position:relative;
+  }
+  .grid {
+    position:absolute; inset:0;
+    background-image:radial-gradient(circle at center, #3d4d5e 1.6px, transparent 1.7px);
+    background-size:28px 28px;
+    opacity:.32;
+  }
+  .glow {
+    position:absolute; left:-120px; top:-260px; width:760px; height:760px;
+    background:radial-gradient(circle, rgba(95,180,162,.13) 0%, rgba(95,180,162,0) 62%);
+  }
+  .frame { position:absolute; inset:0; border:1px solid var(--line); }
+  .bar { position:absolute; left:0; top:0; width:5px; height:100%; background:var(--acc); }
+
+  main {
+    position:relative; height:100%; padding:0 56px 0 62px;
+    display:flex; align-items:center; justify-content:space-between; gap:40px;
+  }
+
+  h1 { font-size:76px; line-height:1; color:var(--acc); font-weight:700; letter-spacing:-.03em; }
+  .tag { margin-top:14px; font-size:22px; line-height:1.4; color:var(--fg); }
+  .tag b { color:var(--acc); font-weight:700; }
+
+  /* right rail: proof, stacked so it stays legible when the banner is scaled down */
+  .rail { text-align:right; border-left:1px solid var(--line); padding-left:44px; }
+  .rail .row { font-size:21px; color:var(--dim); line-height:1.75; font-variant-numeric:tabular-nums; }
+  .rail .row b { color:var(--fg); font-weight:700; }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="bar"></div>
+  <div class="frame"></div>
+  <main>
+    <div>
+      <h1>steamwand</h1>
+      <div class="tag">
+        Steamworks SDK bindings for TypeScript.<br>
+        <b>No native build step.</b>
+      </div>
+    </div>
+    <div class="rail">
+      <div class="row"><b>801</b> methods</div>
+      <div class="row"><b>25</b> interfaces</div>
+      <div class="row"><b>3</b> platforms</div>
+      <div class="row"><b>1</b> dependency</div>
+    </div>
+  </main>
+</body>
+</html>
