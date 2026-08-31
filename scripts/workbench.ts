@@ -2,6 +2,9 @@
  * steamwand workbench: a local web UI to poke the whole binding by hand,
  * including destructive workshop actions. Run: pnpm workbench
  * Then open http://localhost:4879
+ *
+ * Needs the Steam client running and logged in. The page explains the workflow;
+ * the per-method help it shows comes from `loadSignatures`.
  */
 import * as fs from 'node:fs';
 import * as http from 'node:http';
@@ -9,7 +12,7 @@ import * as path from 'node:path';
 import { init, Steam, stringArray, flat } from '../src';
 import { decodeStruct } from '../src/runtime/struct';
 
-const PORT = 4879;
+const PORT = Number(process.env.PORT) || 4879;
 
 let steam: Steam | undefined;
 let closedOnce = false;
@@ -56,11 +59,67 @@ function getIface(name: string): Record<string, (...args: unknown[]) => unknown>
   return inst as Record<string, (...args: unknown[]) => unknown>;
 }
 
-function listInterfaces(): Record<string, string[]> {
-  const result: Record<string, string[]> = {};
+/** What a raw call takes, lifted from the generated source so the UI can spell it out. */
+interface MethodSig {
+  /** The C declaration, e.g. `bool SetItemTitle(UGCUpdateHandle_t handle, const char *pchTitle)`. */
+  c: string;
+  params: { name: string; type: string; note?: string }[];
+  returns: string;
+  /** partner.steamgames.com page for this method. */
+  doc?: string;
+}
+
+/** A JSDoc block plus the method declaration that follows it, in a generated interface. */
+const SIG_RE = /\/\*\*\n((?:[ \t]*\*.*\n)+?)[ \t]*\*\/\n[ \t]*(\w+)\(([^\n]*?)\):\s*([^\n{]+?)\s*\{/g;
+
+/**
+ * Parses the generated interface sources for every method's C signature,
+ * parameter names, and doc link. Without it the raw call panel is two dropdowns
+ * and an empty args box, and you have to read the source to use it.
+ */
+function loadSignatures(): Record<string, Record<string, MethodSig>> {
+  const dir = path.join(__dirname, '..', 'src', 'generated', 'interfaces');
+  const all: Record<string, Record<string, MethodSig>> = {};
+  for (const file of fs.readdirSync(dir)) {
+    // Generated files check out with CRLF on Windows; normalize so SIG_RE sees plain lines.
+    const src = fs.readFileSync(path.join(dir, file), 'utf8').replace(/\r\n/g, '\n');
+    const methods: Record<string, MethodSig> = {};
+    for (const [, doc, name, params, returns] of src.matchAll(SIG_RE)) {
+      const notes = new Map<string, string>();
+      for (const [, p, text] of doc.matchAll(/@param (\w+) (.+)/g)) notes.set(p, text.replace(/`/g, ''));
+      methods[name] = {
+        c: doc.match(/`([^`]+)`/)?.[1] ?? name,
+        params: params
+          ? params.split(', ').map((p) => {
+              const [pName, pType] = p.split(': ');
+              return { name: pName, type: pType, note: notes.get(pName) };
+            })
+          : [],
+        returns,
+        doc: doc.match(/@see (https:\S+)/)?.[1],
+      };
+    }
+    all[path.basename(file, '.ts')] = methods;
+  }
+  return all;
+}
+
+const signatures = loadSignatures();
+
+/**
+ * Every callable interface method, with its signature attached where the parse
+ * found one. Method names come from the prototype rather than the parse, so no
+ * method can disappear from the UI if the generated format ever shifts.
+ */
+function listInterfaces(): Record<string, Record<string, MethodSig | null>> {
+  const result: Record<string, Record<string, MethodSig | null>> = {};
   for (const [name, v] of Object.entries(flat)) {
     if (typeof v === 'function' && name.startsWith('ISteam')) {
-      result[name] = Object.getOwnPropertyNames((v as { prototype: object }).prototype).filter((m) => m !== 'constructor');
+      const methods: Record<string, MethodSig | null> = {};
+      for (const m of Object.getOwnPropertyNames((v as { prototype: object }).prototype)) {
+        if (m !== 'constructor') methods[m] = signatures[name]?.[m] ?? null;
+      }
+      result[name] = methods;
     }
   }
   return result;
@@ -74,7 +133,14 @@ async function handle(url: string, body: any): Promise<unknown> {
       if (steam) throw new Error('already initialized; close first (one app id per process)');
       if (closedOnce)
         throw new Error('Steam cannot re-initialize in the same process after close; restart the workbench (pnpm workbench)');
-      steam = init({ appId: Number(body.appId) || 480 });
+      const appId = Number(body.appId) || 480;
+      try {
+        steam = init({ appId });
+      } catch (e) {
+        throw new Error(
+          `${(e as Error).message} - check that Steam is running, that you are logged in, and that your account owns app id ${appId}. App id 480 (Spacewar) works on any account.`,
+        );
+      }
       addLog('session', `initialized as appId ${steam.appId}, user ${steam.steamId()}`);
       return { ok: true, steamId: steam.steamId(), accountId: steam.accountId() };
     }
@@ -88,7 +154,12 @@ async function handle(url: string, body: any): Promise<unknown> {
       return { ok: true };
     }
     case '/api/interfaces':
-      return listInterfaces();
+      // Callback and struct names ride along so their inputs can autocomplete.
+      return {
+        interfaces: listInterfaces(),
+        callbacks: Object.keys(flat.callbackId).sort(),
+        structs: Object.keys(flat.structLayouts).sort(),
+      };
     case '/api/call': {
       const iface = getIface(body.iface);
       const fn = iface[body.method];
@@ -164,12 +235,13 @@ async function handle(url: string, body: any): Promise<unknown> {
   }
 }
 
-const html = fs.readFileSync(path.join(__dirname, 'workbench.html'), 'utf8');
+const HTML_PATH = path.join(__dirname, 'workbench.html');
 
 http
   .createServer(async (req, res) => {
     if (req.method === 'GET' && (req.url === '/' || req.url === '/index.html')) {
-      res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(html);
+      // Read per request so editing the page only needs a browser refresh.
+      res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(fs.readFileSync(HTML_PATH, 'utf8'));
       return;
     }
     if (req.url?.startsWith('/api/')) {
@@ -192,6 +264,20 @@ http
     }
     res.writeHead(404).end();
   })
+  .on('error', (e: NodeJS.ErrnoException) => {
+    if (e.code !== 'EADDRINUSE') throw e;
+    console.error(
+      `\n  Port ${PORT} is already in use, most likely by a workbench you left running.\n` +
+        `  Close that one, or start this on another port:  npx cross-env PORT=${PORT + 1} pnpm workbench\n`,
+    );
+    process.exit(1);
+  })
   .listen(PORT, '127.0.0.1', () => {
-    console.log(`steamwand workbench: http://localhost:${PORT}`);
+    console.log(`
+  steamwand workbench   http://localhost:${PORT}
+
+  Start Steam and log in before you press init. Nothing touches Steam until then.
+  Workshop create, update, and delete write for real, under the app id you init with.
+  Steam allows one init per process: after close, restart this script.
+`);
   });

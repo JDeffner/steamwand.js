@@ -94,10 +94,12 @@ The SDK itself is not in this repo and must not be committed; Valve's license
 does not allow redistributing the headers or `steam_api.json`. To regenerate,
 download the SDK from
 [partner.steamgames.com](https://partner.steamgames.com/downloads/list),
-unpack it to `sdk/` (gitignored), and run `pnpm generate`. `sdk.lock.json`
-records which SDK version and `steam_api.json` hash the committed output came
-from. Shipping the redistributable binaries (`steam_api64.dll` and friends)
-is normal practice and allowed.
+unpack it to `sdk/` (gitignored apart from the STEAMWAND.md file), and run
+`pnpm generate`. [`sdk/STEAMWAND.md`](sdk/STEAMWAND.md) has the exact paths, the
+hash checks, and what to update on a version bump. `sdk.lock.json` records
+which SDK version and `steam_api.json` hash the committed output came from.
+Shipping the redistributable binaries (`steam_api64.dll` and friends) is
+normal practice and allowed.
 
 ## Known limits
 

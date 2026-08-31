@@ -6,7 +6,7 @@
  */
 import { init, flat } from '../src';
 
-const results: [string, string, unknown][] = [];
+const results: [string, string, string][] = [];
 let failed = 0;
 function t(iface: string, name: string, fn: () => unknown, check?: (v: any) => boolean) {
   try {

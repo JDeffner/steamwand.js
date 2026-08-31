@@ -7,25 +7,55 @@
   :root { --bg:#101418; --panel:#171d24; --line:#2a3441; --fg:#cdd6e0; --dim:#7d8b9a; --acc:#5fb4a2; --warn:#d4a054; --bad:#d46a6a; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--fg); font:13px/1.5 "Cascadia Code","Consolas",monospace; }
-  header { padding:10px 16px; border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:baseline; }
+  header { padding:10px 16px; border-bottom:1px solid var(--line); display:flex; gap:12px; align-items:baseline; }
   header h1 { font-size:14px; margin:0; color:var(--acc); font-weight:600; }
-  #status { color:var(--dim); }
-  main { display:grid; grid-template-columns: 340px 1fr; gap:0; height:calc(100vh - 42px); }
-  #left { border-right:1px solid var(--line); overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:14px; }
+  #status { padding:1px 8px; border:1px solid var(--line); border-radius:10px; color:var(--dim); }
+  #status.on { color:var(--acc); border-color:var(--acc); }
+  #status.off { color:var(--bad); border-color:var(--bad); }
+  header .spacer { flex:1; }
+  main { display:grid; grid-template-columns: 360px 1fr; height:calc(100vh - 42px); }
+  #left { border-right:1px solid var(--line); overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:12px; }
   #right { display:flex; flex-direction:column; overflow:hidden; }
   section { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:10px; }
   section h2 { margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--dim); }
+  h3 { margin:12px 0 4px; font-size:12px; color:var(--fg); font-weight:600; }
+  h3:first-of-type { margin-top:2px; }
   label { display:block; color:var(--dim); margin-top:6px; }
   input, select, textarea, button { font:inherit; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:4px; padding:4px 6px; width:100%; }
   textarea { resize:vertical; }
   button { cursor:pointer; width:auto; padding:4px 12px; margin-top:8px; }
-  button:hover { border-color:var(--acc); }
+  button:hover:not(:disabled) { border-color:var(--acc); }
+  button:disabled { opacity:.5; cursor:default; }
   button.danger { color:var(--bad); }
-  button.danger:hover { border-color:var(--bad); }
+  button.danger:hover:not(:disabled) { border-color:var(--bad); }
   .row { display:flex; gap:8px; }
   .row > * { flex:1; }
-  #result { flex:0 0 auto; max-height:38%; overflow:auto; margin:12px; }
+  fieldset { border:0; padding:0; margin:0; min-width:0; display:flex; flex-direction:column; gap:12px; }
+  fieldset[disabled] { opacity:.4; }
+  .hint { color:var(--dim); margin:0 0 6px; }
+  .hint code, .sig code { color:var(--fg); }
+
+  /* Getting started */
+  details#guide { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:10px; }
+  details#guide summary { cursor:pointer; color:var(--acc); font-size:12px; text-transform:uppercase; letter-spacing:.08em; }
+  details#guide ol { margin:8px 0 0; padding-left:18px; }
+  details#guide p { margin:8px 0 0; color:var(--dim); }
+  details#guide b { color:var(--fg); font-weight:600; }
+
+  /* Raw call signature */
+  .sig { border:1px solid var(--line); border-radius:4px; padding:6px 8px; margin-top:8px; background:var(--bg); }
+  .sig .c { color:var(--acc); word-break:break-all; }
+  .sig table { border-collapse:collapse; width:100%; margin-top:6px; }
+  .sig td { padding:1px 8px 1px 0; vertical-align:top; color:var(--dim); }
+  .sig td.n { color:var(--fg); white-space:nowrap; }
+  .sig td.t { color:var(--warn); white-space:nowrap; }
+  .sig a { color:var(--dim); }
+  .legend { color:var(--dim); margin-top:6px; }
+
+  #result { flex:0 0 auto; max-height:34%; overflow:auto; margin:12px; }
   #result pre { margin:0; white-space:pre-wrap; word-break:break-all; }
+  #result.err { border-color:var(--bad); }
+  #result.err pre { color:var(--bad); }
   #logwrap { flex:1; overflow:auto; margin:0 12px 12px; }
   #log div { border-bottom:1px solid var(--line); padding:2px 0; word-break:break-all; }
   .k-error { color:var(--bad); } .k-workshop { color:var(--acc); } .k-progress { color:var(--warn); }
@@ -34,72 +64,125 @@
 </style>
 </head>
 <body>
-<header><h1>steamwand workbench</h1><span id="status">checking…</span></header>
+<header>
+  <h1>steamwand workbench</h1>
+  <span id="status">checking…</span>
+  <span class="spacer"></span>
+  <span class="hint" style="margin:0">manual test surface over the binding</span>
+</header>
 <main>
   <div id="left">
+
+    <details id="guide">
+      <summary>How to use this</summary>
+      <p>A hand-test surface over the whole binding. It drives your real Steam client, so
+         writes are real writes.</p>
+      <ol>
+        <li>Start the Steam client and log in.</li>
+        <li>Press <b>init</b>. Nothing reaches Steam before that.</li>
+        <li>Use <b>Workshop</b> for the wrapped flows, or <b>Raw call</b> for any of the
+            801 generated methods.</li>
+        <li>Watch the <b>log</b> at the bottom right. Every call, callback, and error lands there.</li>
+      </ol>
+      <p><b>App id.</b> 480 is Spacewar, Valve's public test app, and works on any account.
+         Use your own app id to reach your own workshop items.</p>
+      <p><b>One init per process.</b> Steam cannot start again after close. To begin a new
+         session, stop the script and run <code>pnpm workbench</code> again.</p>
+    </details>
+
     <section>
       <h2>Session</h2>
+      <p class="hint">Start here. 480 = Spacewar, usable by any account.</p>
       <div class="row">
         <input id="appId" value="480" title="app id">
-        <button onclick="doInit()">init</button>
-        <button onclick="api('/api/close').then(refresh)">close</button>
+        <button onclick="run(this,doInit)">init</button>
+        <button onclick="run(this,()=>api('/api/close').then(afterClose))">close</button>
       </div>
     </section>
 
-    <section>
-      <h2>Workshop</h2>
-      <label>file id</label><input id="w-fileId" placeholder="e.g. 3786319531">
-      <div class="row">
-        <button onclick="ws('createItem')">create item</button>
-        <button onclick="ws('getUserItems')">my items</button>
-      </div>
-      <label>language (query)</label><input id="w-lang" placeholder="german">
-      <button onclick="ws('getItem')">get item</button>
-      <label>title</label><input id="u-title">
-      <label>description</label><textarea id="u-description" rows="2"></textarea>
-      <label>update language</label><input id="u-language" placeholder="empty = default text">
-      <label>content folder</label><input id="u-contentPath">
-      <label>preview image</label><input id="u-previewPath">
-      <label>tags (comma separated)</label><input id="u-tags">
-      <label>visibility</label>
-      <select id="u-visibility">
-        <option value="">(unchanged)</option>
-        <option value="2">private</option>
-        <option value="3">unlisted</option>
-        <option value="1">friends only</option>
-        <option value="0">public</option>
-      </select>
-      <label>change note</label><input id="u-changeNote">
-      <button onclick="ws('submitUpdate')">submit update</button>
-      <button class="danger" onclick="if(confirm('Permanently delete item '+v('w-fileId')+'?')) ws('deleteItem')">delete item</button>
-    </section>
+    <fieldset id="gated" disabled>
+      <section>
+        <h2>Workshop</h2>
 
-    <section>
-      <h2>Await call result</h2>
-      <label>call handle (from a raw call)</label><input id="cr-call">
-      <label>decode as struct</label><input id="cr-struct" placeholder="CreateItemResult_t">
-      <button onclick="api('/api/awaitResult',{call:v('cr-call'),struct:v('cr-struct')||undefined}).then(show)">await</button>
-    </section>
+        <h3>Read</h3>
+        <p class="hint">Safe. <code>get item</code> needs a file id, <code>my items</code> does not.</p>
+        <label>file id</label><input id="w-fileId" placeholder="e.g. 3786319531">
+        <label>language (query)</label><input id="w-lang" placeholder="german">
+        <div class="row">
+          <button onclick="run(this,()=>ws('getItem'))">get item</button>
+          <button onclick="run(this,()=>ws('getUserItems'))">my items</button>
+        </div>
 
-    <section>
-      <h2>Watch callback</h2>
-      <input id="cb-name" placeholder="ItemInstalled_t">
-      <button onclick="api('/api/watch',{callback:v('cb-name')}).then(show)">watch</button>
-    </section>
+        <h3>Write</h3>
+        <p class="hint">These change Steam for real, under the app id above.
+           <code>create item</code> makes a new empty item and returns its file id.
+           <code>submit update</code> applies the fields below to the <b>file id</b> above.</p>
+        <button onclick="run(this,()=>ws('createItem'))">create item</button>
+        <label>title</label><input id="u-title">
+        <label>description</label><textarea id="u-description" rows="2"></textarea>
+        <label>update language</label><input id="u-language" placeholder="empty = default text">
+        <label>content folder</label><input id="u-contentPath">
+        <label>preview image</label><input id="u-previewPath">
+        <label>tags (comma separated)</label><input id="u-tags">
+        <label>visibility</label>
+        <select id="u-visibility">
+          <option value="">(unchanged)</option>
+          <option value="2">private</option>
+          <option value="3">unlisted</option>
+          <option value="1">friends only</option>
+          <option value="0">public</option>
+        </select>
+        <label>change note</label><input id="u-changeNote">
+        <p class="hint">Empty fields are left unchanged.</p>
+        <button onclick="run(this,()=>ws('submitUpdate'))">submit update</button>
+        <button class="danger" onclick="if(confirm('Permanently delete item '+v('w-fileId')+'?')) run(this,()=>ws('deleteItem'))">delete item</button>
+      </section>
+
+      <section>
+        <h2>Await call result</h2>
+        <p class="hint">For the async flat calls. A raw call that returns a
+           <code>SteamAPICall_t</code> fills the handle in here for you.</p>
+        <label>call handle</label><input id="cr-call">
+        <label>decode as struct (optional)</label>
+        <input id="cr-struct" list="structs" placeholder="CreateItemResult_t">
+        <datalist id="structs"></datalist>
+        <button onclick="run(this,()=>api('/api/awaitResult',{call:v('cr-call'),struct:v('cr-struct')||undefined}).then(show))">await</button>
+      </section>
+
+      <section>
+        <h2>Watch callback</h2>
+        <p class="hint">Logs every callback of this type as Steam delivers it.</p>
+        <input id="cb-name" list="callbacks" placeholder="ItemInstalled_t">
+        <datalist id="callbacks"></datalist>
+        <button onclick="run(this,()=>api('/api/watch',{callback:v('cb-name')}).then(show))">watch</button>
+      </section>
+    </fieldset>
   </div>
 
   <div id="right">
     <section id="raw" style="margin:12px 12px 0">
       <h2>Raw call</h2>
-      <div class="row">
-        <select id="r-iface" onchange="fillMethods()"></select>
-        <select id="r-method"></select>
-      </div>
-      <label>args as JSON array — "123n" = bigint, {"buf":260} = out-buffer, ["a","b"] = string array struct</label>
-      <div class="row">
-        <input id="r-args" value="[]">
-        <button onclick="rawCall()">call</button>
-      </div>
+      <fieldset id="gated2" disabled>
+        <div>
+          <div class="row">
+            <select id="r-iface" onchange="fillMethods()"></select>
+            <select id="r-method" onchange="fillSig(true)"></select>
+          </div>
+          <div class="sig" id="r-sig"></div>
+          <label>args (JSON array)</label>
+          <div class="row">
+            <input id="r-args" value="[]">
+            <button style="flex:0 0 auto" onclick="fillSig(true)" title="reset args to a template for this method">template</button>
+            <button style="flex:0 0 auto" onclick="run(this,rawCall)">call</button>
+          </div>
+          <div class="legend">
+            <code>"123n"</code> bigint &nbsp;·&nbsp;
+            <code>{"buf":260}</code> buffer you size &nbsp;·&nbsp;
+            <code>["a","b"]</code> string array &nbsp;·&nbsp;
+            plain JSON for the rest. Buffers come back filled under <code>outBuffers</code>.
+          </div>
+        </div>
+      </fieldset>
     </section>
     <section id="result"><h2>Last result</h2><pre id="resultText">–</pre></section>
     <div id="logwrap"><div id="log"></div></div>
@@ -107,47 +190,116 @@
 </main>
 <script>
 const v = id => document.getElementById(id).value.trim();
+const el = id => document.getElementById(id);
+
 async function api(url, body) {
   const r = await fetch(url, { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(body||{}) });
   const j = await r.json();
   if (j && j.error) show(j);
   return j;
 }
-function show(x) { document.getElementById('resultText').textContent = JSON.stringify(x, null, 2); }
-async function doInit() { show(await api('/api/init', { appId: v('appId') })); refresh(); loadIfaces(); }
+function show(x) {
+  el('resultText').textContent = JSON.stringify(x, null, 2);
+  el('result').classList.toggle('err', !!(x && x.error));
+}
+/** Disable a button and mark it busy while its action runs, so slow calls are visible. */
+async function run(btn, fn) {
+  const label = btn.textContent;
+  btn.disabled = true; btn.textContent = '…';
+  try { return await fn(); } finally { btn.disabled = false; btn.textContent = label; }
+}
+
+async function doInit() {
+  const r = await api('/api/init', { appId: v('appId') });
+  show(r);
+  if (!r.error) { setGated(false); loadIfaces(); }
+  refresh();
+}
+function afterClose(r) { show(r); setGated(true); refresh(); }
+function setGated(off) { el('gated').disabled = off; el('gated2').disabled = off; }
+
 async function ws(op) {
   const update = op === 'submitUpdate' ? {
     title: v('u-title'), description: v('u-description'), language: v('u-language'),
     contentPath: v('u-contentPath'), previewPath: v('u-previewPath'), tags: v('u-tags'),
     visibility: v('u-visibility') || undefined, changeNote: v('u-changeNote'),
   } : undefined;
-  show(await api('/api/workshop', { op, fileId: v('w-fileId') || undefined, language: v('w-lang'), update, appId: v('appId') }));
+  const r = await api('/api/workshop', { op, fileId: v('w-fileId') || undefined, language: v('w-lang'), update, appId: v('appId') });
+  show(r);
+  // A fresh item is the obvious next subject, so carry its id into the file id box.
+  if (op === 'createItem' && r.fileId) el('w-fileId').value = String(r.fileId).replace(/n$/, '');
 }
+
 let ifaces = {};
 async function loadIfaces() {
-  ifaces = await api('/api/interfaces');
-  const sel = document.getElementById('r-iface');
+  const r = await api('/api/interfaces');
+  if (r.error) return;
+  ifaces = r.interfaces;
+  el('callbacks').innerHTML = r.callbacks.map(n => `<option value="${n}">`).join('');
+  el('structs').innerHTML = r.structs.map(n => `<option value="${n}">`).join('');
+  const sel = el('r-iface');
   sel.innerHTML = Object.keys(ifaces).sort().map(n => `<option>${n}</option>`).join('');
   sel.value = 'ISteamUGC';
   fillMethods();
 }
 function fillMethods() {
-  const m = ifaces[v('r-iface')] || [];
-  document.getElementById('r-method').innerHTML = m.map(x => `<option>${x}</option>`).join('');
+  const names = Object.keys(ifaces[v('r-iface')] || {});
+  el('r-method').innerHTML = names.map(x => `<option>${x}</option>`).join('');
+  fillSig(true);
 }
+
+// How each generated parameter type is written in the args JSON.
+const TEMPLATE = {
+  'number': '0', 'boolean': 'false', 'string': '""', 'bigint | number': '"0n"',
+  'Buffer | null': '{"buf":256}', 'SteamParamStringArrayJs': '["a","b"]', 'unknown': 'null',
+};
+const esc = s => s.replace(/[<&]/g, c => (c === '<' ? '&lt;' : '&amp;'));
+
+/** Show the selected method's C signature and parameters; optionally reset the args box. */
+function fillSig(resetArgs) {
+  const sig = (ifaces[v('r-iface')] || {})[v('r-method')];
+  if (!sig) { el('r-sig').innerHTML = '<span class="hint">no signature on file</span>'; return; }
+  const rows = sig.params.map(p =>
+    `<tr><td class="n">${esc(p.name)}</td><td class="t">${esc(p.type)}</td><td>${p.note ? esc(p.note) : ''}</td></tr>`).join('');
+  el('r-sig').innerHTML =
+    `<div class="c">${esc(sig.c)}</div>` +
+    (rows ? `<table>${rows}</table>` : '<div class="hint">no parameters</div>') +
+    (sig.doc ? `<div style="margin-top:4px"><a href="${sig.doc}" target="_blank" rel="noreferrer">Steam docs</a></div>` : '');
+  if (resetArgs) el('r-args').value = '[' + sig.params.map(p => TEMPLATE[p.type] ?? 'null').join(', ') + ']';
+}
+
 async function rawCall() {
   let args;
   try { args = JSON.parse(v('r-args') || '[]'); } catch (e) { return show({ error: 'args is not valid JSON: ' + e.message }); }
-  show(await api('/api/call', { iface: v('r-iface'), method: v('r-method'), args }));
+  const sig = (ifaces[v('r-iface')] || {})[v('r-method')];
+  if (sig && args.length !== sig.params.length)
+    return show({ error: `${v('r-method')} takes ${sig.params.length} argument(s), got ${args.length}. Press template for a starting point.` });
+  const r = await api('/api/call', { iface: v('r-iface'), method: v('r-method'), args });
+  show(r);
+  // Only a SteamAPICall_t is awaitable; other 64-bit handles are not.
+  if (!r.error && sig && sig.c.startsWith('SteamAPICall_t ')) el('cr-call').value = String(r.result).replace(/n$/, '');
 }
+
 async function refresh() {
   try {
     const s = await api('/api/status');
-    document.getElementById('status').textContent = s.initialized ? `initialized · appId ${s.appId}` : 'not initialized';
-    document.getElementById('log').innerHTML = s.log.map(l =>
-      `<div class="k-${l.kind}"><span class="time">${l.time}</span>[${l.kind}] ${l.text.replace(/</g,'&lt;')}</div>`).join('');
-  } catch { document.getElementById('status').textContent = 'server unreachable'; }
+    const st = el('status');
+    st.textContent = s.initialized ? `initialized · appId ${s.appId}` : 'not initialized · press init';
+    st.className = s.initialized ? 'on' : '';
+    setGated(!s.initialized);
+    el('log').innerHTML = s.log.map(l =>
+      `<div class="k-${l.kind}"><span class="time">${l.time}</span>[${l.kind}] ${esc(l.text)}</div>`).join('');
+  } catch {
+    const st = el('status');
+    st.textContent = 'server unreachable'; st.className = 'off';
+  }
 }
+
+// Keep the guide open until it has been read once.
+const guide = el('guide');
+guide.open = localStorage.getItem('wb-guide') !== 'closed';
+guide.addEventListener('toggle', () => localStorage.setItem('wb-guide', guide.open ? 'open' : 'closed'));
+
 setInterval(refresh, 1000);
 refresh(); loadIfaces();
 </script>

@@ -1,5 +1,8 @@
-# Licensed Steamworks SDK content: never commit (regeneration needs a local copy)
-sdk/
+# Licensed Steamworks SDK content: never commit (regeneration needs a local copy).
+# sdk/* not sdk/, because git does not descend into an excluded directory, so a
+# plain sdk/ would make the negation below impossible.
+sdk/*
+!sdk/STEAMWAND.md
 steamworks_sdk_*.zip
 
 node_modules/
