@@ -12,6 +12,7 @@ import { decodeStruct } from '../src/runtime/struct';
 const PORT = 4879;
 
 let steam: Steam | undefined;
+let closedOnce = false;
 const log: { time: string; kind: string; text: string }[] = [];
 const watchers = new Map<string, () => void>();
 
@@ -71,6 +72,8 @@ async function handle(url: string, body: any): Promise<unknown> {
       return { initialized: !!steam, appId: steam?.appId, log };
     case '/api/init': {
       if (steam) throw new Error('already initialized; close first (one app id per process)');
+      if (closedOnce)
+        throw new Error('Steam cannot re-initialize in the same process after close; restart the workbench (pnpm workbench)');
       steam = init({ appId: Number(body.appId) || 480 });
       addLog('session', `initialized as appId ${steam.appId}, user ${steam.steamId()}`);
       return { ok: true, steamId: steam.steamId(), accountId: steam.accountId() };
@@ -78,6 +81,7 @@ async function handle(url: string, body: any): Promise<unknown> {
     case '/api/close': {
       steam?.close();
       steam = undefined;
+      closedOnce = true;
       ifaceCache.clear();
       watchers.clear();
       addLog('session', 'closed (restart the workbench to re-init: Steam re-init in one process is unreliable)');
