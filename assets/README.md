@@ -11,9 +11,23 @@ because a relative path renders on GitHub and breaks on npmjs.com.
 | `banner.png` | 1200x280 | the image at the top of the root README |
 
 Both PNGs are rendered from the `.html` next to them, so edit the HTML and
-re-render rather than touching the image. Type stays crisp that way, and the
-palette is the same one the workbench uses (`scripts/workbench.html`):
-background `#101418`, accent `#5fb4a2`, text `#cdd6e0`, rules `#2a3441`.
+re-render rather than touching the image. Type stays crisp that way.
+
+The highlight is Steam's `#66c0f4`, with `#c7d5e0` text and `#1f2d3d` rules.
+The background is a near-black `#0b0f14` rather than Steam's own `#1b2838`
+navy: that navy only gives the wordmark 7.4:1 contrast and visibly washes the
+blue out, while this base reaches 9.5:1. Keep the background dark if you
+retint anything.
+
+Type is split by role: **Montserrat** for the wordmark and tagline, because its
+geometry is close to Steam's own Motiva Sans, and **Cascadia Code** only for
+text that really is code, the install command and the repo URL. A monospaced
+wordmark does not work here: the fixed cell forces a visible gap before the
+`.js`.
+
+Both fonts must be installed locally to re-render. Chrome falls back silently
+if Montserrat is missing, so check the wordmark after any re-render on a
+different machine.
 
 ## Re-rendering
 
@@ -34,8 +48,3 @@ Three things that will trip you up:
 - Chrome cannot overwrite the PNG while another program holds it open, and it
   reports that only on stderr. If the file does not change, close whatever is
   previewing it.
-
-The numbers on both images are real and will drift. `801 methods` and
-`25 interfaces` come from the workbench's `/api/interfaces` endpoint,
-`3 platforms` from the folders in `runtime/`, and `1 dependency` from
-`dependencies` in package.json. Recheck them after an SDK bump.

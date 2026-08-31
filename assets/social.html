@@ -4,69 +4,69 @@
 <head>
 <meta charset="utf-8">
 <style>
-  :root { --bg:#101418; --line:#2a3441; --fg:#cdd6e0; --dim:#7d8b9a; --acc:#5fb4a2; }
+  /* Near-black base on purpose: Steam's #1b2838 navy only gave the #66c0f4
+     wordmark 7.4:1, and washed it out. This base takes it to 9.5:1. */
+  :root { --bg:#0b0f14; --line:#1f2d3d; --fg:#c7d5e0; --dim:#6f8496; --acc:#66c0f4; }
+  /* Montserrat for display (geometric, near Steam's own Motiva Sans);
+     Cascadia Code only where the text really is code. */
   * { box-sizing:border-box; margin:0; padding:0; }
   html, body { width:1280px; height:640px; overflow:hidden; }
   body {
     background:var(--bg);
-    font-family:"Cascadia Code","Consolas",monospace;
+    font-family:"Montserrat","Segoe UI",sans-serif;
     color:var(--fg);
     position:relative;
   }
-  /* faint dot grid, keeps the flat background from reading as empty */
   .grid {
     position:absolute; inset:0;
-    background-image:radial-gradient(circle at center, #3d4d5e 1.6px, transparent 1.7px);
+    background-image:radial-gradient(circle at center, #1f2d3d 1.6px, transparent 1.7px);
     background-size:32px 32px;
-    opacity:.35;
+    opacity:.5;
   }
-  /* soft pool of accent light behind the wordmark */
   .glow {
-    position:absolute; left:-160px; top:-200px; width:900px; height:900px;
-    background:radial-gradient(circle, rgba(95,180,162,.14) 0%, rgba(95,180,162,0) 62%);
+    position:absolute; right:-260px; bottom:-320px; width:900px; height:900px;
+    background:radial-gradient(circle, rgba(102,192,244,.10) 0%, rgba(102,192,244,0) 62%);
   }
   .frame { position:absolute; inset:0; border:1px solid var(--line); }
-  .bar { position:absolute; left:0; top:0; width:6px; height:100%; background:var(--acc); }
 
-  main { position:relative; padding:84px 84px 0 96px; height:100%; display:flex; flex-direction:column; }
+  main {
+    position:relative; height:100%; padding:0 96px;
+    display:flex; flex-direction:column; justify-content:center;
+  }
 
-  h1 { font-size:132px; line-height:1; color:var(--acc); font-weight:700; letter-spacing:-.03em; }
-  .tag { margin-top:26px; font-size:40px; line-height:1.35; color:var(--fg); font-weight:400; }
+  h1 { font-size:132px; line-height:1; color:var(--acc); font-weight:700; letter-spacing:-.025em; }
+  h1 .js { color:var(--fg); opacity:.5; font-weight:600; }
+
+  .tag { margin-top:34px; font-size:41px; line-height:1.38; color:var(--fg); font-weight:400; }
   .tag b { color:var(--acc); font-weight:700; }
 
-  .stats { margin-top:auto; margin-bottom:0; border-top:1px solid var(--line); display:flex; padding:34px 0 0; gap:74px; }
-  .stat .n { font-size:52px; line-height:1; color:var(--fg); font-weight:700; font-variant-numeric:tabular-nums; }
-  .stat .l { margin-top:8px; font-size:20px; color:var(--dim); letter-spacing:.06em; text-transform:uppercase; }
+  .cmd {
+    margin-top:54px; align-self:flex-start;
+    border:1px solid var(--line); border-radius:8px;
+    background:rgba(255,255,255,.02);
+    padding:18px 30px; font-size:29px; color:var(--fg);
+    font-family:"Cascadia Code","Consolas",monospace;
+  }
+  .cmd .p { color:var(--acc); margin-right:14px; }
 
-  .foot { display:flex; align-items:center; justify-content:space-between; padding:34px 0 52px; }
-  .cmd { font-size:26px; color:var(--dim); }
-  .cmd .p { color:var(--acc); }
-  .repo { font-size:22px; color:var(--dim); }
+  .repo {
+    position:absolute; right:96px; bottom:52px; font-size:21px; color:var(--dim);
+    font-family:"Cascadia Code","Consolas",monospace;
+  }
 </style>
 </head>
 <body>
   <div class="grid"></div>
   <div class="glow"></div>
-  <div class="bar"></div>
   <div class="frame"></div>
   <main>
-    <h1>steamwand</h1>
+    <h1>steamwand<span class="js">.js</span></h1>
     <div class="tag">
       TypeScript bindings for the Steamworks SDK.<br>
       <b>No native build step.</b>
     </div>
-
-    <div class="stats">
-      <div class="stat"><div class="n">801</div><div class="l">methods</div></div>
-      <div class="stat"><div class="n">25</div><div class="l">interfaces</div></div>
-      <div class="stat"><div class="n">3</div><div class="l">platforms</div></div>
-      <div class="stat"><div class="n">1</div><div class="l">dependency</div></div>
-    </div>
-
-    <div class="foot">
-      <div class="cmd"><span class="p">$</span> npm i steamwand.js</div>
-      <div class="repo">github.com/JDeffner/steamwand.js</div>
-    </div>
+    <div class="cmd"><span class="p">$</span>npm i steamwand.js</div>
   </main>
+  <div class="repo">github.com/JDeffner/steamwand.js</div>
 </body>
 </html>
