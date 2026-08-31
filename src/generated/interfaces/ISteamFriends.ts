@@ -58,10 +58,10 @@ export class ISteamFriends {
    * `EFriendRelationship GetFriendRelationship(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendRelationship`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRelationship
    */
-  GetFriendRelationship(steamIDFriend: bigint | number): number {
+  GetFriendRelationship(steamIDFriend: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendRelationship', 'int32', ['void *', 'uint64'])(this.ptr, steamIDFriend) as number;
   }
 
@@ -69,10 +69,10 @@ export class ISteamFriends {
    * `EPersonaState GetFriendPersonaState(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendPersonaState`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaState
    */
-  GetFriendPersonaState(steamIDFriend: bigint | number): number {
+  GetFriendPersonaState(steamIDFriend: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendPersonaState', 'int32', ['void *', 'uint64'])(this.ptr, steamIDFriend) as number;
   }
 
@@ -80,10 +80,10 @@ export class ISteamFriends {
    * `const char * GetFriendPersonaName(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendPersonaName`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaName
    */
-  GetFriendPersonaName(steamIDFriend: bigint | number): string {
+  GetFriendPersonaName(steamIDFriend: bigint): string {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendPersonaName', 'str', ['void *', 'uint64'])(this.ptr, steamIDFriend) as string;
   }
 
@@ -91,11 +91,11 @@ export class ISteamFriends {
    * `bool GetFriendGamePlayed(CSteamID steamIDFriend, FriendGameInfo_t *pFriendGameInfo)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendGamePlayed`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pFriendGameInfo Buffer you allocate for `FriendGameInfo_t *`: `Buffer.alloc(layoutOf('FriendGameInfo_t').size)`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendGamePlayed
    */
-  GetFriendGamePlayed(steamIDFriend: bigint | number, pFriendGameInfo: Buffer | null): boolean {
+  GetFriendGamePlayed(steamIDFriend: bigint, pFriendGameInfo: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendGamePlayed', 'bool', ['void *', 'uint64', 'void *'])(this.ptr, steamIDFriend, pFriendGameInfo) as boolean;
   }
 
@@ -103,10 +103,10 @@ export class ISteamFriends {
    * `const char * GetFriendPersonaNameHistory(CSteamID steamIDFriend, int iPersonaName)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendPersonaNameHistory`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaNameHistory
    */
-  GetFriendPersonaNameHistory(steamIDFriend: bigint | number, iPersonaName: number): string {
+  GetFriendPersonaNameHistory(steamIDFriend: bigint, iPersonaName: number): string {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendPersonaNameHistory', 'str', ['void *', 'uint64', 'int32'])(this.ptr, steamIDFriend, iPersonaName) as string;
   }
 
@@ -114,10 +114,10 @@ export class ISteamFriends {
    * `int GetFriendSteamLevel(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendSteamLevel`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendSteamLevel
    */
-  GetFriendSteamLevel(steamIDFriend: bigint | number): number {
+  GetFriendSteamLevel(steamIDFriend: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendSteamLevel', 'int32', ['void *', 'uint64'])(this.ptr, steamIDFriend) as number;
   }
 
@@ -125,10 +125,10 @@ export class ISteamFriends {
    * `const char * GetPlayerNickname(CSteamID steamIDPlayer)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetPlayerNickname`
-   * @param steamIDPlayer `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDPlayer `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetPlayerNickname
    */
-  GetPlayerNickname(steamIDPlayer: bigint | number): string {
+  GetPlayerNickname(steamIDPlayer: bigint): string {
     return this.nat.func('SteamAPI_ISteamFriends_GetPlayerNickname', 'str', ['void *', 'uint64'])(this.ptr, steamIDPlayer) as string;
   }
 
@@ -187,10 +187,10 @@ export class ISteamFriends {
    * `bool HasFriend(CSteamID steamIDFriend, int iFriendFlags)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_HasFriend`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#HasFriend
    */
-  HasFriend(steamIDFriend: bigint | number, iFriendFlags: number): boolean {
+  HasFriend(steamIDFriend: bigint, iFriendFlags: number): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_HasFriend', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, steamIDFriend, iFriendFlags) as boolean;
   }
 
@@ -218,10 +218,10 @@ export class ISteamFriends {
    * `const char * GetClanName(CSteamID steamIDClan)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetClanName`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetClanName
    */
-  GetClanName(steamIDClan: bigint | number): string {
+  GetClanName(steamIDClan: bigint): string {
     return this.nat.func('SteamAPI_ISteamFriends_GetClanName', 'str', ['void *', 'uint64'])(this.ptr, steamIDClan) as string;
   }
 
@@ -229,10 +229,10 @@ export class ISteamFriends {
    * `const char * GetClanTag(CSteamID steamIDClan)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetClanTag`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetClanTag
    */
-  GetClanTag(steamIDClan: bigint | number): string {
+  GetClanTag(steamIDClan: bigint): string {
     return this.nat.func('SteamAPI_ISteamFriends_GetClanTag', 'str', ['void *', 'uint64'])(this.ptr, steamIDClan) as string;
   }
 
@@ -240,13 +240,13 @@ export class ISteamFriends {
    * `bool GetClanActivityCounts(CSteamID steamIDClan, int *pnOnline, int *pnInGame, int *pnChatting)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetClanActivityCounts`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pnOnline Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
    * @param pnInGame Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
    * @param pnChatting Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetClanActivityCounts
    */
-  GetClanActivityCounts(steamIDClan: bigint | number, pnOnline: Buffer | null, pnInGame: Buffer | null, pnChatting: Buffer | null): boolean {
+  GetClanActivityCounts(steamIDClan: bigint, pnOnline: Buffer | null, pnInGame: Buffer | null, pnChatting: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_GetClanActivityCounts', 'bool', ['void *', 'uint64', 'void *', 'void *', 'void *'])(this.ptr, steamIDClan, pnOnline, pnInGame, pnChatting) as boolean;
   }
 
@@ -266,10 +266,10 @@ export class ISteamFriends {
    * `int GetFriendCountFromSource(CSteamID steamIDSource)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendCountFromSource`
-   * @param steamIDSource `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDSource `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCountFromSource
    */
-  GetFriendCountFromSource(steamIDSource: bigint | number): number {
+  GetFriendCountFromSource(steamIDSource: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendCountFromSource', 'int32', ['void *', 'uint64'])(this.ptr, steamIDSource) as number;
   }
 
@@ -277,10 +277,10 @@ export class ISteamFriends {
    * `CSteamID GetFriendFromSourceByIndex(CSteamID steamIDSource, int iFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendFromSourceByIndex`
-   * @param steamIDSource `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDSource `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendFromSourceByIndex
    */
-  GetFriendFromSourceByIndex(steamIDSource: bigint | number, iFriend: number): bigint {
+  GetFriendFromSourceByIndex(steamIDSource: bigint, iFriend: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamFriends_GetFriendFromSourceByIndex', 'uint64', ['void *', 'uint64', 'int32'])(this.ptr, steamIDSource, iFriend) as number | bigint);
   }
 
@@ -288,11 +288,11 @@ export class ISteamFriends {
    * `bool IsUserInSource(CSteamID steamIDUser, CSteamID steamIDSource)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_IsUserInSource`
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
-   * @param steamIDSource `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param steamIDSource `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#IsUserInSource
    */
-  IsUserInSource(steamIDUser: bigint | number, steamIDSource: bigint | number): boolean {
+  IsUserInSource(steamIDUser: bigint, steamIDSource: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_IsUserInSource', 'bool', ['void *', 'uint64', 'uint64'])(this.ptr, steamIDUser, steamIDSource) as boolean;
   }
 
@@ -300,10 +300,10 @@ export class ISteamFriends {
    * `void SetInGameVoiceSpeaking(CSteamID steamIDUser, bool bSpeaking)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_SetInGameVoiceSpeaking`
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#SetInGameVoiceSpeaking
    */
-  SetInGameVoiceSpeaking(steamIDUser: bigint | number, bSpeaking: boolean): void {
+  SetInGameVoiceSpeaking(steamIDUser: bigint, bSpeaking: boolean): void {
     this.nat.func('SteamAPI_ISteamFriends_SetInGameVoiceSpeaking', 'void', ['void *', 'uint64', 'bool'])(this.ptr, steamIDUser, bSpeaking);
   }
 
@@ -321,10 +321,10 @@ export class ISteamFriends {
    * `void ActivateGameOverlayToUser(const char *pchDialog, CSteamID steamID)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_ActivateGameOverlayToUser`
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayToUser
    */
-  ActivateGameOverlayToUser(pchDialog: string, steamID: bigint | number): void {
+  ActivateGameOverlayToUser(pchDialog: string, steamID: bigint): void {
     this.nat.func('SteamAPI_ISteamFriends_ActivateGameOverlayToUser', 'void', ['void *', 'str', 'uint64'])(this.ptr, pchDialog, steamID);
   }
 
@@ -354,10 +354,10 @@ export class ISteamFriends {
    * `void SetPlayedWith(CSteamID steamIDUserPlayedWith)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_SetPlayedWith`
-   * @param steamIDUserPlayedWith `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDUserPlayedWith `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#SetPlayedWith
    */
-  SetPlayedWith(steamIDUserPlayedWith: bigint | number): void {
+  SetPlayedWith(steamIDUserPlayedWith: bigint): void {
     this.nat.func('SteamAPI_ISteamFriends_SetPlayedWith', 'void', ['void *', 'uint64'])(this.ptr, steamIDUserPlayedWith);
   }
 
@@ -365,10 +365,10 @@ export class ISteamFriends {
    * `void ActivateGameOverlayInviteDialog(CSteamID steamIDLobby)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_ActivateGameOverlayInviteDialog`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayInviteDialog
    */
-  ActivateGameOverlayInviteDialog(steamIDLobby: bigint | number): void {
+  ActivateGameOverlayInviteDialog(steamIDLobby: bigint): void {
     this.nat.func('SteamAPI_ISteamFriends_ActivateGameOverlayInviteDialog', 'void', ['void *', 'uint64'])(this.ptr, steamIDLobby);
   }
 
@@ -376,10 +376,10 @@ export class ISteamFriends {
    * `int GetSmallFriendAvatar(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetSmallFriendAvatar`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetSmallFriendAvatar
    */
-  GetSmallFriendAvatar(steamIDFriend: bigint | number): number {
+  GetSmallFriendAvatar(steamIDFriend: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetSmallFriendAvatar', 'int32', ['void *', 'uint64'])(this.ptr, steamIDFriend) as number;
   }
 
@@ -387,10 +387,10 @@ export class ISteamFriends {
    * `int GetMediumFriendAvatar(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetMediumFriendAvatar`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetMediumFriendAvatar
    */
-  GetMediumFriendAvatar(steamIDFriend: bigint | number): number {
+  GetMediumFriendAvatar(steamIDFriend: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetMediumFriendAvatar', 'int32', ['void *', 'uint64'])(this.ptr, steamIDFriend) as number;
   }
 
@@ -398,10 +398,10 @@ export class ISteamFriends {
    * `int GetLargeFriendAvatar(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetLargeFriendAvatar`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetLargeFriendAvatar
    */
-  GetLargeFriendAvatar(steamIDFriend: bigint | number): number {
+  GetLargeFriendAvatar(steamIDFriend: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetLargeFriendAvatar', 'int32', ['void *', 'uint64'])(this.ptr, steamIDFriend) as number;
   }
 
@@ -409,10 +409,10 @@ export class ISteamFriends {
    * `bool RequestUserInformation(CSteamID steamIDUser, bool bRequireNameOnly)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_RequestUserInformation`
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#RequestUserInformation
    */
-  RequestUserInformation(steamIDUser: bigint | number, bRequireNameOnly: boolean): boolean {
+  RequestUserInformation(steamIDUser: bigint, bRequireNameOnly: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_RequestUserInformation', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, steamIDUser, bRequireNameOnly) as boolean;
   }
 
@@ -421,10 +421,10 @@ export class ISteamFriends {
    *
    * Flat symbol: `SteamAPI_ISteamFriends_RequestClanOfficerList`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<ClanOfficerListResponse_t>(handle, layoutOf('ClanOfficerListResponse_t'))`.
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#RequestClanOfficerList
    */
-  RequestClanOfficerList(steamIDClan: bigint | number): bigint {
+  RequestClanOfficerList(steamIDClan: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamFriends_RequestClanOfficerList', 'uint64', ['void *', 'uint64'])(this.ptr, steamIDClan) as number | bigint);
   }
 
@@ -432,10 +432,10 @@ export class ISteamFriends {
    * `CSteamID GetClanOwner(CSteamID steamIDClan)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetClanOwner`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOwner
    */
-  GetClanOwner(steamIDClan: bigint | number): bigint {
+  GetClanOwner(steamIDClan: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamFriends_GetClanOwner', 'uint64', ['void *', 'uint64'])(this.ptr, steamIDClan) as number | bigint);
   }
 
@@ -443,10 +443,10 @@ export class ISteamFriends {
    * `int GetClanOfficerCount(CSteamID steamIDClan)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetClanOfficerCount`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerCount
    */
-  GetClanOfficerCount(steamIDClan: bigint | number): number {
+  GetClanOfficerCount(steamIDClan: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetClanOfficerCount', 'int32', ['void *', 'uint64'])(this.ptr, steamIDClan) as number;
   }
 
@@ -454,10 +454,10 @@ export class ISteamFriends {
    * `CSteamID GetClanOfficerByIndex(CSteamID steamIDClan, int iOfficer)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetClanOfficerByIndex`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerByIndex
    */
-  GetClanOfficerByIndex(steamIDClan: bigint | number, iOfficer: number): bigint {
+  GetClanOfficerByIndex(steamIDClan: bigint, iOfficer: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamFriends_GetClanOfficerByIndex', 'uint64', ['void *', 'uint64', 'int32'])(this.ptr, steamIDClan, iOfficer) as number | bigint);
   }
 
@@ -485,10 +485,10 @@ export class ISteamFriends {
    * `const char * GetFriendRichPresence(CSteamID steamIDFriend, const char *pchKey)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendRichPresence`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresence
    */
-  GetFriendRichPresence(steamIDFriend: bigint | number, pchKey: string): string {
+  GetFriendRichPresence(steamIDFriend: bigint, pchKey: string): string {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendRichPresence', 'str', ['void *', 'uint64', 'str'])(this.ptr, steamIDFriend, pchKey) as string;
   }
 
@@ -496,10 +496,10 @@ export class ISteamFriends {
    * `int GetFriendRichPresenceKeyCount(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendRichPresenceKeyCount`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyCount
    */
-  GetFriendRichPresenceKeyCount(steamIDFriend: bigint | number): number {
+  GetFriendRichPresenceKeyCount(steamIDFriend: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendRichPresenceKeyCount', 'int32', ['void *', 'uint64'])(this.ptr, steamIDFriend) as number;
   }
 
@@ -507,10 +507,10 @@ export class ISteamFriends {
    * `const char * GetFriendRichPresenceKeyByIndex(CSteamID steamIDFriend, int iKey)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendRichPresenceKeyByIndex`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyByIndex
    */
-  GetFriendRichPresenceKeyByIndex(steamIDFriend: bigint | number, iKey: number): string {
+  GetFriendRichPresenceKeyByIndex(steamIDFriend: bigint, iKey: number): string {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendRichPresenceKeyByIndex', 'str', ['void *', 'uint64', 'int32'])(this.ptr, steamIDFriend, iKey) as string;
   }
 
@@ -518,10 +518,10 @@ export class ISteamFriends {
    * `void RequestFriendRichPresence(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_RequestFriendRichPresence`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#RequestFriendRichPresence
    */
-  RequestFriendRichPresence(steamIDFriend: bigint | number): void {
+  RequestFriendRichPresence(steamIDFriend: bigint): void {
     this.nat.func('SteamAPI_ISteamFriends_RequestFriendRichPresence', 'void', ['void *', 'uint64'])(this.ptr, steamIDFriend);
   }
 
@@ -529,10 +529,10 @@ export class ISteamFriends {
    * `bool InviteUserToGame(CSteamID steamIDFriend, const char *pchConnectString)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_InviteUserToGame`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#InviteUserToGame
    */
-  InviteUserToGame(steamIDFriend: bigint | number, pchConnectString: string): boolean {
+  InviteUserToGame(steamIDFriend: bigint, pchConnectString: string): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_InviteUserToGame', 'bool', ['void *', 'uint64', 'str'])(this.ptr, steamIDFriend, pchConnectString) as boolean;
   }
 
@@ -560,10 +560,10 @@ export class ISteamFriends {
    * `int GetFriendCoplayTime(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendCoplayTime`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayTime
    */
-  GetFriendCoplayTime(steamIDFriend: bigint | number): number {
+  GetFriendCoplayTime(steamIDFriend: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendCoplayTime', 'int32', ['void *', 'uint64'])(this.ptr, steamIDFriend) as number;
   }
 
@@ -571,10 +571,10 @@ export class ISteamFriends {
    * `AppId_t GetFriendCoplayGame(CSteamID steamIDFriend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendCoplayGame`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayGame
    */
-  GetFriendCoplayGame(steamIDFriend: bigint | number): number {
+  GetFriendCoplayGame(steamIDFriend: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendCoplayGame', 'uint32', ['void *', 'uint64'])(this.ptr, steamIDFriend) as number;
   }
 
@@ -583,10 +583,10 @@ export class ISteamFriends {
    *
    * Flat symbol: `SteamAPI_ISteamFriends_JoinClanChatRoom`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<JoinClanChatRoomCompletionResult_t>(handle, layoutOf('JoinClanChatRoomCompletionResult_t'))`.
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#JoinClanChatRoom
    */
-  JoinClanChatRoom(steamIDClan: bigint | number): bigint {
+  JoinClanChatRoom(steamIDClan: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamFriends_JoinClanChatRoom', 'uint64', ['void *', 'uint64'])(this.ptr, steamIDClan) as number | bigint);
   }
 
@@ -594,10 +594,10 @@ export class ISteamFriends {
    * `bool LeaveClanChatRoom(CSteamID steamIDClan)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_LeaveClanChatRoom`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#LeaveClanChatRoom
    */
-  LeaveClanChatRoom(steamIDClan: bigint | number): boolean {
+  LeaveClanChatRoom(steamIDClan: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_LeaveClanChatRoom', 'bool', ['void *', 'uint64'])(this.ptr, steamIDClan) as boolean;
   }
 
@@ -605,10 +605,10 @@ export class ISteamFriends {
    * `int GetClanChatMemberCount(CSteamID steamIDClan)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetClanChatMemberCount`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMemberCount
    */
-  GetClanChatMemberCount(steamIDClan: bigint | number): number {
+  GetClanChatMemberCount(steamIDClan: bigint): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetClanChatMemberCount', 'int32', ['void *', 'uint64'])(this.ptr, steamIDClan) as number;
   }
 
@@ -616,10 +616,10 @@ export class ISteamFriends {
    * `CSteamID GetChatMemberByIndex(CSteamID steamIDClan, int iUser)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetChatMemberByIndex`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetChatMemberByIndex
    */
-  GetChatMemberByIndex(steamIDClan: bigint | number, iUser: number): bigint {
+  GetChatMemberByIndex(steamIDClan: bigint, iUser: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamFriends_GetChatMemberByIndex', 'uint64', ['void *', 'uint64', 'int32'])(this.ptr, steamIDClan, iUser) as number | bigint);
   }
 
@@ -627,10 +627,10 @@ export class ISteamFriends {
    * `bool SendClanChatMessage(CSteamID steamIDClanChat, const char *pchText)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_SendClanChatMessage`
-   * @param steamIDClanChat `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClanChat `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#SendClanChatMessage
    */
-  SendClanChatMessage(steamIDClanChat: bigint | number, pchText: string): boolean {
+  SendClanChatMessage(steamIDClanChat: bigint, pchText: string): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_SendClanChatMessage', 'bool', ['void *', 'uint64', 'str'])(this.ptr, steamIDClanChat, pchText) as boolean;
   }
 
@@ -638,13 +638,13 @@ export class ISteamFriends {
    * `int GetClanChatMessage(CSteamID steamIDClanChat, int iMessage, void *prgchText, int cchTextMax, EChatEntryType *peChatEntryType, CSteamID *psteamidChatter)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetClanChatMessage`
-   * @param steamIDClanChat `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClanChat `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param prgchText Buffer you allocate for `void *`.
    * @param peChatEntryType Buffer you allocate for `EChatEntryType *`: `Buffer.alloc(4)` per element.
    * @param psteamidChatter Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMessage
    */
-  GetClanChatMessage(steamIDClanChat: bigint | number, iMessage: number, prgchText: Buffer | null, cchTextMax: number, peChatEntryType: Buffer | null, psteamidChatter: Buffer | null): number {
+  GetClanChatMessage(steamIDClanChat: bigint, iMessage: number, prgchText: Buffer | null, cchTextMax: number, peChatEntryType: Buffer | null, psteamidChatter: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetClanChatMessage', 'int32', ['void *', 'uint64', 'int32', 'void *', 'int32', 'void *', 'void *'])(this.ptr, steamIDClanChat, iMessage, prgchText, cchTextMax, peChatEntryType, psteamidChatter) as number;
   }
 
@@ -652,11 +652,11 @@ export class ISteamFriends {
    * `bool IsClanChatAdmin(CSteamID steamIDClanChat, CSteamID steamIDUser)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_IsClanChatAdmin`
-   * @param steamIDClanChat `CSteamID`, 64-bit: bigint or number.
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClanChat `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatAdmin
    */
-  IsClanChatAdmin(steamIDClanChat: bigint | number, steamIDUser: bigint | number): boolean {
+  IsClanChatAdmin(steamIDClanChat: bigint, steamIDUser: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_IsClanChatAdmin', 'bool', ['void *', 'uint64', 'uint64'])(this.ptr, steamIDClanChat, steamIDUser) as boolean;
   }
 
@@ -664,10 +664,10 @@ export class ISteamFriends {
    * `bool IsClanChatWindowOpenInSteam(CSteamID steamIDClanChat)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_IsClanChatWindowOpenInSteam`
-   * @param steamIDClanChat `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClanChat `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatWindowOpenInSteam
    */
-  IsClanChatWindowOpenInSteam(steamIDClanChat: bigint | number): boolean {
+  IsClanChatWindowOpenInSteam(steamIDClanChat: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_IsClanChatWindowOpenInSteam', 'bool', ['void *', 'uint64'])(this.ptr, steamIDClanChat) as boolean;
   }
 
@@ -675,10 +675,10 @@ export class ISteamFriends {
    * `bool OpenClanChatWindowInSteam(CSteamID steamIDClanChat)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_OpenClanChatWindowInSteam`
-   * @param steamIDClanChat `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClanChat `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#OpenClanChatWindowInSteam
    */
-  OpenClanChatWindowInSteam(steamIDClanChat: bigint | number): boolean {
+  OpenClanChatWindowInSteam(steamIDClanChat: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_OpenClanChatWindowInSteam', 'bool', ['void *', 'uint64'])(this.ptr, steamIDClanChat) as boolean;
   }
 
@@ -686,10 +686,10 @@ export class ISteamFriends {
    * `bool CloseClanChatWindowInSteam(CSteamID steamIDClanChat)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_CloseClanChatWindowInSteam`
-   * @param steamIDClanChat `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClanChat `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#CloseClanChatWindowInSteam
    */
-  CloseClanChatWindowInSteam(steamIDClanChat: bigint | number): boolean {
+  CloseClanChatWindowInSteam(steamIDClanChat: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_CloseClanChatWindowInSteam', 'bool', ['void *', 'uint64'])(this.ptr, steamIDClanChat) as boolean;
   }
 
@@ -707,10 +707,10 @@ export class ISteamFriends {
    * `bool ReplyToFriendMessage(CSteamID steamIDFriend, const char *pchMsgToSend)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_ReplyToFriendMessage`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#ReplyToFriendMessage
    */
-  ReplyToFriendMessage(steamIDFriend: bigint | number, pchMsgToSend: string): boolean {
+  ReplyToFriendMessage(steamIDFriend: bigint, pchMsgToSend: string): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_ReplyToFriendMessage', 'bool', ['void *', 'uint64', 'str'])(this.ptr, steamIDFriend, pchMsgToSend) as boolean;
   }
 
@@ -718,12 +718,12 @@ export class ISteamFriends {
    * `int GetFriendMessage(CSteamID steamIDFriend, int iMessageID, void *pvData, int cubData, EChatEntryType *peChatEntryType)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFriendMessage`
-   * @param steamIDFriend `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDFriend `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pvData Buffer you allocate for `void *`.
    * @param peChatEntryType Buffer you allocate for `EChatEntryType *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendMessage
    */
-  GetFriendMessage(steamIDFriend: bigint | number, iMessageID: number, pvData: Buffer | null, cubData: number, peChatEntryType: Buffer | null): number {
+  GetFriendMessage(steamIDFriend: bigint, iMessageID: number, pvData: Buffer | null, cubData: number, peChatEntryType: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetFriendMessage', 'int32', ['void *', 'uint64', 'int32', 'void *', 'int32', 'void *'])(this.ptr, steamIDFriend, iMessageID, pvData, cubData, peChatEntryType) as number;
   }
 
@@ -732,10 +732,10 @@ export class ISteamFriends {
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFollowerCount`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<FriendsGetFollowerCount_t>(handle, layoutOf('FriendsGetFollowerCount_t'))`.
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFollowerCount
    */
-  GetFollowerCount(steamID: bigint | number): bigint {
+  GetFollowerCount(steamID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamFriends_GetFollowerCount', 'uint64', ['void *', 'uint64'])(this.ptr, steamID) as number | bigint);
   }
 
@@ -744,10 +744,10 @@ export class ISteamFriends {
    *
    * Flat symbol: `SteamAPI_ISteamFriends_IsFollowing`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<FriendsIsFollowing_t>(handle, layoutOf('FriendsIsFollowing_t'))`.
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#IsFollowing
    */
-  IsFollowing(steamID: bigint | number): bigint {
+  IsFollowing(steamID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamFriends_IsFollowing', 'uint64', ['void *', 'uint64'])(this.ptr, steamID) as number | bigint);
   }
 
@@ -766,10 +766,10 @@ export class ISteamFriends {
    * `bool IsClanPublic(CSteamID steamIDClan)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_IsClanPublic`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#IsClanPublic
    */
-  IsClanPublic(steamIDClan: bigint | number): boolean {
+  IsClanPublic(steamIDClan: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_IsClanPublic', 'bool', ['void *', 'uint64'])(this.ptr, steamIDClan) as boolean;
   }
 
@@ -777,10 +777,10 @@ export class ISteamFriends {
    * `bool IsClanOfficialGameGroup(CSteamID steamIDClan)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_IsClanOfficialGameGroup`
-   * @param steamIDClan `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#IsClanOfficialGameGroup
    */
-  IsClanOfficialGameGroup(steamIDClan: bigint | number): boolean {
+  IsClanOfficialGameGroup(steamIDClan: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_IsClanOfficialGameGroup', 'bool', ['void *', 'uint64'])(this.ptr, steamIDClan) as boolean;
   }
 
@@ -798,10 +798,10 @@ export class ISteamFriends {
    * `void ActivateGameOverlayRemotePlayTogetherInviteDialog(CSteamID steamIDLobby)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayRemotePlayTogetherInviteDialog
    */
-  ActivateGameOverlayRemotePlayTogetherInviteDialog(steamIDLobby: bigint | number): void {
+  ActivateGameOverlayRemotePlayTogetherInviteDialog(steamIDLobby: bigint): void {
     this.nat.func('SteamAPI_ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog', 'void', ['void *', 'uint64'])(this.ptr, steamIDLobby);
   }
 
@@ -830,10 +830,10 @@ export class ISteamFriends {
    *
    * Flat symbol: `SteamAPI_ISteamFriends_RequestEquippedProfileItems`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<EquippedProfileItems_t>(handle, layoutOf('EquippedProfileItems_t'))`.
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#RequestEquippedProfileItems
    */
-  RequestEquippedProfileItems(steamID: bigint | number): bigint {
+  RequestEquippedProfileItems(steamID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamFriends_RequestEquippedProfileItems', 'uint64', ['void *', 'uint64'])(this.ptr, steamID) as number | bigint);
   }
 
@@ -841,11 +841,11 @@ export class ISteamFriends {
    * `bool BHasEquippedProfileItem(CSteamID steamID, ECommunityProfileItemType itemType)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_BHasEquippedProfileItem`
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param itemType enum `ECommunityProfileItemType`; values on `flat.ECommunityProfileItemType`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#BHasEquippedProfileItem
    */
-  BHasEquippedProfileItem(steamID: bigint | number, itemType: number): boolean {
+  BHasEquippedProfileItem(steamID: bigint, itemType: number): boolean {
     return this.nat.func('SteamAPI_ISteamFriends_BHasEquippedProfileItem', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, steamID, itemType) as boolean;
   }
 
@@ -853,12 +853,12 @@ export class ISteamFriends {
    * `const char * GetProfileItemPropertyString(CSteamID steamID, ECommunityProfileItemType itemType, ECommunityProfileItemProperty prop)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetProfileItemPropertyString`
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param itemType enum `ECommunityProfileItemType`; values on `flat.ECommunityProfileItemType`.
    * @param prop enum `ECommunityProfileItemProperty`; values on `flat.ECommunityProfileItemProperty`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetProfileItemPropertyString
    */
-  GetProfileItemPropertyString(steamID: bigint | number, itemType: number, prop: number): string {
+  GetProfileItemPropertyString(steamID: bigint, itemType: number, prop: number): string {
     return this.nat.func('SteamAPI_ISteamFriends_GetProfileItemPropertyString', 'str', ['void *', 'uint64', 'int32', 'int32'])(this.ptr, steamID, itemType, prop) as string;
   }
 
@@ -866,12 +866,12 @@ export class ISteamFriends {
    * `uint32 GetProfileItemPropertyUint(CSteamID steamID, ECommunityProfileItemType itemType, ECommunityProfileItemProperty prop)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetProfileItemPropertyUint`
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param itemType enum `ECommunityProfileItemType`; values on `flat.ECommunityProfileItemType`.
    * @param prop enum `ECommunityProfileItemProperty`; values on `flat.ECommunityProfileItemProperty`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetProfileItemPropertyUint
    */
-  GetProfileItemPropertyUint(steamID: bigint | number, itemType: number, prop: number): number {
+  GetProfileItemPropertyUint(steamID: bigint, itemType: number, prop: number): number {
     return this.nat.func('SteamAPI_ISteamFriends_GetProfileItemPropertyUint', 'uint32', ['void *', 'uint64', 'int32', 'int32'])(this.ptr, steamID, itemType, prop) as number;
   }
 }

@@ -64,11 +64,11 @@ export class ISteamRemoteStorage {
    * `bool FileReadAsyncComplete(SteamAPICall_t hReadCall, void *pvBuffer, uint32 cubToRead)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileReadAsyncComplete`
-   * @param hReadCall `SteamAPICall_t`, 64-bit: bigint or number.
+   * @param hReadCall `SteamAPICall_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pvBuffer Buffer you allocate for `void *`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsyncComplete
    */
-  FileReadAsyncComplete(hReadCall: bigint | number, pvBuffer: Buffer | null, cubToRead: number): boolean {
+  FileReadAsyncComplete(hReadCall: bigint, pvBuffer: Buffer | null, cubToRead: number): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileReadAsyncComplete', 'bool', ['void *', 'uint64', 'void *', 'uint32'])(this.ptr, hReadCall, pvBuffer, cubToRead) as boolean;
   }
 
@@ -128,11 +128,11 @@ export class ISteamRemoteStorage {
    * `bool FileWriteStreamWriteChunk(UGCFileWriteStreamHandle_t writeHandle, const void *pvData, int32 cubData)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileWriteStreamWriteChunk`
-   * @param writeHandle `UGCFileWriteStreamHandle_t`, 64-bit: bigint or number.
+   * @param writeHandle `UGCFileWriteStreamHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pvData Buffer you allocate for `const void *`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamWriteChunk
    */
-  FileWriteStreamWriteChunk(writeHandle: bigint | number, pvData: Buffer | null, cubData: number): boolean {
+  FileWriteStreamWriteChunk(writeHandle: bigint, pvData: Buffer | null, cubData: number): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileWriteStreamWriteChunk', 'bool', ['void *', 'uint64', 'void *', 'int32'])(this.ptr, writeHandle, pvData, cubData) as boolean;
   }
 
@@ -140,10 +140,10 @@ export class ISteamRemoteStorage {
    * `bool FileWriteStreamClose(UGCFileWriteStreamHandle_t writeHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileWriteStreamClose`
-   * @param writeHandle `UGCFileWriteStreamHandle_t`, 64-bit: bigint or number.
+   * @param writeHandle `UGCFileWriteStreamHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamClose
    */
-  FileWriteStreamClose(writeHandle: bigint | number): boolean {
+  FileWriteStreamClose(writeHandle: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileWriteStreamClose', 'bool', ['void *', 'uint64'])(this.ptr, writeHandle) as boolean;
   }
 
@@ -151,10 +151,10 @@ export class ISteamRemoteStorage {
    * `bool FileWriteStreamCancel(UGCFileWriteStreamHandle_t writeHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileWriteStreamCancel`
-   * @param writeHandle `UGCFileWriteStreamHandle_t`, 64-bit: bigint or number.
+   * @param writeHandle `UGCFileWriteStreamHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamCancel
    */
-  FileWriteStreamCancel(writeHandle: bigint | number): boolean {
+  FileWriteStreamCancel(writeHandle: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_FileWriteStreamCancel', 'bool', ['void *', 'uint64'])(this.ptr, writeHandle) as boolean;
   }
 
@@ -276,10 +276,10 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UGCDownload`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageDownloadUGCResult_t>(handle, layoutOf('RemoteStorageDownloadUGCResult_t'))`.
-   * @param hContent `UGCHandle_t`, 64-bit: bigint or number.
+   * @param hContent `UGCHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownload
    */
-  UGCDownload(hContent: bigint | number, unPriority: number): bigint {
+  UGCDownload(hContent: bigint, unPriority: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_UGCDownload', 'uint64', ['void *', 'uint64', 'uint32'])(this.ptr, hContent, unPriority) as number | bigint);
   }
 
@@ -287,12 +287,12 @@ export class ISteamRemoteStorage {
    * `bool GetUGCDownloadProgress(UGCHandle_t hContent, int32 *pnBytesDownloaded, int32 *pnBytesExpected)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetUGCDownloadProgress`
-   * @param hContent `UGCHandle_t`, 64-bit: bigint or number.
+   * @param hContent `UGCHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pnBytesDownloaded Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
    * @param pnBytesExpected Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDownloadProgress
    */
-  GetUGCDownloadProgress(hContent: bigint | number, pnBytesDownloaded: Buffer | null, pnBytesExpected: Buffer | null): boolean {
+  GetUGCDownloadProgress(hContent: bigint, pnBytesDownloaded: Buffer | null, pnBytesExpected: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetUGCDownloadProgress', 'bool', ['void *', 'uint64', 'void *', 'void *'])(this.ptr, hContent, pnBytesDownloaded, pnBytesExpected) as boolean;
   }
 
@@ -300,14 +300,14 @@ export class ISteamRemoteStorage {
    * `bool GetUGCDetails(UGCHandle_t hContent, AppId_t *pnAppID, char **ppchName, int32 *pnFileSizeInBytes, CSteamID *pSteamIDOwner)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetUGCDetails`
-   * @param hContent `UGCHandle_t`, 64-bit: bigint or number.
+   * @param hContent `UGCHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pnAppID Buffer you allocate for `AppId_t *`: `Buffer.alloc(4)` per element.
    * @param ppchName Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @param pnFileSizeInBytes Buffer you allocate for `int32 *`: `Buffer.alloc(4)` per element.
    * @param pSteamIDOwner Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDetails
    */
-  GetUGCDetails(hContent: bigint | number, pnAppID: Buffer | null, ppchName: Buffer | null, pnFileSizeInBytes: Buffer | null, pSteamIDOwner: Buffer | null): boolean {
+  GetUGCDetails(hContent: bigint, pnAppID: Buffer | null, ppchName: Buffer | null, pnFileSizeInBytes: Buffer | null, pSteamIDOwner: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_GetUGCDetails', 'bool', ['void *', 'uint64', 'void *', 'void *', 'void *', 'void *'])(this.ptr, hContent, pnAppID, ppchName, pnFileSizeInBytes, pSteamIDOwner) as boolean;
   }
 
@@ -315,12 +315,12 @@ export class ISteamRemoteStorage {
    * `int32 UGCRead(UGCHandle_t hContent, void *pvData, int32 cubDataToRead, uint32 cOffset, EUGCReadAction eAction)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UGCRead`
-   * @param hContent `UGCHandle_t`, 64-bit: bigint or number.
+   * @param hContent `UGCHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pvData Buffer you allocate for `void *`.
    * @param eAction enum `EUGCReadAction`; values on `flat.EUGCReadAction`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCRead
    */
-  UGCRead(hContent: bigint | number, pvData: Buffer | null, cubDataToRead: number, cOffset: number, eAction: number): number {
+  UGCRead(hContent: bigint, pvData: Buffer | null, cubDataToRead: number, cOffset: number, eAction: number): number {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UGCRead', 'int32', ['void *', 'uint64', 'void *', 'int32', 'uint32', 'int32'])(this.ptr, hContent, pvData, cubDataToRead, cOffset, eAction) as number;
   }
 
@@ -362,10 +362,10 @@ export class ISteamRemoteStorage {
    * `PublishedFileUpdateHandle_t CreatePublishedFileUpdateRequest(PublishedFileId_t unPublishedFileId)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_CreatePublishedFileUpdateRequest`
-   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#CreatePublishedFileUpdateRequest
    */
-  CreatePublishedFileUpdateRequest(unPublishedFileId: bigint | number): bigint {
+  CreatePublishedFileUpdateRequest(unPublishedFileId: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_CreatePublishedFileUpdateRequest', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
@@ -373,10 +373,10 @@ export class ISteamRemoteStorage {
    * `bool UpdatePublishedFileFile(PublishedFileUpdateHandle_t updateHandle, const char *pchFile)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileFile`
-   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileFile
    */
-  UpdatePublishedFileFile(updateHandle: bigint | number, pchFile: string): boolean {
+  UpdatePublishedFileFile(updateHandle: bigint, pchFile: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileFile', 'bool', ['void *', 'uint64', 'str'])(this.ptr, updateHandle, pchFile) as boolean;
   }
 
@@ -384,10 +384,10 @@ export class ISteamRemoteStorage {
    * `bool UpdatePublishedFilePreviewFile(PublishedFileUpdateHandle_t updateHandle, const char *pchPreviewFile)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFilePreviewFile`
-   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFilePreviewFile
    */
-  UpdatePublishedFilePreviewFile(updateHandle: bigint | number, pchPreviewFile: string): boolean {
+  UpdatePublishedFilePreviewFile(updateHandle: bigint, pchPreviewFile: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFilePreviewFile', 'bool', ['void *', 'uint64', 'str'])(this.ptr, updateHandle, pchPreviewFile) as boolean;
   }
 
@@ -395,10 +395,10 @@ export class ISteamRemoteStorage {
    * `bool UpdatePublishedFileTitle(PublishedFileUpdateHandle_t updateHandle, const char *pchTitle)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileTitle`
-   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileTitle
    */
-  UpdatePublishedFileTitle(updateHandle: bigint | number, pchTitle: string): boolean {
+  UpdatePublishedFileTitle(updateHandle: bigint, pchTitle: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileTitle', 'bool', ['void *', 'uint64', 'str'])(this.ptr, updateHandle, pchTitle) as boolean;
   }
 
@@ -406,10 +406,10 @@ export class ISteamRemoteStorage {
    * `bool UpdatePublishedFileDescription(PublishedFileUpdateHandle_t updateHandle, const char *pchDescription)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileDescription`
-   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileDescription
    */
-  UpdatePublishedFileDescription(updateHandle: bigint | number, pchDescription: string): boolean {
+  UpdatePublishedFileDescription(updateHandle: bigint, pchDescription: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileDescription', 'bool', ['void *', 'uint64', 'str'])(this.ptr, updateHandle, pchDescription) as boolean;
   }
 
@@ -417,11 +417,11 @@ export class ISteamRemoteStorage {
    * `bool UpdatePublishedFileVisibility(PublishedFileUpdateHandle_t updateHandle, ERemoteStoragePublishedFileVisibility eVisibility)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileVisibility`
-   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eVisibility enum `ERemoteStoragePublishedFileVisibility`; values on `flat.ERemoteStoragePublishedFileVisibility`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileVisibility
    */
-  UpdatePublishedFileVisibility(updateHandle: bigint | number, eVisibility: number): boolean {
+  UpdatePublishedFileVisibility(updateHandle: bigint, eVisibility: number): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileVisibility', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, updateHandle, eVisibility) as boolean;
   }
 
@@ -429,11 +429,11 @@ export class ISteamRemoteStorage {
    * `bool UpdatePublishedFileTags(PublishedFileUpdateHandle_t updateHandle, SteamParamStringArray_t *pTags)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileTags`
-   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileTags
    */
-  UpdatePublishedFileTags(updateHandle: bigint | number, pTags: SteamParamStringArrayJs): boolean {
+  UpdatePublishedFileTags(updateHandle: bigint, pTags: SteamParamStringArrayJs): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileTags', 'bool', ['void *', 'uint64', SteamParamStringArrayPtr])(this.ptr, updateHandle, pTags) as boolean;
   }
 
@@ -442,10 +442,10 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_CommitPublishedFileUpdate`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUpdatePublishedFileResult_t>(handle, layoutOf('RemoteStorageUpdatePublishedFileResult_t'))`.
-   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#CommitPublishedFileUpdate
    */
-  CommitPublishedFileUpdate(updateHandle: bigint | number): bigint {
+  CommitPublishedFileUpdate(updateHandle: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_CommitPublishedFileUpdate', 'uint64', ['void *', 'uint64'])(this.ptr, updateHandle) as number | bigint);
   }
 
@@ -454,10 +454,10 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetPublishedFileDetails`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageGetPublishedFileDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedFileDetailsResult_t'))`.
-   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetPublishedFileDetails
    */
-  GetPublishedFileDetails(unPublishedFileId: bigint | number, unMaxSecondsOld: number): bigint {
+  GetPublishedFileDetails(unPublishedFileId: bigint, unMaxSecondsOld: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_GetPublishedFileDetails', 'uint64', ['void *', 'uint64', 'uint32'])(this.ptr, unPublishedFileId, unMaxSecondsOld) as number | bigint);
   }
 
@@ -466,10 +466,10 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_DeletePublishedFile`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageDeletePublishedFileResult_t>(handle, layoutOf('RemoteStorageDeletePublishedFileResult_t'))`.
-   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#DeletePublishedFile
    */
-  DeletePublishedFile(unPublishedFileId: bigint | number): bigint {
+  DeletePublishedFile(unPublishedFileId: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_DeletePublishedFile', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
@@ -489,10 +489,10 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_SubscribePublishedFile`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageSubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageSubscribePublishedFileResult_t'))`.
-   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SubscribePublishedFile
    */
-  SubscribePublishedFile(unPublishedFileId: bigint | number): bigint {
+  SubscribePublishedFile(unPublishedFileId: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_SubscribePublishedFile', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
@@ -512,10 +512,10 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UnsubscribePublishedFile`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUnsubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageUnsubscribePublishedFileResult_t'))`.
-   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UnsubscribePublishedFile
    */
-  UnsubscribePublishedFile(unPublishedFileId: bigint | number): bigint {
+  UnsubscribePublishedFile(unPublishedFileId: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_UnsubscribePublishedFile', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
@@ -523,10 +523,10 @@ export class ISteamRemoteStorage {
    * `bool UpdatePublishedFileSetChangeDescription(PublishedFileUpdateHandle_t updateHandle, const char *pchChangeDescription)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdatePublishedFileSetChangeDescription`
-   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: bigint or number.
+   * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileSetChangeDescription
    */
-  UpdatePublishedFileSetChangeDescription(updateHandle: bigint | number, pchChangeDescription: string): boolean {
+  UpdatePublishedFileSetChangeDescription(updateHandle: bigint, pchChangeDescription: string): boolean {
     return this.nat.func('SteamAPI_ISteamRemoteStorage_UpdatePublishedFileSetChangeDescription', 'bool', ['void *', 'uint64', 'str'])(this.ptr, updateHandle, pchChangeDescription) as boolean;
   }
 
@@ -535,10 +535,10 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetPublishedItemVoteDetails`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageGetPublishedItemVoteDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t'))`.
-   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetPublishedItemVoteDetails
    */
-  GetPublishedItemVoteDetails(unPublishedFileId: bigint | number): bigint {
+  GetPublishedItemVoteDetails(unPublishedFileId: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_GetPublishedItemVoteDetails', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
@@ -547,10 +547,10 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdateUserPublishedItemVote`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUpdateUserPublishedItemVoteResult_t>(handle, layoutOf('RemoteStorageUpdateUserPublishedItemVoteResult_t'))`.
-   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdateUserPublishedItemVote
    */
-  UpdateUserPublishedItemVote(unPublishedFileId: bigint | number, bVoteUp: boolean): bigint {
+  UpdateUserPublishedItemVote(unPublishedFileId: bigint, bVoteUp: boolean): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_UpdateUserPublishedItemVote', 'uint64', ['void *', 'uint64', 'bool'])(this.ptr, unPublishedFileId, bVoteUp) as number | bigint);
   }
 
@@ -559,10 +559,10 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetUserPublishedItemVoteDetails`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageGetPublishedItemVoteDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t'))`.
-   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUserPublishedItemVoteDetails
    */
-  GetUserPublishedItemVoteDetails(unPublishedFileId: bigint | number): bigint {
+  GetUserPublishedItemVoteDetails(unPublishedFileId: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_GetUserPublishedItemVoteDetails', 'uint64', ['void *', 'uint64'])(this.ptr, unPublishedFileId) as number | bigint);
   }
 
@@ -571,12 +571,12 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumerateUserSharedWorkshopFiles`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumerateUserPublishedFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateUserPublishedFilesResult_t'))`.
-   * @param steamId `CSteamID`, 64-bit: bigint or number.
+   * @param steamId `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pRequiredTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
    * @param pExcludedTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumerateUserSharedWorkshopFiles
    */
-  EnumerateUserSharedWorkshopFiles(steamId: bigint | number, unStartIndex: number, pRequiredTags: SteamParamStringArrayJs, pExcludedTags: SteamParamStringArrayJs): bigint {
+  EnumerateUserSharedWorkshopFiles(steamId: bigint, unStartIndex: number, pRequiredTags: SteamParamStringArrayJs, pExcludedTags: SteamParamStringArrayJs): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_EnumerateUserSharedWorkshopFiles', 'uint64', ['void *', 'uint64', 'uint32', SteamParamStringArrayPtr, SteamParamStringArrayPtr])(this.ptr, steamId, unStartIndex, pRequiredTags, pExcludedTags) as number | bigint);
   }
 
@@ -599,11 +599,11 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_SetUserPublishedFileAction`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageSetUserPublishedFileActionResult_t>(handle, layoutOf('RemoteStorageSetUserPublishedFileActionResult_t'))`.
-   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eAction enum `EWorkshopFileAction`; values on `flat.EWorkshopFileAction`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetUserPublishedFileAction
    */
-  SetUserPublishedFileAction(unPublishedFileId: bigint | number, eAction: number): bigint {
+  SetUserPublishedFileAction(unPublishedFileId: bigint, eAction: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_SetUserPublishedFileAction', 'uint64', ['void *', 'uint64', 'int32'])(this.ptr, unPublishedFileId, eAction) as number | bigint);
   }
 
@@ -638,10 +638,10 @@ export class ISteamRemoteStorage {
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UGCDownloadToLocation`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageDownloadUGCResult_t>(handle, layoutOf('RemoteStorageDownloadUGCResult_t'))`.
-   * @param hContent `UGCHandle_t`, 64-bit: bigint or number.
+   * @param hContent `UGCHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownloadToLocation
    */
-  UGCDownloadToLocation(hContent: bigint | number, pchLocation: string, unPriority: number): bigint {
+  UGCDownloadToLocation(hContent: bigint, pchLocation: string, unPriority: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamRemoteStorage_UGCDownloadToLocation', 'uint64', ['void *', 'uint64', 'str', 'uint32'])(this.ptr, hContent, pchLocation, unPriority) as number | bigint);
   }
 

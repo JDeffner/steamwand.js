@@ -68,10 +68,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SendQueryUGCRequest`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamUGCQueryCompleted_t>(handle, layoutOf('SteamUGCQueryCompleted_t'))`.
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SendQueryUGCRequest
    */
-  SendQueryUGCRequest(handle: bigint | number): bigint {
+  SendQueryUGCRequest(handle: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_SendQueryUGCRequest', 'uint64', ['void *', 'uint64'])(this.ptr, handle) as number | bigint);
   }
 
@@ -79,11 +79,11 @@ export class ISteamUGC {
    * `bool GetQueryUGCResult(UGCQueryHandle_t handle, uint32 index, SteamUGCDetails_t *pDetails)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCResult`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pDetails Buffer you allocate for `SteamUGCDetails_t *`: `Buffer.alloc(layoutOf('SteamUGCDetails_t').size)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCResult
    */
-  GetQueryUGCResult(handle: bigint | number, index: number, pDetails: Buffer | null): boolean {
+  GetQueryUGCResult(handle: bigint, index: number, pDetails: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCResult', 'bool', ['void *', 'uint64', 'uint32', 'void *'])(this.ptr, handle, index, pDetails) as boolean;
   }
 
@@ -91,10 +91,10 @@ export class ISteamUGC {
    * `uint32 GetQueryUGCNumTags(UGCQueryHandle_t handle, uint32 index)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCNumTags`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCNumTags
    */
-  GetQueryUGCNumTags(handle: bigint | number, index: number): number {
+  GetQueryUGCNumTags(handle: bigint, index: number): number {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCNumTags', 'uint32', ['void *', 'uint64', 'uint32'])(this.ptr, handle, index) as number;
   }
 
@@ -102,11 +102,11 @@ export class ISteamUGC {
    * `bool GetQueryUGCTag(UGCQueryHandle_t handle, uint32 index, uint32 indexTag, char *pchValue, uint32 cchValueSize)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCTag`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pchValue Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCTag
    */
-  GetQueryUGCTag(handle: bigint | number, index: number, indexTag: number, pchValue: Buffer | null, cchValueSize: number): boolean {
+  GetQueryUGCTag(handle: bigint, index: number, indexTag: number, pchValue: Buffer | null, cchValueSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCTag', 'bool', ['void *', 'uint64', 'uint32', 'uint32', 'void *', 'uint32'])(this.ptr, handle, index, indexTag, pchValue, cchValueSize) as boolean;
   }
 
@@ -114,11 +114,11 @@ export class ISteamUGC {
    * `bool GetQueryUGCTagDisplayName(UGCQueryHandle_t handle, uint32 index, uint32 indexTag, char *pchValue, uint32 cchValueSize)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCTagDisplayName`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pchValue Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCTagDisplayName
    */
-  GetQueryUGCTagDisplayName(handle: bigint | number, index: number, indexTag: number, pchValue: Buffer | null, cchValueSize: number): boolean {
+  GetQueryUGCTagDisplayName(handle: bigint, index: number, indexTag: number, pchValue: Buffer | null, cchValueSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCTagDisplayName', 'bool', ['void *', 'uint64', 'uint32', 'uint32', 'void *', 'uint32'])(this.ptr, handle, index, indexTag, pchValue, cchValueSize) as boolean;
   }
 
@@ -126,11 +126,11 @@ export class ISteamUGC {
    * `bool GetQueryUGCPreviewURL(UGCQueryHandle_t handle, uint32 index, char *pchURL, uint32 cchURLSize)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCPreviewURL`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pchURL Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCPreviewURL
    */
-  GetQueryUGCPreviewURL(handle: bigint | number, index: number, pchURL: Buffer | null, cchURLSize: number): boolean {
+  GetQueryUGCPreviewURL(handle: bigint, index: number, pchURL: Buffer | null, cchURLSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCPreviewURL', 'bool', ['void *', 'uint64', 'uint32', 'void *', 'uint32'])(this.ptr, handle, index, pchURL, cchURLSize) as boolean;
   }
 
@@ -138,11 +138,11 @@ export class ISteamUGC {
    * `bool GetQueryUGCMetadata(UGCQueryHandle_t handle, uint32 index, char *pchMetadata, uint32 cchMetadatasize)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCMetadata`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pchMetadata Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCMetadata
    */
-  GetQueryUGCMetadata(handle: bigint | number, index: number, pchMetadata: Buffer | null, cchMetadatasize: number): boolean {
+  GetQueryUGCMetadata(handle: bigint, index: number, pchMetadata: Buffer | null, cchMetadatasize: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCMetadata', 'bool', ['void *', 'uint64', 'uint32', 'void *', 'uint32'])(this.ptr, handle, index, pchMetadata, cchMetadatasize) as boolean;
   }
 
@@ -150,11 +150,11 @@ export class ISteamUGC {
    * `bool GetQueryUGCChildren(UGCQueryHandle_t handle, uint32 index, PublishedFileId_t *pvecPublishedFileID, uint32 cMaxEntries)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCChildren`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pvecPublishedFileID Buffer you allocate for `PublishedFileId_t *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCChildren
    */
-  GetQueryUGCChildren(handle: bigint | number, index: number, pvecPublishedFileID: Buffer | null, cMaxEntries: number): boolean {
+  GetQueryUGCChildren(handle: bigint, index: number, pvecPublishedFileID: Buffer | null, cMaxEntries: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCChildren', 'bool', ['void *', 'uint64', 'uint32', 'void *', 'uint32'])(this.ptr, handle, index, pvecPublishedFileID, cMaxEntries) as boolean;
   }
 
@@ -162,12 +162,12 @@ export class ISteamUGC {
    * `bool GetQueryUGCStatistic(UGCQueryHandle_t handle, uint32 index, EItemStatistic eStatType, uint64 *pStatValue)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCStatistic`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eStatType enum `EItemStatistic`; values on `flat.EItemStatistic`.
    * @param pStatValue Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCStatistic
    */
-  GetQueryUGCStatistic(handle: bigint | number, index: number, eStatType: number, pStatValue: Buffer | null): boolean {
+  GetQueryUGCStatistic(handle: bigint, index: number, eStatType: number, pStatValue: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCStatistic', 'bool', ['void *', 'uint64', 'uint32', 'int32', 'void *'])(this.ptr, handle, index, eStatType, pStatValue) as boolean;
   }
 
@@ -175,10 +175,10 @@ export class ISteamUGC {
    * `uint32 GetQueryUGCNumAdditionalPreviews(UGCQueryHandle_t handle, uint32 index)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCNumAdditionalPreviews`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCNumAdditionalPreviews
    */
-  GetQueryUGCNumAdditionalPreviews(handle: bigint | number, index: number): number {
+  GetQueryUGCNumAdditionalPreviews(handle: bigint, index: number): number {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCNumAdditionalPreviews', 'uint32', ['void *', 'uint64', 'uint32'])(this.ptr, handle, index) as number;
   }
 
@@ -186,13 +186,13 @@ export class ISteamUGC {
    * `bool GetQueryUGCAdditionalPreview(UGCQueryHandle_t handle, uint32 index, uint32 previewIndex, char *pchURLOrVideoID, uint32 cchURLSize, char *pchOriginalFileName, uint32 cchOriginalFileNameSize, EItemPreviewType *pPreviewType)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCAdditionalPreview`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pchURLOrVideoID Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @param pchOriginalFileName Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @param pPreviewType Buffer you allocate for `EItemPreviewType *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCAdditionalPreview
    */
-  GetQueryUGCAdditionalPreview(handle: bigint | number, index: number, previewIndex: number, pchURLOrVideoID: Buffer | null, cchURLSize: number, pchOriginalFileName: Buffer | null, cchOriginalFileNameSize: number, pPreviewType: Buffer | null): boolean {
+  GetQueryUGCAdditionalPreview(handle: bigint, index: number, previewIndex: number, pchURLOrVideoID: Buffer | null, cchURLSize: number, pchOriginalFileName: Buffer | null, cchOriginalFileNameSize: number, pPreviewType: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCAdditionalPreview', 'bool', ['void *', 'uint64', 'uint32', 'uint32', 'void *', 'uint32', 'void *', 'uint32', 'void *'])(this.ptr, handle, index, previewIndex, pchURLOrVideoID, cchURLSize, pchOriginalFileName, cchOriginalFileNameSize, pPreviewType) as boolean;
   }
 
@@ -200,10 +200,10 @@ export class ISteamUGC {
    * `uint32 GetQueryUGCNumKeyValueTags(UGCQueryHandle_t handle, uint32 index)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCNumKeyValueTags`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCNumKeyValueTags
    */
-  GetQueryUGCNumKeyValueTags(handle: bigint | number, index: number): number {
+  GetQueryUGCNumKeyValueTags(handle: bigint, index: number): number {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCNumKeyValueTags', 'uint32', ['void *', 'uint64', 'uint32'])(this.ptr, handle, index) as number;
   }
 
@@ -211,12 +211,12 @@ export class ISteamUGC {
    * `bool GetQueryUGCKeyValueTag(UGCQueryHandle_t handle, uint32 index, uint32 keyValueTagIndex, char *pchKey, uint32 cchKeySize, char *pchValue, uint32 cchValueSize)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCKeyValueTag`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pchKey Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @param pchValue Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCKeyValueTag
    */
-  GetQueryUGCKeyValueTag(handle: bigint | number, index: number, keyValueTagIndex: number, pchKey: Buffer | null, cchKeySize: number, pchValue: Buffer | null, cchValueSize: number): boolean {
+  GetQueryUGCKeyValueTag(handle: bigint, index: number, keyValueTagIndex: number, pchKey: Buffer | null, cchKeySize: number, pchValue: Buffer | null, cchValueSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCKeyValueTag', 'bool', ['void *', 'uint64', 'uint32', 'uint32', 'void *', 'uint32', 'void *', 'uint32'])(this.ptr, handle, index, keyValueTagIndex, pchKey, cchKeySize, pchValue, cchValueSize) as boolean;
   }
 
@@ -224,11 +224,11 @@ export class ISteamUGC {
    * `bool GetQueryUGCKeyValueTag(UGCQueryHandle_t handle, uint32 index, const char *pchKey, char *pchValue, uint32 cchValueSize)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryFirstUGCKeyValueTag`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pchValue Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCKeyValueTag
    */
-  GetQueryFirstUGCKeyValueTag(handle: bigint | number, index: number, pchKey: string, pchValue: Buffer | null, cchValueSize: number): boolean {
+  GetQueryFirstUGCKeyValueTag(handle: bigint, index: number, pchKey: string, pchValue: Buffer | null, cchValueSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryFirstUGCKeyValueTag', 'bool', ['void *', 'uint64', 'uint32', 'str', 'void *', 'uint32'])(this.ptr, handle, index, pchKey, pchValue, cchValueSize) as boolean;
   }
 
@@ -236,10 +236,10 @@ export class ISteamUGC {
    * `uint32 GetNumSupportedGameVersions(UGCQueryHandle_t handle, uint32 index)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetNumSupportedGameVersions`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetNumSupportedGameVersions
    */
-  GetNumSupportedGameVersions(handle: bigint | number, index: number): number {
+  GetNumSupportedGameVersions(handle: bigint, index: number): number {
     return this.nat.func('SteamAPI_ISteamUGC_GetNumSupportedGameVersions', 'uint32', ['void *', 'uint64', 'uint32'])(this.ptr, handle, index) as number;
   }
 
@@ -247,12 +247,12 @@ export class ISteamUGC {
    * `bool GetSupportedGameVersionData(UGCQueryHandle_t handle, uint32 index, uint32 versionIndex, char *pchGameBranchMin, char *pchGameBranchMax, uint32 cchGameBranchSize)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetSupportedGameVersionData`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pchGameBranchMin Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @param pchGameBranchMax Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetSupportedGameVersionData
    */
-  GetSupportedGameVersionData(handle: bigint | number, index: number, versionIndex: number, pchGameBranchMin: Buffer | null, pchGameBranchMax: Buffer | null, cchGameBranchSize: number): boolean {
+  GetSupportedGameVersionData(handle: bigint, index: number, versionIndex: number, pchGameBranchMin: Buffer | null, pchGameBranchMax: Buffer | null, cchGameBranchSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetSupportedGameVersionData', 'bool', ['void *', 'uint64', 'uint32', 'uint32', 'void *', 'void *', 'uint32'])(this.ptr, handle, index, versionIndex, pchGameBranchMin, pchGameBranchMax, cchGameBranchSize) as boolean;
   }
 
@@ -260,11 +260,11 @@ export class ISteamUGC {
    * `uint32 GetQueryUGCContentDescriptors(UGCQueryHandle_t handle, uint32 index, EUGCContentDescriptorID *pvecDescriptors, uint32 cMaxEntries)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetQueryUGCContentDescriptors`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pvecDescriptors Buffer you allocate for `EUGCContentDescriptorID *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCContentDescriptors
    */
-  GetQueryUGCContentDescriptors(handle: bigint | number, index: number, pvecDescriptors: Buffer | null, cMaxEntries: number): number {
+  GetQueryUGCContentDescriptors(handle: bigint, index: number, pvecDescriptors: Buffer | null, cMaxEntries: number): number {
     return this.nat.func('SteamAPI_ISteamUGC_GetQueryUGCContentDescriptors', 'uint32', ['void *', 'uint64', 'uint32', 'void *', 'uint32'])(this.ptr, handle, index, pvecDescriptors, cMaxEntries) as number;
   }
 
@@ -272,10 +272,10 @@ export class ISteamUGC {
    * `bool ReleaseQueryUGCRequest(UGCQueryHandle_t handle)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_ReleaseQueryUGCRequest`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#ReleaseQueryUGCRequest
    */
-  ReleaseQueryUGCRequest(handle: bigint | number): boolean {
+  ReleaseQueryUGCRequest(handle: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_ReleaseQueryUGCRequest', 'bool', ['void *', 'uint64'])(this.ptr, handle) as boolean;
   }
 
@@ -283,10 +283,10 @@ export class ISteamUGC {
    * `bool AddRequiredTag(UGCQueryHandle_t handle, const char *pTagName)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddRequiredTag`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddRequiredTag
    */
-  AddRequiredTag(handle: bigint | number, pTagName: string): boolean {
+  AddRequiredTag(handle: bigint, pTagName: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_AddRequiredTag', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pTagName) as boolean;
   }
 
@@ -294,11 +294,11 @@ export class ISteamUGC {
    * `bool AddRequiredTagGroup(UGCQueryHandle_t handle, const SteamParamStringArray_t *pTagGroups)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddRequiredTagGroup`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pTagGroups `const SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddRequiredTagGroup
    */
-  AddRequiredTagGroup(handle: bigint | number, pTagGroups: SteamParamStringArrayJs): boolean {
+  AddRequiredTagGroup(handle: bigint, pTagGroups: SteamParamStringArrayJs): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_AddRequiredTagGroup', 'bool', ['void *', 'uint64', SteamParamStringArrayPtr])(this.ptr, handle, pTagGroups) as boolean;
   }
 
@@ -306,10 +306,10 @@ export class ISteamUGC {
    * `bool AddExcludedTag(UGCQueryHandle_t handle, const char *pTagName)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddExcludedTag`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddExcludedTag
    */
-  AddExcludedTag(handle: bigint | number, pTagName: string): boolean {
+  AddExcludedTag(handle: bigint, pTagName: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_AddExcludedTag', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pTagName) as boolean;
   }
 
@@ -317,10 +317,10 @@ export class ISteamUGC {
    * `bool SetReturnOnlyIDs(UGCQueryHandle_t handle, bool bReturnOnlyIDs)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetReturnOnlyIDs`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnOnlyIDs
    */
-  SetReturnOnlyIDs(handle: bigint | number, bReturnOnlyIDs: boolean): boolean {
+  SetReturnOnlyIDs(handle: bigint, bReturnOnlyIDs: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetReturnOnlyIDs', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, handle, bReturnOnlyIDs) as boolean;
   }
 
@@ -328,10 +328,10 @@ export class ISteamUGC {
    * `bool SetReturnKeyValueTags(UGCQueryHandle_t handle, bool bReturnKeyValueTags)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetReturnKeyValueTags`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnKeyValueTags
    */
-  SetReturnKeyValueTags(handle: bigint | number, bReturnKeyValueTags: boolean): boolean {
+  SetReturnKeyValueTags(handle: bigint, bReturnKeyValueTags: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetReturnKeyValueTags', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, handle, bReturnKeyValueTags) as boolean;
   }
 
@@ -339,10 +339,10 @@ export class ISteamUGC {
    * `bool SetReturnLongDescription(UGCQueryHandle_t handle, bool bReturnLongDescription)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetReturnLongDescription`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnLongDescription
    */
-  SetReturnLongDescription(handle: bigint | number, bReturnLongDescription: boolean): boolean {
+  SetReturnLongDescription(handle: bigint, bReturnLongDescription: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetReturnLongDescription', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, handle, bReturnLongDescription) as boolean;
   }
 
@@ -350,10 +350,10 @@ export class ISteamUGC {
    * `bool SetReturnMetadata(UGCQueryHandle_t handle, bool bReturnMetadata)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetReturnMetadata`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnMetadata
    */
-  SetReturnMetadata(handle: bigint | number, bReturnMetadata: boolean): boolean {
+  SetReturnMetadata(handle: bigint, bReturnMetadata: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetReturnMetadata', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, handle, bReturnMetadata) as boolean;
   }
 
@@ -361,10 +361,10 @@ export class ISteamUGC {
    * `bool SetReturnChildren(UGCQueryHandle_t handle, bool bReturnChildren)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetReturnChildren`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnChildren
    */
-  SetReturnChildren(handle: bigint | number, bReturnChildren: boolean): boolean {
+  SetReturnChildren(handle: bigint, bReturnChildren: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetReturnChildren', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, handle, bReturnChildren) as boolean;
   }
 
@@ -372,10 +372,10 @@ export class ISteamUGC {
    * `bool SetReturnAdditionalPreviews(UGCQueryHandle_t handle, bool bReturnAdditionalPreviews)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetReturnAdditionalPreviews`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnAdditionalPreviews
    */
-  SetReturnAdditionalPreviews(handle: bigint | number, bReturnAdditionalPreviews: boolean): boolean {
+  SetReturnAdditionalPreviews(handle: bigint, bReturnAdditionalPreviews: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetReturnAdditionalPreviews', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, handle, bReturnAdditionalPreviews) as boolean;
   }
 
@@ -383,10 +383,10 @@ export class ISteamUGC {
    * `bool SetReturnTotalOnly(UGCQueryHandle_t handle, bool bReturnTotalOnly)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetReturnTotalOnly`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnTotalOnly
    */
-  SetReturnTotalOnly(handle: bigint | number, bReturnTotalOnly: boolean): boolean {
+  SetReturnTotalOnly(handle: bigint, bReturnTotalOnly: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetReturnTotalOnly', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, handle, bReturnTotalOnly) as boolean;
   }
 
@@ -394,10 +394,10 @@ export class ISteamUGC {
    * `bool SetReturnPlaytimeStats(UGCQueryHandle_t handle, uint32 unDays)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetReturnPlaytimeStats`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnPlaytimeStats
    */
-  SetReturnPlaytimeStats(handle: bigint | number, unDays: number): boolean {
+  SetReturnPlaytimeStats(handle: bigint, unDays: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetReturnPlaytimeStats', 'bool', ['void *', 'uint64', 'uint32'])(this.ptr, handle, unDays) as boolean;
   }
 
@@ -405,10 +405,10 @@ export class ISteamUGC {
    * `bool SetLanguage(UGCQueryHandle_t handle, const char *pchLanguage)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetLanguage`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetLanguage
    */
-  SetLanguage(handle: bigint | number, pchLanguage: string): boolean {
+  SetLanguage(handle: bigint, pchLanguage: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetLanguage', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pchLanguage) as boolean;
   }
 
@@ -416,10 +416,10 @@ export class ISteamUGC {
    * `bool SetAllowCachedResponse(UGCQueryHandle_t handle, uint32 unMaxAgeSeconds)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetAllowCachedResponse`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetAllowCachedResponse
    */
-  SetAllowCachedResponse(handle: bigint | number, unMaxAgeSeconds: number): boolean {
+  SetAllowCachedResponse(handle: bigint, unMaxAgeSeconds: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetAllowCachedResponse', 'bool', ['void *', 'uint64', 'uint32'])(this.ptr, handle, unMaxAgeSeconds) as boolean;
   }
 
@@ -427,10 +427,10 @@ export class ISteamUGC {
    * `bool SetAdminQuery(UGCUpdateHandle_t handle, bool bAdminQuery)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetAdminQuery`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetAdminQuery
    */
-  SetAdminQuery(handle: bigint | number, bAdminQuery: boolean): boolean {
+  SetAdminQuery(handle: bigint, bAdminQuery: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetAdminQuery', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, handle, bAdminQuery) as boolean;
   }
 
@@ -438,10 +438,10 @@ export class ISteamUGC {
    * `bool SetCloudFileNameFilter(UGCQueryHandle_t handle, const char *pMatchCloudFileName)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetCloudFileNameFilter`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetCloudFileNameFilter
    */
-  SetCloudFileNameFilter(handle: bigint | number, pMatchCloudFileName: string): boolean {
+  SetCloudFileNameFilter(handle: bigint, pMatchCloudFileName: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetCloudFileNameFilter', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pMatchCloudFileName) as boolean;
   }
 
@@ -449,10 +449,10 @@ export class ISteamUGC {
    * `bool SetMatchAnyTag(UGCQueryHandle_t handle, bool bMatchAnyTag)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetMatchAnyTag`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetMatchAnyTag
    */
-  SetMatchAnyTag(handle: bigint | number, bMatchAnyTag: boolean): boolean {
+  SetMatchAnyTag(handle: bigint, bMatchAnyTag: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetMatchAnyTag', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, handle, bMatchAnyTag) as boolean;
   }
 
@@ -460,10 +460,10 @@ export class ISteamUGC {
    * `bool SetSearchText(UGCQueryHandle_t handle, const char *pSearchText)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetSearchText`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetSearchText
    */
-  SetSearchText(handle: bigint | number, pSearchText: string): boolean {
+  SetSearchText(handle: bigint, pSearchText: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetSearchText', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pSearchText) as boolean;
   }
 
@@ -471,10 +471,10 @@ export class ISteamUGC {
    * `bool SetRankedByTrendDays(UGCQueryHandle_t handle, uint32 unDays)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetRankedByTrendDays`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetRankedByTrendDays
    */
-  SetRankedByTrendDays(handle: bigint | number, unDays: number): boolean {
+  SetRankedByTrendDays(handle: bigint, unDays: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetRankedByTrendDays', 'bool', ['void *', 'uint64', 'uint32'])(this.ptr, handle, unDays) as boolean;
   }
 
@@ -482,10 +482,10 @@ export class ISteamUGC {
    * `bool SetTimeCreatedDateRange(UGCQueryHandle_t handle, RTime32 rtStart, RTime32 rtEnd)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetTimeCreatedDateRange`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetTimeCreatedDateRange
    */
-  SetTimeCreatedDateRange(handle: bigint | number, rtStart: number, rtEnd: number): boolean {
+  SetTimeCreatedDateRange(handle: bigint, rtStart: number, rtEnd: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetTimeCreatedDateRange', 'bool', ['void *', 'uint64', 'uint32', 'uint32'])(this.ptr, handle, rtStart, rtEnd) as boolean;
   }
 
@@ -493,10 +493,10 @@ export class ISteamUGC {
    * `bool SetTimeUpdatedDateRange(UGCQueryHandle_t handle, RTime32 rtStart, RTime32 rtEnd)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetTimeUpdatedDateRange`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetTimeUpdatedDateRange
    */
-  SetTimeUpdatedDateRange(handle: bigint | number, rtStart: number, rtEnd: number): boolean {
+  SetTimeUpdatedDateRange(handle: bigint, rtStart: number, rtEnd: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetTimeUpdatedDateRange', 'bool', ['void *', 'uint64', 'uint32', 'uint32'])(this.ptr, handle, rtStart, rtEnd) as boolean;
   }
 
@@ -504,10 +504,10 @@ export class ISteamUGC {
    * `bool AddRequiredKeyValueTag(UGCQueryHandle_t handle, const char *pKey, const char *pValue)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddRequiredKeyValueTag`
-   * @param handle `UGCQueryHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddRequiredKeyValueTag
    */
-  AddRequiredKeyValueTag(handle: bigint | number, pKey: string, pValue: string): boolean {
+  AddRequiredKeyValueTag(handle: bigint, pKey: string, pValue: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_AddRequiredKeyValueTag', 'bool', ['void *', 'uint64', 'str', 'str'])(this.ptr, handle, pKey, pValue) as boolean;
   }
 
@@ -516,10 +516,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RequestUGCDetails`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamUGCRequestUGCDetailsResult_t>(handle, layoutOf('SteamUGCRequestUGCDetailsResult_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RequestUGCDetails
    */
-  RequestUGCDetails(nPublishedFileID: bigint | number, unMaxAgeSeconds: number): bigint {
+  RequestUGCDetails(nPublishedFileID: bigint, unMaxAgeSeconds: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_RequestUGCDetails', 'uint64', ['void *', 'uint64', 'uint32'])(this.ptr, nPublishedFileID, unMaxAgeSeconds) as number | bigint);
   }
 
@@ -539,10 +539,10 @@ export class ISteamUGC {
    * `UGCUpdateHandle_t StartItemUpdate(AppId_t nConsumerAppId, PublishedFileId_t nPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_StartItemUpdate`
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#StartItemUpdate
    */
-  StartItemUpdate(nConsumerAppId: number, nPublishedFileID: bigint | number): bigint {
+  StartItemUpdate(nConsumerAppId: number, nPublishedFileID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_StartItemUpdate', 'uint64', ['void *', 'uint32', 'uint64'])(this.ptr, nConsumerAppId, nPublishedFileID) as number | bigint);
   }
 
@@ -550,10 +550,10 @@ export class ISteamUGC {
    * `bool SetItemTitle(UGCUpdateHandle_t handle, const char *pchTitle)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetItemTitle`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetItemTitle
    */
-  SetItemTitle(handle: bigint | number, pchTitle: string): boolean {
+  SetItemTitle(handle: bigint, pchTitle: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetItemTitle', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pchTitle) as boolean;
   }
 
@@ -561,10 +561,10 @@ export class ISteamUGC {
    * `bool SetItemDescription(UGCUpdateHandle_t handle, const char *pchDescription)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetItemDescription`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetItemDescription
    */
-  SetItemDescription(handle: bigint | number, pchDescription: string): boolean {
+  SetItemDescription(handle: bigint, pchDescription: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetItemDescription', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pchDescription) as boolean;
   }
 
@@ -572,10 +572,10 @@ export class ISteamUGC {
    * `bool SetItemUpdateLanguage(UGCUpdateHandle_t handle, const char *pchLanguage)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetItemUpdateLanguage`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetItemUpdateLanguage
    */
-  SetItemUpdateLanguage(handle: bigint | number, pchLanguage: string): boolean {
+  SetItemUpdateLanguage(handle: bigint, pchLanguage: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetItemUpdateLanguage', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pchLanguage) as boolean;
   }
 
@@ -583,10 +583,10 @@ export class ISteamUGC {
    * `bool SetItemMetadata(UGCUpdateHandle_t handle, const char *pchMetaData)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetItemMetadata`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetItemMetadata
    */
-  SetItemMetadata(handle: bigint | number, pchMetaData: string): boolean {
+  SetItemMetadata(handle: bigint, pchMetaData: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetItemMetadata', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pchMetaData) as boolean;
   }
 
@@ -594,11 +594,11 @@ export class ISteamUGC {
    * `bool SetItemVisibility(UGCUpdateHandle_t handle, ERemoteStoragePublishedFileVisibility eVisibility)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetItemVisibility`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eVisibility enum `ERemoteStoragePublishedFileVisibility`; values on `flat.ERemoteStoragePublishedFileVisibility`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetItemVisibility
    */
-  SetItemVisibility(handle: bigint | number, eVisibility: number): boolean {
+  SetItemVisibility(handle: bigint, eVisibility: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetItemVisibility', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, handle, eVisibility) as boolean;
   }
 
@@ -606,11 +606,11 @@ export class ISteamUGC {
    * `bool SetItemTags(UGCUpdateHandle_t updateHandle, const SteamParamStringArray_t *pTags, bool bAllowAdminTags)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetItemTags`
-   * @param updateHandle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param updateHandle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pTags `const SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetItemTags
    */
-  SetItemTags(updateHandle: bigint | number, pTags: SteamParamStringArrayJs, bAllowAdminTags: boolean): boolean {
+  SetItemTags(updateHandle: bigint, pTags: SteamParamStringArrayJs, bAllowAdminTags: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetItemTags', 'bool', ['void *', 'uint64', SteamParamStringArrayPtr, 'bool'])(this.ptr, updateHandle, pTags, bAllowAdminTags) as boolean;
   }
 
@@ -618,10 +618,10 @@ export class ISteamUGC {
    * `bool SetItemContent(UGCUpdateHandle_t handle, const char *pszContentFolder)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetItemContent`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetItemContent
    */
-  SetItemContent(handle: bigint | number, pszContentFolder: string): boolean {
+  SetItemContent(handle: bigint, pszContentFolder: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetItemContent', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pszContentFolder) as boolean;
   }
 
@@ -629,10 +629,10 @@ export class ISteamUGC {
    * `bool SetItemPreview(UGCUpdateHandle_t handle, const char *pszPreviewFile)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetItemPreview`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetItemPreview
    */
-  SetItemPreview(handle: bigint | number, pszPreviewFile: string): boolean {
+  SetItemPreview(handle: bigint, pszPreviewFile: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetItemPreview', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pszPreviewFile) as boolean;
   }
 
@@ -640,10 +640,10 @@ export class ISteamUGC {
    * `bool SetAllowLegacyUpload(UGCUpdateHandle_t handle, bool bAllowLegacyUpload)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetAllowLegacyUpload`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetAllowLegacyUpload
    */
-  SetAllowLegacyUpload(handle: bigint | number, bAllowLegacyUpload: boolean): boolean {
+  SetAllowLegacyUpload(handle: bigint, bAllowLegacyUpload: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetAllowLegacyUpload', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, handle, bAllowLegacyUpload) as boolean;
   }
 
@@ -651,10 +651,10 @@ export class ISteamUGC {
    * `bool RemoveAllItemKeyValueTags(UGCUpdateHandle_t handle)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RemoveAllItemKeyValueTags`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RemoveAllItemKeyValueTags
    */
-  RemoveAllItemKeyValueTags(handle: bigint | number): boolean {
+  RemoveAllItemKeyValueTags(handle: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_RemoveAllItemKeyValueTags', 'bool', ['void *', 'uint64'])(this.ptr, handle) as boolean;
   }
 
@@ -662,10 +662,10 @@ export class ISteamUGC {
    * `bool RemoveItemKeyValueTags(UGCUpdateHandle_t handle, const char *pchKey)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RemoveItemKeyValueTags`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RemoveItemKeyValueTags
    */
-  RemoveItemKeyValueTags(handle: bigint | number, pchKey: string): boolean {
+  RemoveItemKeyValueTags(handle: bigint, pchKey: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_RemoveItemKeyValueTags', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pchKey) as boolean;
   }
 
@@ -673,10 +673,10 @@ export class ISteamUGC {
    * `bool AddItemKeyValueTag(UGCUpdateHandle_t handle, const char *pchKey, const char *pchValue)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddItemKeyValueTag`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddItemKeyValueTag
    */
-  AddItemKeyValueTag(handle: bigint | number, pchKey: string, pchValue: string): boolean {
+  AddItemKeyValueTag(handle: bigint, pchKey: string, pchValue: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_AddItemKeyValueTag', 'bool', ['void *', 'uint64', 'str', 'str'])(this.ptr, handle, pchKey, pchValue) as boolean;
   }
 
@@ -684,11 +684,11 @@ export class ISteamUGC {
    * `bool AddItemPreviewFile(UGCUpdateHandle_t handle, const char *pszPreviewFile, EItemPreviewType type)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddItemPreviewFile`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param type enum `EItemPreviewType`; values on `flat.EItemPreviewType`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddItemPreviewFile
    */
-  AddItemPreviewFile(handle: bigint | number, pszPreviewFile: string, type: number): boolean {
+  AddItemPreviewFile(handle: bigint, pszPreviewFile: string, type: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_AddItemPreviewFile', 'bool', ['void *', 'uint64', 'str', 'int32'])(this.ptr, handle, pszPreviewFile, type) as boolean;
   }
 
@@ -696,10 +696,10 @@ export class ISteamUGC {
    * `bool AddItemPreviewVideo(UGCUpdateHandle_t handle, const char *pszVideoID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddItemPreviewVideo`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddItemPreviewVideo
    */
-  AddItemPreviewVideo(handle: bigint | number, pszVideoID: string): boolean {
+  AddItemPreviewVideo(handle: bigint, pszVideoID: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_AddItemPreviewVideo', 'bool', ['void *', 'uint64', 'str'])(this.ptr, handle, pszVideoID) as boolean;
   }
 
@@ -707,10 +707,10 @@ export class ISteamUGC {
    * `bool UpdateItemPreviewFile(UGCUpdateHandle_t handle, uint32 index, const char *pszPreviewFile)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_UpdateItemPreviewFile`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#UpdateItemPreviewFile
    */
-  UpdateItemPreviewFile(handle: bigint | number, index: number, pszPreviewFile: string): boolean {
+  UpdateItemPreviewFile(handle: bigint, index: number, pszPreviewFile: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_UpdateItemPreviewFile', 'bool', ['void *', 'uint64', 'uint32', 'str'])(this.ptr, handle, index, pszPreviewFile) as boolean;
   }
 
@@ -718,10 +718,10 @@ export class ISteamUGC {
    * `bool UpdateItemPreviewVideo(UGCUpdateHandle_t handle, uint32 index, const char *pszVideoID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_UpdateItemPreviewVideo`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#UpdateItemPreviewVideo
    */
-  UpdateItemPreviewVideo(handle: bigint | number, index: number, pszVideoID: string): boolean {
+  UpdateItemPreviewVideo(handle: bigint, index: number, pszVideoID: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_UpdateItemPreviewVideo', 'bool', ['void *', 'uint64', 'uint32', 'str'])(this.ptr, handle, index, pszVideoID) as boolean;
   }
 
@@ -729,10 +729,10 @@ export class ISteamUGC {
    * `bool RemoveItemPreview(UGCUpdateHandle_t handle, uint32 index)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RemoveItemPreview`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RemoveItemPreview
    */
-  RemoveItemPreview(handle: bigint | number, index: number): boolean {
+  RemoveItemPreview(handle: bigint, index: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_RemoveItemPreview', 'bool', ['void *', 'uint64', 'uint32'])(this.ptr, handle, index) as boolean;
   }
 
@@ -740,11 +740,11 @@ export class ISteamUGC {
    * `bool AddContentDescriptor(UGCUpdateHandle_t handle, EUGCContentDescriptorID descid)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddContentDescriptor`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param descid enum `EUGCContentDescriptorID`; values on `flat.EUGCContentDescriptorID`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddContentDescriptor
    */
-  AddContentDescriptor(handle: bigint | number, descid: number): boolean {
+  AddContentDescriptor(handle: bigint, descid: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_AddContentDescriptor', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, handle, descid) as boolean;
   }
 
@@ -752,11 +752,11 @@ export class ISteamUGC {
    * `bool RemoveContentDescriptor(UGCUpdateHandle_t handle, EUGCContentDescriptorID descid)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RemoveContentDescriptor`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param descid enum `EUGCContentDescriptorID`; values on `flat.EUGCContentDescriptorID`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RemoveContentDescriptor
    */
-  RemoveContentDescriptor(handle: bigint | number, descid: number): boolean {
+  RemoveContentDescriptor(handle: bigint, descid: number): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_RemoveContentDescriptor', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, handle, descid) as boolean;
   }
 
@@ -764,10 +764,10 @@ export class ISteamUGC {
    * `bool SetRequiredGameVersions(UGCUpdateHandle_t handle, const char *pszGameBranchMin, const char *pszGameBranchMax)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetRequiredGameVersions`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetRequiredGameVersions
    */
-  SetRequiredGameVersions(handle: bigint | number, pszGameBranchMin: string, pszGameBranchMax: string): boolean {
+  SetRequiredGameVersions(handle: bigint, pszGameBranchMin: string, pszGameBranchMax: string): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_SetRequiredGameVersions', 'bool', ['void *', 'uint64', 'str', 'str'])(this.ptr, handle, pszGameBranchMin, pszGameBranchMax) as boolean;
   }
 
@@ -776,10 +776,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SubmitItemUpdate`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SubmitItemUpdateResult_t>(handle, layoutOf('SubmitItemUpdateResult_t'))`.
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SubmitItemUpdate
    */
-  SubmitItemUpdate(handle: bigint | number, pchChangeNote: string): bigint {
+  SubmitItemUpdate(handle: bigint, pchChangeNote: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_SubmitItemUpdate', 'uint64', ['void *', 'uint64', 'str'])(this.ptr, handle, pchChangeNote) as number | bigint);
   }
 
@@ -787,12 +787,12 @@ export class ISteamUGC {
    * `EItemUpdateStatus GetItemUpdateProgress(UGCUpdateHandle_t handle, uint64 *punBytesProcessed, uint64 *punBytesTotal)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetItemUpdateProgress`
-   * @param handle `UGCUpdateHandle_t`, 64-bit: bigint or number.
+   * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param punBytesProcessed Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
    * @param punBytesTotal Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetItemUpdateProgress
    */
-  GetItemUpdateProgress(handle: bigint | number, punBytesProcessed: Buffer | null, punBytesTotal: Buffer | null): number {
+  GetItemUpdateProgress(handle: bigint, punBytesProcessed: Buffer | null, punBytesTotal: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamUGC_GetItemUpdateProgress', 'int32', ['void *', 'uint64', 'void *', 'void *'])(this.ptr, handle, punBytesProcessed, punBytesTotal) as number;
   }
 
@@ -801,10 +801,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetUserItemVote`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SetUserItemVoteResult_t>(handle, layoutOf('SetUserItemVoteResult_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetUserItemVote
    */
-  SetUserItemVote(nPublishedFileID: bigint | number, bVoteUp: boolean): bigint {
+  SetUserItemVote(nPublishedFileID: bigint, bVoteUp: boolean): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_SetUserItemVote', 'uint64', ['void *', 'uint64', 'bool'])(this.ptr, nPublishedFileID, bVoteUp) as number | bigint);
   }
 
@@ -813,10 +813,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetUserItemVote`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<GetUserItemVoteResult_t>(handle, layoutOf('GetUserItemVoteResult_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetUserItemVote
    */
-  GetUserItemVote(nPublishedFileID: bigint | number): bigint {
+  GetUserItemVote(nPublishedFileID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_GetUserItemVote', 'uint64', ['void *', 'uint64'])(this.ptr, nPublishedFileID) as number | bigint);
   }
 
@@ -825,10 +825,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddItemToFavorites`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<UserFavoriteItemsListChanged_t>(handle, layoutOf('UserFavoriteItemsListChanged_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddItemToFavorites
    */
-  AddItemToFavorites(nAppId: number, nPublishedFileID: bigint | number): bigint {
+  AddItemToFavorites(nAppId: number, nPublishedFileID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_AddItemToFavorites', 'uint64', ['void *', 'uint32', 'uint64'])(this.ptr, nAppId, nPublishedFileID) as number | bigint);
   }
 
@@ -837,10 +837,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RemoveItemFromFavorites`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<UserFavoriteItemsListChanged_t>(handle, layoutOf('UserFavoriteItemsListChanged_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RemoveItemFromFavorites
    */
-  RemoveItemFromFavorites(nAppId: number, nPublishedFileID: bigint | number): bigint {
+  RemoveItemFromFavorites(nAppId: number, nPublishedFileID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_RemoveItemFromFavorites', 'uint64', ['void *', 'uint32', 'uint64'])(this.ptr, nAppId, nPublishedFileID) as number | bigint);
   }
 
@@ -849,10 +849,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SubscribeItem`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageSubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageSubscribePublishedFileResult_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SubscribeItem
    */
-  SubscribeItem(nPublishedFileID: bigint | number): bigint {
+  SubscribeItem(nPublishedFileID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_SubscribeItem', 'uint64', ['void *', 'uint64'])(this.ptr, nPublishedFileID) as number | bigint);
   }
 
@@ -861,10 +861,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_UnsubscribeItem`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUnsubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageUnsubscribePublishedFileResult_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#UnsubscribeItem
    */
-  UnsubscribeItem(nPublishedFileID: bigint | number): bigint {
+  UnsubscribeItem(nPublishedFileID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_UnsubscribeItem', 'uint64', ['void *', 'uint64'])(this.ptr, nPublishedFileID) as number | bigint);
   }
 
@@ -893,10 +893,10 @@ export class ISteamUGC {
    * `uint32 GetItemState(PublishedFileId_t nPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetItemState`
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetItemState
    */
-  GetItemState(nPublishedFileID: bigint | number): number {
+  GetItemState(nPublishedFileID: bigint): number {
     return this.nat.func('SteamAPI_ISteamUGC_GetItemState', 'uint32', ['void *', 'uint64'])(this.ptr, nPublishedFileID) as number;
   }
 
@@ -904,13 +904,13 @@ export class ISteamUGC {
    * `bool GetItemInstallInfo(PublishedFileId_t nPublishedFileID, uint64 *punSizeOnDisk, char *pchFolder, uint32 cchFolderSize, uint32 *punTimeStamp)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetItemInstallInfo`
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param punSizeOnDisk Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
    * @param pchFolder Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @param punTimeStamp Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetItemInstallInfo
    */
-  GetItemInstallInfo(nPublishedFileID: bigint | number, punSizeOnDisk: Buffer | null, pchFolder: Buffer | null, cchFolderSize: number, punTimeStamp: Buffer | null): boolean {
+  GetItemInstallInfo(nPublishedFileID: bigint, punSizeOnDisk: Buffer | null, pchFolder: Buffer | null, cchFolderSize: number, punTimeStamp: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetItemInstallInfo', 'bool', ['void *', 'uint64', 'void *', 'void *', 'uint32', 'void *'])(this.ptr, nPublishedFileID, punSizeOnDisk, pchFolder, cchFolderSize, punTimeStamp) as boolean;
   }
 
@@ -918,12 +918,12 @@ export class ISteamUGC {
    * `bool GetItemDownloadInfo(PublishedFileId_t nPublishedFileID, uint64 *punBytesDownloaded, uint64 *punBytesTotal)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetItemDownloadInfo`
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param punBytesDownloaded Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
    * @param punBytesTotal Buffer you allocate for `uint64 *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetItemDownloadInfo
    */
-  GetItemDownloadInfo(nPublishedFileID: bigint | number, punBytesDownloaded: Buffer | null, punBytesTotal: Buffer | null): boolean {
+  GetItemDownloadInfo(nPublishedFileID: bigint, punBytesDownloaded: Buffer | null, punBytesTotal: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_GetItemDownloadInfo', 'bool', ['void *', 'uint64', 'void *', 'void *'])(this.ptr, nPublishedFileID, punBytesDownloaded, punBytesTotal) as boolean;
   }
 
@@ -931,10 +931,10 @@ export class ISteamUGC {
    * `bool DownloadItem(PublishedFileId_t nPublishedFileID, bool bHighPriority)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_DownloadItem`
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#DownloadItem
    */
-  DownloadItem(nPublishedFileID: bigint | number, bHighPriority: boolean): boolean {
+  DownloadItem(nPublishedFileID: bigint, bHighPriority: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_DownloadItem', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, nPublishedFileID, bHighPriority) as boolean;
   }
 
@@ -998,11 +998,11 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddDependency`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<AddUGCDependencyResult_t>(handle, layoutOf('AddUGCDependencyResult_t'))`.
-   * @param nParentPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
-   * @param nChildPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nParentPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param nChildPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddDependency
    */
-  AddDependency(nParentPublishedFileID: bigint | number, nChildPublishedFileID: bigint | number): bigint {
+  AddDependency(nParentPublishedFileID: bigint, nChildPublishedFileID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_AddDependency', 'uint64', ['void *', 'uint64', 'uint64'])(this.ptr, nParentPublishedFileID, nChildPublishedFileID) as number | bigint);
   }
 
@@ -1011,11 +1011,11 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RemoveDependency`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoveUGCDependencyResult_t>(handle, layoutOf('RemoveUGCDependencyResult_t'))`.
-   * @param nParentPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
-   * @param nChildPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nParentPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param nChildPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RemoveDependency
    */
-  RemoveDependency(nParentPublishedFileID: bigint | number, nChildPublishedFileID: bigint | number): bigint {
+  RemoveDependency(nParentPublishedFileID: bigint, nChildPublishedFileID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_RemoveDependency', 'uint64', ['void *', 'uint64', 'uint64'])(this.ptr, nParentPublishedFileID, nChildPublishedFileID) as number | bigint);
   }
 
@@ -1024,10 +1024,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddAppDependency`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<AddAppDependencyResult_t>(handle, layoutOf('AddAppDependencyResult_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddAppDependency
    */
-  AddAppDependency(nPublishedFileID: bigint | number, nAppID: number): bigint {
+  AddAppDependency(nPublishedFileID: bigint, nAppID: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_AddAppDependency', 'uint64', ['void *', 'uint64', 'uint32'])(this.ptr, nPublishedFileID, nAppID) as number | bigint);
   }
 
@@ -1036,10 +1036,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RemoveAppDependency`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoveAppDependencyResult_t>(handle, layoutOf('RemoveAppDependencyResult_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RemoveAppDependency
    */
-  RemoveAppDependency(nPublishedFileID: bigint | number, nAppID: number): bigint {
+  RemoveAppDependency(nPublishedFileID: bigint, nAppID: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_RemoveAppDependency', 'uint64', ['void *', 'uint64', 'uint32'])(this.ptr, nPublishedFileID, nAppID) as number | bigint);
   }
 
@@ -1048,10 +1048,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetAppDependencies`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<GetAppDependenciesResult_t>(handle, layoutOf('GetAppDependenciesResult_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetAppDependencies
    */
-  GetAppDependencies(nPublishedFileID: bigint | number): bigint {
+  GetAppDependencies(nPublishedFileID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_GetAppDependencies', 'uint64', ['void *', 'uint64'])(this.ptr, nPublishedFileID) as number | bigint);
   }
 
@@ -1060,10 +1060,10 @@ export class ISteamUGC {
    *
    * Flat symbol: `SteamAPI_ISteamUGC_DeleteItem`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<DeleteItemResult_t>(handle, layoutOf('DeleteItemResult_t'))`.
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#DeleteItem
    */
-  DeleteItem(nPublishedFileID: bigint | number): bigint {
+  DeleteItem(nPublishedFileID: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamUGC_DeleteItem', 'uint64', ['void *', 'uint64'])(this.ptr, nPublishedFileID) as number | bigint);
   }
 
@@ -1125,10 +1125,10 @@ export class ISteamUGC {
    * `bool MarkDownloadedItemAsUnused(PublishedFileId_t nPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_MarkDownloadedItemAsUnused`
-   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: bigint or number.
+   * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#MarkDownloadedItemAsUnused
    */
-  MarkDownloadedItemAsUnused(nPublishedFileID: bigint | number): boolean {
+  MarkDownloadedItemAsUnused(nPublishedFileID: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamUGC_MarkDownloadedItemAsUnused', 'bool', ['void *', 'uint64'])(this.ptr, nPublishedFileID) as boolean;
   }
 

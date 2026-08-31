@@ -328,7 +328,7 @@ function paramDoc(p: JParam, mapped: MappedParam): string | undefined {
     if (s.kind === 'prim') return `Buffer you allocate for \`${t}\`: \`Buffer.alloc(${s.size})\` per element.`;
     return `Buffer you allocate for \`${t}\`.`;
   }
-  if (mapped.ts === 'bigint | number') return `\`${t}\`, 64-bit: bigint or number.`;
+  if (mapped.ts === 'bigint') return `\`${t}\`, 64-bit: pass a \`bigint\`, for example \`123n\`.`;
   const e = enumNameOf(t);
   if (e) return `${t === e ? '' : `\`${t}\` is `}enum \`${e}\`; values on \`flat.${e}\`.`;
   return undefined;
@@ -487,7 +487,8 @@ function emitStructs(structs: EmittedStruct[]): string {
 }
 
 function emitCallbacks(cbs: { def: JCallbackStruct; layout: EmittedStruct }[]): string {
-  const out: string[] = [HEADER, `import type { StructLayout } from '../runtime/struct';`, ''];
+  const out: string[] = [HEADER, `import type { StructLayout } from '../runtime/struct';`];
+  out.push(`import type {`, ...cbs.map(({ def }) => `  ${def.struct},`), `} from './structs';`, '');
   out.push(`export interface CallbackDef { id: number; name: string; win64: StructLayout; posix: StructLayout }`, '');
   out.push(`export const callbacksById: Record<number, CallbackDef> = {`);
   for (const { def, layout } of cbs) {
@@ -501,7 +502,16 @@ function emitCallbacks(cbs: { def: JCallbackStruct; layout: EmittedStruct }[]): 
     out.push(`  /** \`${def.struct}\` callback id. Subscribe with \`steam.on('${def.struct}', cb)\`. */`);
     out.push(`  ${def.struct}: ${def.callback_id},`);
   }
-  out.push(`} as const;`);
+  out.push(`} as const;`, '');
+  out.push(`/**`);
+  out.push(` * Every subscribable callback name, mapped to the struct its listener gets.`);
+  out.push(` *`);
+  out.push(` * \`Steam.on\` is keyed on this, so the callback name is checked at compile time`);
+  out.push(` * and the listener argument is typed for you.`);
+  out.push(` */`);
+  out.push(`export interface SteamCallbackMap {`);
+  for (const { def } of cbs) out.push(`  ${def.struct}: ${def.struct};`);
+  out.push(`}`);
   return out.join('\n');
 }
 
@@ -531,7 +541,7 @@ function mapParam(p: JParam): MappedParam | undefined {
   }
   const scalar = resolveScalar(t);
   if (scalar.kind === 'unsupported') return undefined;
-  return { name, koffi: `'${scalar.koffi}'`, ts: scalar.big ? 'bigint | number' : scalar.ts };
+  return { name, koffi: `'${scalar.koffi}'`, ts: scalar.ts };
 }
 
 function mapReturn(t: string): { koffi: string; ts: string; wrap: 'big' | 'str' | 'none' } | undefined {
@@ -545,9 +555,29 @@ function mapReturn(t: string): { koffi: string; ts: string; wrap: 'big' | 'str' 
   return { koffi: `'${scalar.koffi}'`, ts: scalar.ts, wrap: 'none' };
 }
 
-function emitInterface(iface: JInterface, accessor: JAccessor): string | undefined {
+/** One flat method that returns a call handle and has a decodable result struct. */
+interface AsyncMethod {
+  /** Method name on the interface class, e.g. `FindLeaderboard`. */
+  short: string;
+  /** Mapped parameter list, e.g. `pchLeaderboardName: string`. */
+  sig: string;
+  /** Argument names to forward, e.g. `pchLeaderboardName`. */
+  args: string;
+  /** Result struct name, e.g. `LeaderboardFindResult_t`. */
+  result: string;
+  /** TSDoc block, indented for a class body. */
+  doc: string;
+  /** True if a parameter takes a `SteamParamStringArray_t *`. */
+  usesStringArray: boolean;
+}
+
+function emitInterface(
+  iface: JInterface,
+  accessor: JAccessor,
+): { code: string; asyncMethods: AsyncMethod[] } | undefined {
   const cls = iface.classname;
   const methods: string[] = [];
+  const asyncMethods: AsyncMethod[] = [];
   let usesStringArray = false;
 
   for (const m of iface.methods) {
@@ -582,6 +612,17 @@ function emitInterface(iface: JInterface, accessor: JAccessor): string | undefin
     else if (ret.ts === 'void') body = `    ${call};`;
     else body = `    return ${call} as ${ret.ts};`;
     methods.push(`${doc}  ${short}(${sig}): ${ret.ts} {\n${body}\n  }`);
+
+    if (m.callresult && m.returntype === 'SteamAPICall_t' && layoutNames.has(m.callresult)) {
+      asyncMethods.push({
+        short,
+        sig,
+        args: params.map((p) => p.name).join(', '),
+        result: m.callresult,
+        doc: asyncMethodDoc(cls, m),
+        usesStringArray: params.some((p) => p.koffi === 'SteamParamStringArrayPtr'),
+      });
+    }
   }
 
   const imports = [`import type { SteamNative } from '../../runtime/native';`];
@@ -590,7 +631,7 @@ function emitInterface(iface: JInterface, accessor: JAccessor): string | undefin
       `import { SteamParamStringArrayPtr, type SteamParamStringArrayJs } from '../../runtime/types';`,
     );
   }
-  return [
+  const code = [
     HEADER,
     ...imports,
     '',
@@ -609,6 +650,202 @@ function emitInterface(iface: JInterface, accessor: JAccessor): string | undefin
     `}`,
     '',
   ].join('\n');
+  return { code, asyncMethods };
+}
+
+// ---------------------------------------------------------------------------
+// Emit accessors.ts: one lazy getter per interface, for Steam to extend.
+
+/**
+ * Getter name for an interface class: drop the `ISteam` prefix, then camelize.
+ * A leading acronym goes lowercase, except its last letter when a word follows
+ * it: `ISteamUGC` -> `ugc`, `ISteamHTMLSurface` -> `htmlSurface`.
+ */
+function getterName(cls: string): string {
+  const base = cls.replace(/^ISteam/, '');
+  const run = /^[A-Z]+/.exec(base)?.[0] ?? '';
+  const rest = base.slice(run.length);
+  const keep = rest.length > 0 && run.length > 1 ? 1 : 0;
+  return run.slice(0, run.length - keep).toLowerCase() + run.slice(run.length - keep) + rest;
+}
+
+/** One-line summary per interface, for the generated getters. */
+const IFACE_DOCS: Record<string, string> = {
+  ISteamApps: 'ISteamApps: ownership, install state, DLC, and beta branch.',
+  ISteamController: 'ISteamController: the superseded controller API; new code uses ISteamInput.',
+  ISteamFriends: 'ISteamFriends: friend list, personas, avatars, and overlay calls.',
+  ISteamHTMLSurface: 'ISteamHTMLSurface: an offscreen browser surface, its input, and its events.',
+  ISteamHTTP: "ISteamHTTP: HTTP requests through Steam's client networking.",
+  ISteamInput: 'ISteamInput: controller handles, action sets, and action data.',
+  ISteamInventory: 'ISteamInventory: the Steam Inventory Service: items, definitions, and grants.',
+  ISteamMatchmaking: 'ISteamMatchmaking: lobbies, lobby data, and favorite servers.',
+  ISteamMatchmakingServers: 'ISteamMatchmakingServers: server browser queries and server rules.',
+  ISteamMusic: 'ISteamMusic: the Steam music player: play, pause, and volume.',
+  ISteamNetworking: 'ISteamNetworking: the superseded P2P networking API.',
+  ISteamNetworkingMessages: 'ISteamNetworkingMessages: connectionless messages to a peer identity.',
+  ISteamNetworkingSockets: 'ISteamNetworkingSockets: connections, listen sockets, and poll groups.',
+  ISteamNetworkingUtils: 'ISteamNetworkingUtils: ping locations, relay network status, and config values.',
+  ISteamParentalSettings: 'ISteamParentalSettings: which features Steam family view allows.',
+  ISteamParties: 'ISteamParties: public party beacons that players can join.',
+  ISteamRemotePlay: 'ISteamRemotePlay: Remote Play sessions and Remote Play Together invites.',
+  ISteamRemoteStorage: 'ISteamRemoteStorage: Steam Cloud files, quota, and sync state.',
+  ISteamScreenshots: 'ISteamScreenshots: writing screenshots into the Steam screenshot library.',
+  ISteamTimeline: 'ISteamTimeline: timeline events and phases for Steam game recording.',
+  ISteamUGC: 'ISteamUGC: the raw workshop interface. Prefer {@link Steam.workshop} for the common tasks.',
+  ISteamUser: 'ISteamUser: the logged in account, its Steam id, and auth tickets.',
+  ISteamUserStats: 'ISteamUserStats: stats, achievements, and leaderboards.',
+  ISteamUtils: 'ISteamUtils: app state, language, images, and API call bookkeeping.',
+  ISteamVideo: 'ISteamVideo: video URLs and Steam broadcast state.',
+};
+
+function ifaceDoc(cls: string): string {
+  return IFACE_DOCS[cls] ?? `${cls}: the generated flat interface.`;
+}
+
+function emitAccessors(ifaces: string[]): string {
+  const out: string[] = [HEADER, `import type { SteamNative } from '../runtime/native';`];
+  for (const n of ifaces) out.push(`import { ${n} } from './interfaces/${n}';`);
+  out.push(
+    '',
+    `/**`,
+    ` * Lazy, cached accessors for every generated interface class.`,
+    ` *`,
+    ` * \`Steam\` extends this, so reach them as \`steam.user\`, \`steam.ugc\`, and so on.`,
+    ` * Each interface is created on first use and cached for the rest of the session.`,
+    ` */`,
+    `export class SteamInterfaces {`,
+    `  private readonly ifaceCache = new Map<string, unknown>();`,
+    '',
+    `  /**`,
+    `   * @param native - The loaded library and the core flat exports. Steam must already be initialized.`,
+    `   */`,
+    `  constructor(readonly native: SteamNative) {}`,
+    '',
+    `  /** Returns the cached interface instance for \`ctor\`, creating it on first use. */`,
+    `  protected iface<T>(ctor: new (nat: SteamNative) => T): T {`,
+    `    let v = this.ifaceCache.get(ctor.name) as T | undefined;`,
+    `    if (!v) {`,
+    `      v = new ctor(this.native);`,
+    `      this.ifaceCache.set(ctor.name, v);`,
+    `    }`,
+    `    return v;`,
+    `  }`,
+  );
+  for (const n of ifaces) {
+    out.push('', `  /** ${ifaceDoc(n)} */`, `  get ${getterName(n)}(): ${n} {`, `    return this.iface(${n});`, `  }`);
+  }
+  out.push(`}`, '');
+  return out.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// Emit async.ts: promise wrappers for every flat call that returns a handle.
+
+/** TSDoc block for one async companion method, indented for a class body. */
+function asyncMethodDoc(cls: string, m: JMethod): string {
+  const lines = [
+    ` * \`${m.returntype} ${m.methodname}(${m.params.map(cParam).join(', ')})\``,
+    ` *`,
+    ` * Resolves with \`${m.callresult}\`.`,
+    ` * @see ${DOCS}/${cls}#${m.methodname}`,
+  ];
+  return ['  /**', ...lines.map((l) => `  ${l}`), '   */', ''].join('\n');
+}
+
+function emitAsync(entries: { cls: string; methods: AsyncMethod[] }[]): string {
+  const structs = new Set<string>();
+  let usesStringArray = false;
+  for (const e of entries) {
+    for (const m of e.methods) {
+      structs.add(m.result);
+      if (m.usesStringArray) usesStringArray = true;
+    }
+  }
+  const out: string[] = [
+    HEADER,
+    `import type { SteamDispatch } from '../runtime/dispatch';`,
+    `import type { SteamInterfaces } from './accessors';`,
+    `import { layoutOf } from './structs';`,
+  ];
+  if (usesStringArray) out.push(`import type { SteamParamStringArrayJs } from '../runtime/types';`);
+  out.push(`import type {`, ...[...structs].sort().map((s) => `  ${s},`), `} from './structs';`);
+  for (const e of entries) out.push(`import type { ${e.cls} } from './interfaces/${e.cls}';`);
+
+  for (const e of entries) {
+    out.push(
+      '',
+      `/**`,
+      ` * Promise wrappers for the ${e.cls} calls that return a \`SteamAPICall_t\`.`,
+      ` *`,
+      ` * Each method starts the call and resolves with its decoded result struct.`,
+      ` * Reach it as \`steam.async.${getterName(e.cls)}\`.`,
+      ` */`,
+      `export class ${e.cls}Async {`,
+      `  /**`,
+      `   * @param iface - The flat interface whose calls these wrap.`,
+      `   * @param dispatch - Running pump that resolves the call results.`,
+      `   */`,
+      `  constructor(`,
+      `    private readonly iface: ${e.cls},`,
+      `    private readonly dispatch: SteamDispatch,`,
+      `  ) {}`,
+    );
+    for (const m of e.methods) {
+      out.push(
+        '',
+        m.doc.replace(/\n$/, ''),
+        `  ${m.short}(${m.sig}): Promise<${m.result}> {`,
+        `    return this.dispatch.callResultStruct<${m.result}>(`,
+        `      this.iface.${m.short}(${m.args}),`,
+        `      layoutOf('${m.result}'),`,
+        `    );`,
+        `  }`,
+      );
+    }
+    out.push(`}`);
+  }
+
+  out.push(
+    '',
+    `/**`,
+    ` * Every async flat call, grouped by interface, as promises.`,
+    ` *`,
+    ` * Reach it as \`steam.async\`. Each companion is created on first use and cached.`,
+    ` */`,
+    `export class SteamAsync {`,
+    `  private readonly asyncCache = new Map<string, unknown>();`,
+    '',
+    `  /**`,
+    `   * @param ifaces - The interface accessors these calls run against.`,
+    `   * @param dispatch - Running pump that resolves the call results.`,
+    `   */`,
+    `  constructor(`,
+    `    private readonly ifaces: SteamInterfaces,`,
+    `    private readonly dispatch: SteamDispatch,`,
+    `  ) {}`,
+    '',
+    `  /** Returns the cached companion for \`key\`, creating it on first use. */`,
+    `  private wrap<T>(key: string, make: () => T): T {`,
+    `    let v = this.asyncCache.get(key) as T | undefined;`,
+    `    if (!v) {`,
+    `      v = make();`,
+    `      this.asyncCache.set(key, v);`,
+    `    }`,
+    `    return v;`,
+    `  }`,
+  );
+  for (const e of entries) {
+    const g = getterName(e.cls);
+    out.push(
+      '',
+      `  /** ${e.cls} calls that return a \`SteamAPICall_t\`, as promises. */`,
+      `  get ${g}(): ${e.cls}Async {`,
+      `    return this.wrap('${g}', () => new ${e.cls}Async(this.ifaces.${g}, this.dispatch));`,
+      `  }`,
+    );
+  }
+  out.push(`}`, '');
+  return out.join('\n');
 }
 
 // ---------------------------------------------------------------------------
@@ -645,17 +882,24 @@ for (const def of api.callback_structs) {
 fs.writeFileSync(path.join(genDir, 'callbacks.ts'), emitCallbacks(cbs));
 
 const emittedIfaces: string[] = [];
+const asyncEntries: { cls: string; methods: AsyncMethod[] }[] = [];
 for (const iface of api.interfaces) {
   const accessor =
     (iface.accessors ?? []).find((a) => a.kind === 'user') ??
     (iface.accessors ?? []).find((a) => a.kind === 'global');
   if (!accessor) continue;
-  const code = emitInterface(iface, accessor);
-  if (code) {
-    fs.writeFileSync(path.join(ifaceDir, `${iface.classname}.ts`), code);
+  const emitted = emitInterface(iface, accessor);
+  if (emitted) {
+    fs.writeFileSync(path.join(ifaceDir, `${iface.classname}.ts`), emitted.code);
     emittedIfaces.push(iface.classname);
+    if (emitted.asyncMethods.length > 0) {
+      asyncEntries.push({ cls: iface.classname, methods: emitted.asyncMethods });
+    }
   }
 }
+
+fs.writeFileSync(path.join(genDir, 'accessors.ts'), emitAccessors(emittedIfaces));
+fs.writeFileSync(path.join(genDir, 'async.ts'), emitAsync(asyncEntries));
 
 const index = [
   HEADER,
@@ -664,6 +908,8 @@ const index = [
   `export * from './structs';`,
   `export * from './callbacks';`,
   ...emittedIfaces.map((n) => `export { ${n} } from './interfaces/${n}';`),
+  `export { SteamInterfaces } from './accessors';`,
+  `export * from './async';`,
   '',
 ].join('\n');
 fs.writeFileSync(path.join(genDir, 'index.ts'), index);
@@ -671,7 +917,11 @@ fs.writeFileSync(path.join(genDir, 'index.ts'), index);
 // ---------------------------------------------------------------------------
 // Report
 
-console.log(`generated: ${emittedIfaces.length} interfaces, ${emittedStructs.length} struct layouts, ${cbs.length} callbacks`);
+const asyncCount = asyncEntries.reduce((n, e) => n + e.methods.length, 0);
+console.log(
+  `generated: ${emittedIfaces.length} interfaces, ${emittedStructs.length} struct layouts, ${cbs.length} callbacks, ` +
+    `${asyncCount} async wrappers over ${asyncEntries.length} interfaces`,
+);
 if (layoutFailures.size > 0) {
   console.warn(`structs without layouts (${layoutFailures.size}):`);
   for (const [name, why] of layoutFailures) console.warn(`  ${name}: ${why}`);

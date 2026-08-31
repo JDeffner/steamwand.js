@@ -110,11 +110,11 @@ export class ISteamInput {
    * `void ActivateActionSet(InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_ActivateActionSet`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
-   * @param actionSetHandle `InputActionSetHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param actionSetHandle `InputActionSetHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#ActivateActionSet
    */
-  ActivateActionSet(inputHandle: bigint | number, actionSetHandle: bigint | number): void {
+  ActivateActionSet(inputHandle: bigint, actionSetHandle: bigint): void {
     this.nat.func('SteamAPI_ISteamInput_ActivateActionSet', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, actionSetHandle);
   }
 
@@ -122,10 +122,10 @@ export class ISteamInput {
    * `InputActionSetHandle_t GetCurrentActionSet(InputHandle_t inputHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetCurrentActionSet`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetCurrentActionSet
    */
-  GetCurrentActionSet(inputHandle: bigint | number): bigint {
+  GetCurrentActionSet(inputHandle: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInput_GetCurrentActionSet', 'uint64', ['void *', 'uint64'])(this.ptr, inputHandle) as number | bigint);
   }
 
@@ -133,11 +133,11 @@ export class ISteamInput {
    * `void ActivateActionSetLayer(InputHandle_t inputHandle, InputActionSetHandle_t actionSetLayerHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_ActivateActionSetLayer`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
-   * @param actionSetLayerHandle `InputActionSetHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param actionSetLayerHandle `InputActionSetHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#ActivateActionSetLayer
    */
-  ActivateActionSetLayer(inputHandle: bigint | number, actionSetLayerHandle: bigint | number): void {
+  ActivateActionSetLayer(inputHandle: bigint, actionSetLayerHandle: bigint): void {
     this.nat.func('SteamAPI_ISteamInput_ActivateActionSetLayer', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, actionSetLayerHandle);
   }
 
@@ -145,11 +145,11 @@ export class ISteamInput {
    * `void DeactivateActionSetLayer(InputHandle_t inputHandle, InputActionSetHandle_t actionSetLayerHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_DeactivateActionSetLayer`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
-   * @param actionSetLayerHandle `InputActionSetHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param actionSetLayerHandle `InputActionSetHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#DeactivateActionSetLayer
    */
-  DeactivateActionSetLayer(inputHandle: bigint | number, actionSetLayerHandle: bigint | number): void {
+  DeactivateActionSetLayer(inputHandle: bigint, actionSetLayerHandle: bigint): void {
     this.nat.func('SteamAPI_ISteamInput_DeactivateActionSetLayer', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, actionSetLayerHandle);
   }
 
@@ -157,10 +157,10 @@ export class ISteamInput {
    * `void DeactivateAllActionSetLayers(InputHandle_t inputHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_DeactivateAllActionSetLayers`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#DeactivateAllActionSetLayers
    */
-  DeactivateAllActionSetLayers(inputHandle: bigint | number): void {
+  DeactivateAllActionSetLayers(inputHandle: bigint): void {
     this.nat.func('SteamAPI_ISteamInput_DeactivateAllActionSetLayers', 'void', ['void *', 'uint64'])(this.ptr, inputHandle);
   }
 
@@ -168,11 +168,11 @@ export class ISteamInput {
    * `int GetActiveActionSetLayers(InputHandle_t inputHandle, InputActionSetHandle_t *handlesOut)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetActiveActionSetLayers`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param handlesOut Buffer you allocate for `InputActionSetHandle_t *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetActiveActionSetLayers
    */
-  GetActiveActionSetLayers(inputHandle: bigint | number, handlesOut: Buffer | null): number {
+  GetActiveActionSetLayers(inputHandle: bigint, handlesOut: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamInput_GetActiveActionSetLayers', 'int32', ['void *', 'uint64', 'void *'])(this.ptr, inputHandle, handlesOut) as number;
   }
 
@@ -190,13 +190,13 @@ export class ISteamInput {
    * `int GetDigitalActionOrigins(InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle, InputDigitalActionHandle_t digitalActionHandle, EInputActionOrigin *originsOut)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetDigitalActionOrigins`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
-   * @param actionSetHandle `InputActionSetHandle_t`, 64-bit: bigint or number.
-   * @param digitalActionHandle `InputDigitalActionHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param actionSetHandle `InputActionSetHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param digitalActionHandle `InputDigitalActionHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param originsOut Buffer you allocate for `EInputActionOrigin *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetDigitalActionOrigins
    */
-  GetDigitalActionOrigins(inputHandle: bigint | number, actionSetHandle: bigint | number, digitalActionHandle: bigint | number, originsOut: Buffer | null): number {
+  GetDigitalActionOrigins(inputHandle: bigint, actionSetHandle: bigint, digitalActionHandle: bigint, originsOut: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamInput_GetDigitalActionOrigins', 'int32', ['void *', 'uint64', 'uint64', 'uint64', 'void *'])(this.ptr, inputHandle, actionSetHandle, digitalActionHandle, originsOut) as number;
   }
 
@@ -204,10 +204,10 @@ export class ISteamInput {
    * `const char * GetStringForDigitalActionName(InputDigitalActionHandle_t eActionHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetStringForDigitalActionName`
-   * @param eActionHandle `InputDigitalActionHandle_t`, 64-bit: bigint or number.
+   * @param eActionHandle `InputDigitalActionHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetStringForDigitalActionName
    */
-  GetStringForDigitalActionName(eActionHandle: bigint | number): string {
+  GetStringForDigitalActionName(eActionHandle: bigint): string {
     return this.nat.func('SteamAPI_ISteamInput_GetStringForDigitalActionName', 'str', ['void *', 'uint64'])(this.ptr, eActionHandle) as string;
   }
 
@@ -225,13 +225,13 @@ export class ISteamInput {
    * `int GetAnalogActionOrigins(InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle, InputAnalogActionHandle_t analogActionHandle, EInputActionOrigin *originsOut)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetAnalogActionOrigins`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
-   * @param actionSetHandle `InputActionSetHandle_t`, 64-bit: bigint or number.
-   * @param analogActionHandle `InputAnalogActionHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param actionSetHandle `InputActionSetHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param analogActionHandle `InputAnalogActionHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param originsOut Buffer you allocate for `EInputActionOrigin *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetAnalogActionOrigins
    */
-  GetAnalogActionOrigins(inputHandle: bigint | number, actionSetHandle: bigint | number, analogActionHandle: bigint | number, originsOut: Buffer | null): number {
+  GetAnalogActionOrigins(inputHandle: bigint, actionSetHandle: bigint, analogActionHandle: bigint, originsOut: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamInput_GetAnalogActionOrigins', 'int32', ['void *', 'uint64', 'uint64', 'uint64', 'void *'])(this.ptr, inputHandle, actionSetHandle, analogActionHandle, originsOut) as number;
   }
 
@@ -284,10 +284,10 @@ export class ISteamInput {
    * `const char * GetStringForAnalogActionName(InputAnalogActionHandle_t eActionHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetStringForAnalogActionName`
-   * @param eActionHandle `InputAnalogActionHandle_t`, 64-bit: bigint or number.
+   * @param eActionHandle `InputAnalogActionHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetStringForAnalogActionName
    */
-  GetStringForAnalogActionName(eActionHandle: bigint | number): string {
+  GetStringForAnalogActionName(eActionHandle: bigint): string {
     return this.nat.func('SteamAPI_ISteamInput_GetStringForAnalogActionName', 'str', ['void *', 'uint64'])(this.ptr, eActionHandle) as string;
   }
 
@@ -295,11 +295,11 @@ export class ISteamInput {
    * `void StopAnalogActionMomentum(InputHandle_t inputHandle, InputAnalogActionHandle_t eAction)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_StopAnalogActionMomentum`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
-   * @param eAction `InputAnalogActionHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param eAction `InputAnalogActionHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#StopAnalogActionMomentum
    */
-  StopAnalogActionMomentum(inputHandle: bigint | number, eAction: bigint | number): void {
+  StopAnalogActionMomentum(inputHandle: bigint, eAction: bigint): void {
     this.nat.func('SteamAPI_ISteamInput_StopAnalogActionMomentum', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, eAction);
   }
 
@@ -307,10 +307,10 @@ export class ISteamInput {
    * `void TriggerVibration(InputHandle_t inputHandle, unsigned short usLeftSpeed, unsigned short usRightSpeed)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_TriggerVibration`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#TriggerVibration
    */
-  TriggerVibration(inputHandle: bigint | number, usLeftSpeed: number, usRightSpeed: number): void {
+  TriggerVibration(inputHandle: bigint, usLeftSpeed: number, usRightSpeed: number): void {
     this.nat.func('SteamAPI_ISteamInput_TriggerVibration', 'void', ['void *', 'uint64', 'uint16', 'uint16'])(this.ptr, inputHandle, usLeftSpeed, usRightSpeed);
   }
 
@@ -318,10 +318,10 @@ export class ISteamInput {
    * `void TriggerVibrationExtended(InputHandle_t inputHandle, unsigned short usLeftSpeed, unsigned short usRightSpeed, unsigned short usLeftTriggerSpeed, unsigned short usRightTriggerSpeed)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_TriggerVibrationExtended`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#TriggerVibrationExtended
    */
-  TriggerVibrationExtended(inputHandle: bigint | number, usLeftSpeed: number, usRightSpeed: number, usLeftTriggerSpeed: number, usRightTriggerSpeed: number): void {
+  TriggerVibrationExtended(inputHandle: bigint, usLeftSpeed: number, usRightSpeed: number, usLeftTriggerSpeed: number, usRightTriggerSpeed: number): void {
     this.nat.func('SteamAPI_ISteamInput_TriggerVibrationExtended', 'void', ['void *', 'uint64', 'uint16', 'uint16', 'uint16', 'uint16'])(this.ptr, inputHandle, usLeftSpeed, usRightSpeed, usLeftTriggerSpeed, usRightTriggerSpeed);
   }
 
@@ -329,11 +329,11 @@ export class ISteamInput {
    * `void TriggerSimpleHapticEvent(InputHandle_t inputHandle, EControllerHapticLocation eHapticLocation, uint8 nIntensity, char nGainDB, uint8 nOtherIntensity, char nOtherGainDB)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_TriggerSimpleHapticEvent`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eHapticLocation enum `EControllerHapticLocation`; values on `flat.EControllerHapticLocation`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#TriggerSimpleHapticEvent
    */
-  TriggerSimpleHapticEvent(inputHandle: bigint | number, eHapticLocation: number, nIntensity: number, nGainDB: number, nOtherIntensity: number, nOtherGainDB: number): void {
+  TriggerSimpleHapticEvent(inputHandle: bigint, eHapticLocation: number, nIntensity: number, nGainDB: number, nOtherIntensity: number, nOtherGainDB: number): void {
     this.nat.func('SteamAPI_ISteamInput_TriggerSimpleHapticEvent', 'void', ['void *', 'uint64', 'int32', 'uint8', 'int8', 'uint8', 'int8'])(this.ptr, inputHandle, eHapticLocation, nIntensity, nGainDB, nOtherIntensity, nOtherGainDB);
   }
 
@@ -341,10 +341,10 @@ export class ISteamInput {
    * `void SetLEDColor(InputHandle_t inputHandle, uint8 nColorR, uint8 nColorG, uint8 nColorB, unsigned int nFlags)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_SetLEDColor`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#SetLEDColor
    */
-  SetLEDColor(inputHandle: bigint | number, nColorR: number, nColorG: number, nColorB: number, nFlags: number): void {
+  SetLEDColor(inputHandle: bigint, nColorR: number, nColorG: number, nColorB: number, nFlags: number): void {
     this.nat.func('SteamAPI_ISteamInput_SetLEDColor', 'void', ['void *', 'uint64', 'uint8', 'uint8', 'uint8', 'uint32'])(this.ptr, inputHandle, nColorR, nColorG, nColorB, nFlags);
   }
 
@@ -352,11 +352,11 @@ export class ISteamInput {
    * `void Legacy_TriggerHapticPulse(InputHandle_t inputHandle, ESteamControllerPad eTargetPad, unsigned short usDurationMicroSec)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_Legacy_TriggerHapticPulse`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eTargetPad enum `ESteamControllerPad`; values on `flat.ESteamControllerPad`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#Legacy_TriggerHapticPulse
    */
-  Legacy_TriggerHapticPulse(inputHandle: bigint | number, eTargetPad: number, usDurationMicroSec: number): void {
+  Legacy_TriggerHapticPulse(inputHandle: bigint, eTargetPad: number, usDurationMicroSec: number): void {
     this.nat.func('SteamAPI_ISteamInput_Legacy_TriggerHapticPulse', 'void', ['void *', 'uint64', 'int32', 'uint16'])(this.ptr, inputHandle, eTargetPad, usDurationMicroSec);
   }
 
@@ -364,11 +364,11 @@ export class ISteamInput {
    * `void Legacy_TriggerRepeatedHapticPulse(InputHandle_t inputHandle, ESteamControllerPad eTargetPad, unsigned short usDurationMicroSec, unsigned short usOffMicroSec, unsigned short unRepeat, unsigned int nFlags)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_Legacy_TriggerRepeatedHapticPulse`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eTargetPad enum `ESteamControllerPad`; values on `flat.ESteamControllerPad`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#Legacy_TriggerRepeatedHapticPulse
    */
-  Legacy_TriggerRepeatedHapticPulse(inputHandle: bigint | number, eTargetPad: number, usDurationMicroSec: number, usOffMicroSec: number, unRepeat: number, nFlags: number): void {
+  Legacy_TriggerRepeatedHapticPulse(inputHandle: bigint, eTargetPad: number, usDurationMicroSec: number, usOffMicroSec: number, unRepeat: number, nFlags: number): void {
     this.nat.func('SteamAPI_ISteamInput_Legacy_TriggerRepeatedHapticPulse', 'void', ['void *', 'uint64', 'int32', 'uint16', 'uint16', 'uint16', 'uint32'])(this.ptr, inputHandle, eTargetPad, usDurationMicroSec, usOffMicroSec, unRepeat, nFlags);
   }
 
@@ -376,10 +376,10 @@ export class ISteamInput {
    * `bool ShowBindingPanel(InputHandle_t inputHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_ShowBindingPanel`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#ShowBindingPanel
    */
-  ShowBindingPanel(inputHandle: bigint | number): boolean {
+  ShowBindingPanel(inputHandle: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamInput_ShowBindingPanel', 'bool', ['void *', 'uint64'])(this.ptr, inputHandle) as boolean;
   }
 
@@ -387,10 +387,10 @@ export class ISteamInput {
    * `ESteamInputType GetInputTypeForHandle(InputHandle_t inputHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetInputTypeForHandle`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetInputTypeForHandle
    */
-  GetInputTypeForHandle(inputHandle: bigint | number): number {
+  GetInputTypeForHandle(inputHandle: bigint): number {
     return this.nat.func('SteamAPI_ISteamInput_GetInputTypeForHandle', 'int32', ['void *', 'uint64'])(this.ptr, inputHandle) as number;
   }
 
@@ -408,10 +408,10 @@ export class ISteamInput {
    * `int GetGamepadIndexForController(InputHandle_t ulinputHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetGamepadIndexForController`
-   * @param ulinputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param ulinputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetGamepadIndexForController
    */
-  GetGamepadIndexForController(ulinputHandle: bigint | number): number {
+  GetGamepadIndexForController(ulinputHandle: bigint): number {
     return this.nat.func('SteamAPI_ISteamInput_GetGamepadIndexForController', 'int32', ['void *', 'uint64'])(this.ptr, ulinputHandle) as number;
   }
 
@@ -441,11 +441,11 @@ export class ISteamInput {
    * `EInputActionOrigin GetActionOriginFromXboxOrigin(InputHandle_t inputHandle, EXboxOrigin eOrigin)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetActionOriginFromXboxOrigin`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eOrigin enum `EXboxOrigin`; values on `flat.EXboxOrigin`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetActionOriginFromXboxOrigin
    */
-  GetActionOriginFromXboxOrigin(inputHandle: bigint | number, eOrigin: number): number {
+  GetActionOriginFromXboxOrigin(inputHandle: bigint, eOrigin: number): number {
     return this.nat.func('SteamAPI_ISteamInput_GetActionOriginFromXboxOrigin', 'int32', ['void *', 'uint64', 'int32'])(this.ptr, inputHandle, eOrigin) as number;
   }
 
@@ -465,12 +465,12 @@ export class ISteamInput {
    * `bool GetDeviceBindingRevision(InputHandle_t inputHandle, int *pMajor, int *pMinor)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetDeviceBindingRevision`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pMajor Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
    * @param pMinor Buffer you allocate for `int *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetDeviceBindingRevision
    */
-  GetDeviceBindingRevision(inputHandle: bigint | number, pMajor: Buffer | null, pMinor: Buffer | null): boolean {
+  GetDeviceBindingRevision(inputHandle: bigint, pMajor: Buffer | null, pMinor: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamInput_GetDeviceBindingRevision', 'bool', ['void *', 'uint64', 'void *', 'void *'])(this.ptr, inputHandle, pMajor, pMinor) as boolean;
   }
 
@@ -478,10 +478,10 @@ export class ISteamInput {
    * `uint32 GetRemotePlaySessionID(InputHandle_t inputHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetRemotePlaySessionID`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#GetRemotePlaySessionID
    */
-  GetRemotePlaySessionID(inputHandle: bigint | number): number {
+  GetRemotePlaySessionID(inputHandle: bigint): number {
     return this.nat.func('SteamAPI_ISteamInput_GetRemotePlaySessionID', 'uint32', ['void *', 'uint64'])(this.ptr, inputHandle) as number;
   }
 
@@ -499,11 +499,11 @@ export class ISteamInput {
    * `void SetDualSenseTriggerEffect(InputHandle_t inputHandle, const ScePadTriggerEffectParam *pParam)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_SetDualSenseTriggerEffect`
-   * @param inputHandle `InputHandle_t`, 64-bit: bigint or number.
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pParam Buffer you allocate for `const ScePadTriggerEffectParam *`.
    * @see https://partner.steamgames.com/doc/api/ISteamInput#SetDualSenseTriggerEffect
    */
-  SetDualSenseTriggerEffect(inputHandle: bigint | number, pParam: Buffer | null): void {
+  SetDualSenseTriggerEffect(inputHandle: bigint, pParam: Buffer | null): void {
     this.nat.func('SteamAPI_ISteamInput_SetDualSenseTriggerEffect', 'void', ['void *', 'uint64', 'void *'])(this.ptr, inputHandle, pParam);
   }
 }

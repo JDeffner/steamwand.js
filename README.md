@@ -1,4 +1,12 @@
-# steamwand
+<p align="center">
+  <img src="https://raw.githubusercontent.com/JDeffner/steamwand.js/main/assets/banner.png" alt="steamwand">
+</p>
+
+[![npm](https://img.shields.io/npm/v/steamwand.js?logo=npm&logoColor=white&color=cb3837)](https://www.npmjs.com/package/steamwand.js)
+[![CI](https://github.com/JDeffner/steamwand.js/actions/workflows/ci.yml/badge.svg)](https://github.com/JDeffner/steamwand.js/actions/workflows/ci.yml)
+[![node](https://img.shields.io/node/v/steamwand.js?logo=nodedotjs&logoColor=white&color=5FA04E)](https://nodejs.org)
+[![license](https://img.shields.io/npm/l/steamwand.js?color=blue)](LICENSE)
+[![Discord](https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/DfEJ2H9hj4)
 
 TypeScript bindings for the Steamworks SDK with no native build step. The
 binding layer is generated from `steam_api.json`, Valve's own machine-readable

@@ -181,7 +181,8 @@ async function handle(url: string, body: any): Promise<unknown> {
     }
     case '/api/watch': {
       if (!steam) throw new Error('not initialized');
-      const name = String(body.callback);
+      // The UI sends any name the user picked; `on` throws on an unknown one.
+      const name = String(body.callback) as keyof flat.SteamCallbackMap;
       if (watchers.has(name)) return { ok: true, already: true };
       const off = steam.on(name, (data) => addLog('callback', `${name}: ${out(data)}`));
       watchers.set(name, off);

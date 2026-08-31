@@ -82,11 +82,11 @@ export class ISteamTimeline {
    * `void UpdateRangeTimelineEvent(TimelineEventHandle_t ulEvent, const char *pchTitle, const char *pchDescription, const char *pchIcon, uint32 unPriority, ETimelineEventClipPriority ePossibleClip)`
    *
    * Flat symbol: `SteamAPI_ISteamTimeline_UpdateRangeTimelineEvent`
-   * @param ulEvent `TimelineEventHandle_t`, 64-bit: bigint or number.
+   * @param ulEvent `TimelineEventHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param ePossibleClip enum `ETimelineEventClipPriority`; values on `flat.ETimelineEventClipPriority`.
    * @see https://partner.steamgames.com/doc/api/ISteamTimeline#UpdateRangeTimelineEvent
    */
-  UpdateRangeTimelineEvent(ulEvent: bigint | number, pchTitle: string, pchDescription: string, pchIcon: string, unPriority: number, ePossibleClip: number): void {
+  UpdateRangeTimelineEvent(ulEvent: bigint, pchTitle: string, pchDescription: string, pchIcon: string, unPriority: number, ePossibleClip: number): void {
     this.nat.func('SteamAPI_ISteamTimeline_UpdateRangeTimelineEvent', 'void', ['void *', 'uint64', 'str', 'str', 'str', 'uint32', 'int32'])(this.ptr, ulEvent, pchTitle, pchDescription, pchIcon, unPriority, ePossibleClip);
   }
 
@@ -94,10 +94,10 @@ export class ISteamTimeline {
    * `void EndRangeTimelineEvent(TimelineEventHandle_t ulEvent, float flEndOffsetSeconds)`
    *
    * Flat symbol: `SteamAPI_ISteamTimeline_EndRangeTimelineEvent`
-   * @param ulEvent `TimelineEventHandle_t`, 64-bit: bigint or number.
+   * @param ulEvent `TimelineEventHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamTimeline#EndRangeTimelineEvent
    */
-  EndRangeTimelineEvent(ulEvent: bigint | number, flEndOffsetSeconds: number): void {
+  EndRangeTimelineEvent(ulEvent: bigint, flEndOffsetSeconds: number): void {
     this.nat.func('SteamAPI_ISteamTimeline_EndRangeTimelineEvent', 'void', ['void *', 'uint64', 'float'])(this.ptr, ulEvent, flEndOffsetSeconds);
   }
 
@@ -105,10 +105,10 @@ export class ISteamTimeline {
    * `void RemoveTimelineEvent(TimelineEventHandle_t ulEvent)`
    *
    * Flat symbol: `SteamAPI_ISteamTimeline_RemoveTimelineEvent`
-   * @param ulEvent `TimelineEventHandle_t`, 64-bit: bigint or number.
+   * @param ulEvent `TimelineEventHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamTimeline#RemoveTimelineEvent
    */
-  RemoveTimelineEvent(ulEvent: bigint | number): void {
+  RemoveTimelineEvent(ulEvent: bigint): void {
     this.nat.func('SteamAPI_ISteamTimeline_RemoveTimelineEvent', 'void', ['void *', 'uint64'])(this.ptr, ulEvent);
   }
 
@@ -117,10 +117,10 @@ export class ISteamTimeline {
    *
    * Flat symbol: `SteamAPI_ISteamTimeline_DoesEventRecordingExist`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamTimelineEventRecordingExists_t>(handle, layoutOf('SteamTimelineEventRecordingExists_t'))`.
-   * @param ulEvent `TimelineEventHandle_t`, 64-bit: bigint or number.
+   * @param ulEvent `TimelineEventHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamTimeline#DoesEventRecordingExist
    */
-  DoesEventRecordingExist(ulEvent: bigint | number): bigint {
+  DoesEventRecordingExist(ulEvent: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamTimeline_DoesEventRecordingExist', 'uint64', ['void *', 'uint64'])(this.ptr, ulEvent) as number | bigint);
   }
 
@@ -199,10 +199,10 @@ export class ISteamTimeline {
    * `void OpenOverlayToTimelineEvent(const TimelineEventHandle_t ulEvent)`
    *
    * Flat symbol: `SteamAPI_ISteamTimeline_OpenOverlayToTimelineEvent`
-   * @param ulEvent `const TimelineEventHandle_t`, 64-bit: bigint or number.
+   * @param ulEvent `const TimelineEventHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamTimeline#OpenOverlayToTimelineEvent
    */
-  OpenOverlayToTimelineEvent(ulEvent: bigint | number): void {
+  OpenOverlayToTimelineEvent(ulEvent: bigint): void {
     this.nat.func('SteamAPI_ISteamTimeline_OpenOverlayToTimelineEvent', 'void', ['void *', 'uint64'])(this.ptr, ulEvent);
   }
 }

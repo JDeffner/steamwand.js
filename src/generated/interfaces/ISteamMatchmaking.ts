@@ -138,10 +138,10 @@ export class ISteamMatchmaking {
    * `void AddRequestLobbyListCompatibleMembersFilter(CSteamID steamIDLobby)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListCompatibleMembersFilter
    */
-  AddRequestLobbyListCompatibleMembersFilter(steamIDLobby: bigint | number): void {
+  AddRequestLobbyListCompatibleMembersFilter(steamIDLobby: bigint): void {
     this.nat.func('SteamAPI_ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter', 'void', ['void *', 'uint64'])(this.ptr, steamIDLobby);
   }
 
@@ -172,10 +172,10 @@ export class ISteamMatchmaking {
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_JoinLobby`
    * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LobbyEnter_t>(handle, layoutOf('LobbyEnter_t'))`.
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#JoinLobby
    */
-  JoinLobby(steamIDLobby: bigint | number): bigint {
+  JoinLobby(steamIDLobby: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamMatchmaking_JoinLobby', 'uint64', ['void *', 'uint64'])(this.ptr, steamIDLobby) as number | bigint);
   }
 
@@ -183,10 +183,10 @@ export class ISteamMatchmaking {
    * `void LeaveLobby(CSteamID steamIDLobby)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_LeaveLobby`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#LeaveLobby
    */
-  LeaveLobby(steamIDLobby: bigint | number): void {
+  LeaveLobby(steamIDLobby: bigint): void {
     this.nat.func('SteamAPI_ISteamMatchmaking_LeaveLobby', 'void', ['void *', 'uint64'])(this.ptr, steamIDLobby);
   }
 
@@ -194,11 +194,11 @@ export class ISteamMatchmaking {
    * `bool InviteUserToLobby(CSteamID steamIDLobby, CSteamID steamIDInvitee)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_InviteUserToLobby`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
-   * @param steamIDInvitee `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param steamIDInvitee `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#InviteUserToLobby
    */
-  InviteUserToLobby(steamIDLobby: bigint | number, steamIDInvitee: bigint | number): boolean {
+  InviteUserToLobby(steamIDLobby: bigint, steamIDInvitee: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_InviteUserToLobby', 'bool', ['void *', 'uint64', 'uint64'])(this.ptr, steamIDLobby, steamIDInvitee) as boolean;
   }
 
@@ -206,10 +206,10 @@ export class ISteamMatchmaking {
    * `int GetNumLobbyMembers(CSteamID steamIDLobby)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_GetNumLobbyMembers`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetNumLobbyMembers
    */
-  GetNumLobbyMembers(steamIDLobby: bigint | number): number {
+  GetNumLobbyMembers(steamIDLobby: bigint): number {
     return this.nat.func('SteamAPI_ISteamMatchmaking_GetNumLobbyMembers', 'int32', ['void *', 'uint64'])(this.ptr, steamIDLobby) as number;
   }
 
@@ -217,10 +217,10 @@ export class ISteamMatchmaking {
    * `CSteamID GetLobbyMemberByIndex(CSteamID steamIDLobby, int iMember)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_GetLobbyMemberByIndex`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberByIndex
    */
-  GetLobbyMemberByIndex(steamIDLobby: bigint | number, iMember: number): bigint {
+  GetLobbyMemberByIndex(steamIDLobby: bigint, iMember: number): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamMatchmaking_GetLobbyMemberByIndex', 'uint64', ['void *', 'uint64', 'int32'])(this.ptr, steamIDLobby, iMember) as number | bigint);
   }
 
@@ -228,10 +228,10 @@ export class ISteamMatchmaking {
    * `const char * GetLobbyData(CSteamID steamIDLobby, const char *pchKey)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_GetLobbyData`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyData
    */
-  GetLobbyData(steamIDLobby: bigint | number, pchKey: string): string {
+  GetLobbyData(steamIDLobby: bigint, pchKey: string): string {
     return this.nat.func('SteamAPI_ISteamMatchmaking_GetLobbyData', 'str', ['void *', 'uint64', 'str'])(this.ptr, steamIDLobby, pchKey) as string;
   }
 
@@ -239,10 +239,10 @@ export class ISteamMatchmaking {
    * `bool SetLobbyData(CSteamID steamIDLobby, const char *pchKey, const char *pchValue)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_SetLobbyData`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyData
    */
-  SetLobbyData(steamIDLobby: bigint | number, pchKey: string, pchValue: string): boolean {
+  SetLobbyData(steamIDLobby: bigint, pchKey: string, pchValue: string): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_SetLobbyData', 'bool', ['void *', 'uint64', 'str', 'str'])(this.ptr, steamIDLobby, pchKey, pchValue) as boolean;
   }
 
@@ -250,10 +250,10 @@ export class ISteamMatchmaking {
    * `int GetLobbyDataCount(CSteamID steamIDLobby)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_GetLobbyDataCount`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataCount
    */
-  GetLobbyDataCount(steamIDLobby: bigint | number): number {
+  GetLobbyDataCount(steamIDLobby: bigint): number {
     return this.nat.func('SteamAPI_ISteamMatchmaking_GetLobbyDataCount', 'int32', ['void *', 'uint64'])(this.ptr, steamIDLobby) as number;
   }
 
@@ -261,12 +261,12 @@ export class ISteamMatchmaking {
    * `bool GetLobbyDataByIndex(CSteamID steamIDLobby, int iLobbyData, char *pchKey, int cchKeyBufferSize, char *pchValue, int cchValueBufferSize)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_GetLobbyDataByIndex`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pchKey Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @param pchValue Char buffer you allocate and size yourself; read it back with `buf.toString('utf8', 0, buf.indexOf(0))`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataByIndex
    */
-  GetLobbyDataByIndex(steamIDLobby: bigint | number, iLobbyData: number, pchKey: Buffer | null, cchKeyBufferSize: number, pchValue: Buffer | null, cchValueBufferSize: number): boolean {
+  GetLobbyDataByIndex(steamIDLobby: bigint, iLobbyData: number, pchKey: Buffer | null, cchKeyBufferSize: number, pchValue: Buffer | null, cchValueBufferSize: number): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_GetLobbyDataByIndex', 'bool', ['void *', 'uint64', 'int32', 'void *', 'int32', 'void *', 'int32'])(this.ptr, steamIDLobby, iLobbyData, pchKey, cchKeyBufferSize, pchValue, cchValueBufferSize) as boolean;
   }
 
@@ -274,10 +274,10 @@ export class ISteamMatchmaking {
    * `bool DeleteLobbyData(CSteamID steamIDLobby, const char *pchKey)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_DeleteLobbyData`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#DeleteLobbyData
    */
-  DeleteLobbyData(steamIDLobby: bigint | number, pchKey: string): boolean {
+  DeleteLobbyData(steamIDLobby: bigint, pchKey: string): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_DeleteLobbyData', 'bool', ['void *', 'uint64', 'str'])(this.ptr, steamIDLobby, pchKey) as boolean;
   }
 
@@ -285,11 +285,11 @@ export class ISteamMatchmaking {
    * `const char * GetLobbyMemberData(CSteamID steamIDLobby, CSteamID steamIDUser, const char *pchKey)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_GetLobbyMemberData`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
-   * @param steamIDUser `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberData
    */
-  GetLobbyMemberData(steamIDLobby: bigint | number, steamIDUser: bigint | number, pchKey: string): string {
+  GetLobbyMemberData(steamIDLobby: bigint, steamIDUser: bigint, pchKey: string): string {
     return this.nat.func('SteamAPI_ISteamMatchmaking_GetLobbyMemberData', 'str', ['void *', 'uint64', 'uint64', 'str'])(this.ptr, steamIDLobby, steamIDUser, pchKey) as string;
   }
 
@@ -297,10 +297,10 @@ export class ISteamMatchmaking {
    * `void SetLobbyMemberData(CSteamID steamIDLobby, const char *pchKey, const char *pchValue)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_SetLobbyMemberData`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberData
    */
-  SetLobbyMemberData(steamIDLobby: bigint | number, pchKey: string, pchValue: string): void {
+  SetLobbyMemberData(steamIDLobby: bigint, pchKey: string, pchValue: string): void {
     this.nat.func('SteamAPI_ISteamMatchmaking_SetLobbyMemberData', 'void', ['void *', 'uint64', 'str', 'str'])(this.ptr, steamIDLobby, pchKey, pchValue);
   }
 
@@ -308,11 +308,11 @@ export class ISteamMatchmaking {
    * `bool SendLobbyChatMsg(CSteamID steamIDLobby, const void *pvMsgBody, int cubMsgBody)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_SendLobbyChatMsg`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pvMsgBody Buffer you allocate for `const void *`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#SendLobbyChatMsg
    */
-  SendLobbyChatMsg(steamIDLobby: bigint | number, pvMsgBody: Buffer | null, cubMsgBody: number): boolean {
+  SendLobbyChatMsg(steamIDLobby: bigint, pvMsgBody: Buffer | null, cubMsgBody: number): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_SendLobbyChatMsg', 'bool', ['void *', 'uint64', 'void *', 'int32'])(this.ptr, steamIDLobby, pvMsgBody, cubMsgBody) as boolean;
   }
 
@@ -320,13 +320,13 @@ export class ISteamMatchmaking {
    * `int GetLobbyChatEntry(CSteamID steamIDLobby, int iChatID, CSteamID *pSteamIDUser, void *pvData, int cubData, EChatEntryType *peChatEntryType)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_GetLobbyChatEntry`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pSteamIDUser Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
    * @param pvData Buffer you allocate for `void *`.
    * @param peChatEntryType Buffer you allocate for `EChatEntryType *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyChatEntry
    */
-  GetLobbyChatEntry(steamIDLobby: bigint | number, iChatID: number, pSteamIDUser: Buffer | null, pvData: Buffer | null, cubData: number, peChatEntryType: Buffer | null): number {
+  GetLobbyChatEntry(steamIDLobby: bigint, iChatID: number, pSteamIDUser: Buffer | null, pvData: Buffer | null, cubData: number, peChatEntryType: Buffer | null): number {
     return this.nat.func('SteamAPI_ISteamMatchmaking_GetLobbyChatEntry', 'int32', ['void *', 'uint64', 'int32', 'void *', 'void *', 'int32', 'void *'])(this.ptr, steamIDLobby, iChatID, pSteamIDUser, pvData, cubData, peChatEntryType) as number;
   }
 
@@ -334,10 +334,10 @@ export class ISteamMatchmaking {
    * `bool RequestLobbyData(CSteamID steamIDLobby)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_RequestLobbyData`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyData
    */
-  RequestLobbyData(steamIDLobby: bigint | number): boolean {
+  RequestLobbyData(steamIDLobby: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_RequestLobbyData', 'bool', ['void *', 'uint64'])(this.ptr, steamIDLobby) as boolean;
   }
 
@@ -345,11 +345,11 @@ export class ISteamMatchmaking {
    * `void SetLobbyGameServer(CSteamID steamIDLobby, uint32 unGameServerIP, uint16 unGameServerPort, CSteamID steamIDGameServer)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_SetLobbyGameServer`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
-   * @param steamIDGameServer `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param steamIDGameServer `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyGameServer
    */
-  SetLobbyGameServer(steamIDLobby: bigint | number, unGameServerIP: number, unGameServerPort: number, steamIDGameServer: bigint | number): void {
+  SetLobbyGameServer(steamIDLobby: bigint, unGameServerIP: number, unGameServerPort: number, steamIDGameServer: bigint): void {
     this.nat.func('SteamAPI_ISteamMatchmaking_SetLobbyGameServer', 'void', ['void *', 'uint64', 'uint32', 'uint16', 'uint64'])(this.ptr, steamIDLobby, unGameServerIP, unGameServerPort, steamIDGameServer);
   }
 
@@ -357,13 +357,13 @@ export class ISteamMatchmaking {
    * `bool GetLobbyGameServer(CSteamID steamIDLobby, uint32 *punGameServerIP, uint16 *punGameServerPort, CSteamID *psteamIDGameServer)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_GetLobbyGameServer`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param punGameServerIP Buffer you allocate for `uint32 *`: `Buffer.alloc(4)` per element.
    * @param punGameServerPort Buffer you allocate for `uint16 *`: `Buffer.alloc(2)` per element.
    * @param psteamIDGameServer Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyGameServer
    */
-  GetLobbyGameServer(steamIDLobby: bigint | number, punGameServerIP: Buffer | null, punGameServerPort: Buffer | null, psteamIDGameServer: Buffer | null): boolean {
+  GetLobbyGameServer(steamIDLobby: bigint, punGameServerIP: Buffer | null, punGameServerPort: Buffer | null, psteamIDGameServer: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_GetLobbyGameServer', 'bool', ['void *', 'uint64', 'void *', 'void *', 'void *'])(this.ptr, steamIDLobby, punGameServerIP, punGameServerPort, psteamIDGameServer) as boolean;
   }
 
@@ -371,10 +371,10 @@ export class ISteamMatchmaking {
    * `bool SetLobbyMemberLimit(CSteamID steamIDLobby, int cMaxMembers)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_SetLobbyMemberLimit`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberLimit
    */
-  SetLobbyMemberLimit(steamIDLobby: bigint | number, cMaxMembers: number): boolean {
+  SetLobbyMemberLimit(steamIDLobby: bigint, cMaxMembers: number): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_SetLobbyMemberLimit', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, steamIDLobby, cMaxMembers) as boolean;
   }
 
@@ -382,10 +382,10 @@ export class ISteamMatchmaking {
    * `int GetLobbyMemberLimit(CSteamID steamIDLobby)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_GetLobbyMemberLimit`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberLimit
    */
-  GetLobbyMemberLimit(steamIDLobby: bigint | number): number {
+  GetLobbyMemberLimit(steamIDLobby: bigint): number {
     return this.nat.func('SteamAPI_ISteamMatchmaking_GetLobbyMemberLimit', 'int32', ['void *', 'uint64'])(this.ptr, steamIDLobby) as number;
   }
 
@@ -393,11 +393,11 @@ export class ISteamMatchmaking {
    * `bool SetLobbyType(CSteamID steamIDLobby, ELobbyType eLobbyType)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_SetLobbyType`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eLobbyType enum `ELobbyType`; values on `flat.ELobbyType`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyType
    */
-  SetLobbyType(steamIDLobby: bigint | number, eLobbyType: number): boolean {
+  SetLobbyType(steamIDLobby: bigint, eLobbyType: number): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_SetLobbyType', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, steamIDLobby, eLobbyType) as boolean;
   }
 
@@ -405,10 +405,10 @@ export class ISteamMatchmaking {
    * `bool SetLobbyJoinable(CSteamID steamIDLobby, bool bLobbyJoinable)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_SetLobbyJoinable`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyJoinable
    */
-  SetLobbyJoinable(steamIDLobby: bigint | number, bLobbyJoinable: boolean): boolean {
+  SetLobbyJoinable(steamIDLobby: bigint, bLobbyJoinable: boolean): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_SetLobbyJoinable', 'bool', ['void *', 'uint64', 'bool'])(this.ptr, steamIDLobby, bLobbyJoinable) as boolean;
   }
 
@@ -416,10 +416,10 @@ export class ISteamMatchmaking {
    * `CSteamID GetLobbyOwner(CSteamID steamIDLobby)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_GetLobbyOwner`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyOwner
    */
-  GetLobbyOwner(steamIDLobby: bigint | number): bigint {
+  GetLobbyOwner(steamIDLobby: bigint): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamMatchmaking_GetLobbyOwner', 'uint64', ['void *', 'uint64'])(this.ptr, steamIDLobby) as number | bigint);
   }
 
@@ -427,11 +427,11 @@ export class ISteamMatchmaking {
    * `bool SetLobbyOwner(CSteamID steamIDLobby, CSteamID steamIDNewOwner)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_SetLobbyOwner`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
-   * @param steamIDNewOwner `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param steamIDNewOwner `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyOwner
    */
-  SetLobbyOwner(steamIDLobby: bigint | number, steamIDNewOwner: bigint | number): boolean {
+  SetLobbyOwner(steamIDLobby: bigint, steamIDNewOwner: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_SetLobbyOwner', 'bool', ['void *', 'uint64', 'uint64'])(this.ptr, steamIDLobby, steamIDNewOwner) as boolean;
   }
 
@@ -439,11 +439,11 @@ export class ISteamMatchmaking {
    * `bool SetLinkedLobby(CSteamID steamIDLobby, CSteamID steamIDLobbyDependent)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_SetLinkedLobby`
-   * @param steamIDLobby `CSteamID`, 64-bit: bigint or number.
-   * @param steamIDLobbyDependent `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param steamIDLobbyDependent `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLinkedLobby
    */
-  SetLinkedLobby(steamIDLobby: bigint | number, steamIDLobbyDependent: bigint | number): boolean {
+  SetLinkedLobby(steamIDLobby: bigint, steamIDLobbyDependent: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamMatchmaking_SetLinkedLobby', 'bool', ['void *', 'uint64', 'uint64'])(this.ptr, steamIDLobby, steamIDLobbyDependent) as boolean;
   }
 }

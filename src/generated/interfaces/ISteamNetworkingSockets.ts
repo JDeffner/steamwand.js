@@ -95,10 +95,10 @@ export class ISteamNetworkingSockets {
    * `bool SetConnectionUserData(HSteamNetConnection hPeer, int64 nUserData)`
    *
    * Flat symbol: `SteamAPI_ISteamNetworkingSockets_SetConnectionUserData`
-   * @param nUserData `int64`, 64-bit: bigint or number.
+   * @param nUserData `int64`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#SetConnectionUserData
    */
-  SetConnectionUserData(hPeer: number, nUserData: bigint | number): boolean {
+  SetConnectionUserData(hPeer: number, nUserData: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamNetworkingSockets_SetConnectionUserData', 'bool', ['void *', 'uint32', 'int64'])(this.ptr, hPeer, nUserData) as boolean;
   }
 

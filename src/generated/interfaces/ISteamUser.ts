@@ -49,10 +49,10 @@ export class ISteamUser {
    *
    * Flat symbol: `SteamAPI_ISteamUser_InitiateGameConnection_DEPRECATED`
    * @param pAuthBlob Buffer you allocate for `void *`.
-   * @param steamIDGameServer `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDGameServer `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUser#InitiateGameConnection_DEPRECATED
    */
-  InitiateGameConnection_DEPRECATED(pAuthBlob: Buffer | null, cbMaxAuthBlob: number, steamIDGameServer: bigint | number, unIPServer: number, usPortServer: number, bSecure: boolean): number {
+  InitiateGameConnection_DEPRECATED(pAuthBlob: Buffer | null, cbMaxAuthBlob: number, steamIDGameServer: bigint, unIPServer: number, usPortServer: number, bSecure: boolean): number {
     return this.nat.func('SteamAPI_ISteamUser_InitiateGameConnection_DEPRECATED', 'int32', ['void *', 'void *', 'int32', 'uint64', 'uint32', 'uint16', 'bool'])(this.ptr, pAuthBlob, cbMaxAuthBlob, steamIDGameServer, unIPServer, usPortServer, bSecure) as number;
   }
 
@@ -70,10 +70,10 @@ export class ISteamUser {
    * `void TrackAppUsageEvent(CGameID gameID, int eAppUsageEvent, const char *pchExtraInfo)`
    *
    * Flat symbol: `SteamAPI_ISteamUser_TrackAppUsageEvent`
-   * @param gameID `CGameID`, 64-bit: bigint or number.
+   * @param gameID `CGameID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUser#TrackAppUsageEvent
    */
-  TrackAppUsageEvent(gameID: bigint | number, eAppUsageEvent: number, pchExtraInfo: string): void {
+  TrackAppUsageEvent(gameID: bigint, eAppUsageEvent: number, pchExtraInfo: string): void {
     this.nat.func('SteamAPI_ISteamUser_TrackAppUsageEvent', 'void', ['void *', 'uint64', 'int32', 'str'])(this.ptr, gameID, eAppUsageEvent, pchExtraInfo);
   }
 
@@ -185,10 +185,10 @@ export class ISteamUser {
    *
    * Flat symbol: `SteamAPI_ISteamUser_BeginAuthSession`
    * @param pAuthTicket Buffer you allocate for `const void *`.
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUser#BeginAuthSession
    */
-  BeginAuthSession(pAuthTicket: Buffer | null, cbAuthTicket: number, steamID: bigint | number): number {
+  BeginAuthSession(pAuthTicket: Buffer | null, cbAuthTicket: number, steamID: bigint): number {
     return this.nat.func('SteamAPI_ISteamUser_BeginAuthSession', 'int32', ['void *', 'void *', 'int32', 'uint64'])(this.ptr, pAuthTicket, cbAuthTicket, steamID) as number;
   }
 
@@ -196,10 +196,10 @@ export class ISteamUser {
    * `void EndAuthSession(CSteamID steamID)`
    *
    * Flat symbol: `SteamAPI_ISteamUser_EndAuthSession`
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUser#EndAuthSession
    */
-  EndAuthSession(steamID: bigint | number): void {
+  EndAuthSession(steamID: bigint): void {
     this.nat.func('SteamAPI_ISteamUser_EndAuthSession', 'void', ['void *', 'uint64'])(this.ptr, steamID);
   }
 
@@ -217,10 +217,10 @@ export class ISteamUser {
    * `EUserHasLicenseForAppResult UserHasLicenseForApp(CSteamID steamID, AppId_t appID)`
    *
    * Flat symbol: `SteamAPI_ISteamUser_UserHasLicenseForApp`
-   * @param steamID `CSteamID`, 64-bit: bigint or number.
+   * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUser#UserHasLicenseForApp
    */
-  UserHasLicenseForApp(steamID: bigint | number, appID: number): number {
+  UserHasLicenseForApp(steamID: bigint, appID: number): number {
     return this.nat.func('SteamAPI_ISteamUser_UserHasLicenseForApp', 'int32', ['void *', 'uint64', 'uint32'])(this.ptr, steamID, appID) as number;
   }
 
@@ -238,10 +238,10 @@ export class ISteamUser {
    * `void AdvertiseGame(CSteamID steamIDGameServer, uint32 unIPServer, uint16 usPortServer)`
    *
    * Flat symbol: `SteamAPI_ISteamUser_AdvertiseGame`
-   * @param steamIDGameServer `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDGameServer `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUser#AdvertiseGame
    */
-  AdvertiseGame(steamIDGameServer: bigint | number, unIPServer: number, usPortServer: number): void {
+  AdvertiseGame(steamIDGameServer: bigint, unIPServer: number, usPortServer: number): void {
     this.nat.func('SteamAPI_ISteamUser_AdvertiseGame', 'void', ['void *', 'uint64', 'uint32', 'uint16'])(this.ptr, steamIDGameServer, unIPServer, usPortServer);
   }
 

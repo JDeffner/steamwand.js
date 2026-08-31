@@ -29,10 +29,10 @@ export class ISteamHTTP {
    * `bool SetHTTPRequestContextValue(HTTPRequestHandle hRequest, uint64 ulContextValue)`
    *
    * Flat symbol: `SteamAPI_ISteamHTTP_SetHTTPRequestContextValue`
-   * @param ulContextValue `uint64`, 64-bit: bigint or number.
+   * @param ulContextValue `uint64`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamHTTP#SetHTTPRequestContextValue
    */
-  SetHTTPRequestContextValue(hRequest: number, ulContextValue: bigint | number): boolean {
+  SetHTTPRequestContextValue(hRequest: number, ulContextValue: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamHTTP_SetHTTPRequestContextValue', 'bool', ['void *', 'uint32', 'uint64'])(this.ptr, hRequest, ulContextValue) as boolean;
   }
 

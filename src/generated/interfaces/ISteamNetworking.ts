@@ -18,12 +18,12 @@ export class ISteamNetworking {
    * `bool SendP2PPacket(CSteamID steamIDRemote, const void *pubData, uint32 cubData, EP2PSend eP2PSendType, int nChannel)`
    *
    * Flat symbol: `SteamAPI_ISteamNetworking_SendP2PPacket`
-   * @param steamIDRemote `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDRemote `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pubData Buffer you allocate for `const void *`.
    * @param eP2PSendType enum `EP2PSend`; values on `flat.EP2PSend`.
    * @see https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket
    */
-  SendP2PPacket(steamIDRemote: bigint | number, pubData: Buffer | null, cubData: number, eP2PSendType: number, nChannel: number): boolean {
+  SendP2PPacket(steamIDRemote: bigint, pubData: Buffer | null, cubData: number, eP2PSendType: number, nChannel: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_SendP2PPacket', 'bool', ['void *', 'uint64', 'void *', 'uint32', 'int32', 'int32'])(this.ptr, steamIDRemote, pubData, cubData, eP2PSendType, nChannel) as boolean;
   }
 
@@ -55,10 +55,10 @@ export class ISteamNetworking {
    * `bool AcceptP2PSessionWithUser(CSteamID steamIDRemote)`
    *
    * Flat symbol: `SteamAPI_ISteamNetworking_AcceptP2PSessionWithUser`
-   * @param steamIDRemote `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDRemote `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser
    */
-  AcceptP2PSessionWithUser(steamIDRemote: bigint | number): boolean {
+  AcceptP2PSessionWithUser(steamIDRemote: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_AcceptP2PSessionWithUser', 'bool', ['void *', 'uint64'])(this.ptr, steamIDRemote) as boolean;
   }
 
@@ -66,10 +66,10 @@ export class ISteamNetworking {
    * `bool CloseP2PSessionWithUser(CSteamID steamIDRemote)`
    *
    * Flat symbol: `SteamAPI_ISteamNetworking_CloseP2PSessionWithUser`
-   * @param steamIDRemote `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDRemote `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PSessionWithUser
    */
-  CloseP2PSessionWithUser(steamIDRemote: bigint | number): boolean {
+  CloseP2PSessionWithUser(steamIDRemote: bigint): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_CloseP2PSessionWithUser', 'bool', ['void *', 'uint64'])(this.ptr, steamIDRemote) as boolean;
   }
 
@@ -77,10 +77,10 @@ export class ISteamNetworking {
    * `bool CloseP2PChannelWithUser(CSteamID steamIDRemote, int nChannel)`
    *
    * Flat symbol: `SteamAPI_ISteamNetworking_CloseP2PChannelWithUser`
-   * @param steamIDRemote `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDRemote `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser
    */
-  CloseP2PChannelWithUser(steamIDRemote: bigint | number, nChannel: number): boolean {
+  CloseP2PChannelWithUser(steamIDRemote: bigint, nChannel: number): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_CloseP2PChannelWithUser', 'bool', ['void *', 'uint64', 'int32'])(this.ptr, steamIDRemote, nChannel) as boolean;
   }
 
@@ -88,11 +88,11 @@ export class ISteamNetworking {
    * `bool GetP2PSessionState(CSteamID steamIDRemote, P2PSessionState_t *pConnectionState)`
    *
    * Flat symbol: `SteamAPI_ISteamNetworking_GetP2PSessionState`
-   * @param steamIDRemote `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDRemote `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pConnectionState Buffer you allocate for `P2PSessionState_t *`: `Buffer.alloc(layoutOf('P2PSessionState_t').size)`.
    * @see https://partner.steamgames.com/doc/api/ISteamNetworking#GetP2PSessionState
    */
-  GetP2PSessionState(steamIDRemote: bigint | number, pConnectionState: Buffer | null): boolean {
+  GetP2PSessionState(steamIDRemote: bigint, pConnectionState: Buffer | null): boolean {
     return this.nat.func('SteamAPI_ISteamNetworking_GetP2PSessionState', 'bool', ['void *', 'uint64', 'void *'])(this.ptr, steamIDRemote, pConnectionState) as boolean;
   }
 
@@ -110,10 +110,10 @@ export class ISteamNetworking {
    * `SNetSocket_t CreateP2PConnectionSocket(CSteamID steamIDTarget, int nVirtualPort, int nTimeoutSec, bool bAllowUseOfPacketRelay)`
    *
    * Flat symbol: `SteamAPI_ISteamNetworking_CreateP2PConnectionSocket`
-   * @param steamIDTarget `CSteamID`, 64-bit: bigint or number.
+   * @param steamIDTarget `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamNetworking#CreateP2PConnectionSocket
    */
-  CreateP2PConnectionSocket(steamIDTarget: bigint | number, nVirtualPort: number, nTimeoutSec: number, bAllowUseOfPacketRelay: boolean): number {
+  CreateP2PConnectionSocket(steamIDTarget: bigint, nVirtualPort: number, nTimeoutSec: number, bAllowUseOfPacketRelay: boolean): number {
     return this.nat.func('SteamAPI_ISteamNetworking_CreateP2PConnectionSocket', 'uint32', ['void *', 'uint64', 'int32', 'int32', 'bool'])(this.ptr, steamIDTarget, nVirtualPort, nTimeoutSec, bAllowUseOfPacketRelay) as number;
   }
 
