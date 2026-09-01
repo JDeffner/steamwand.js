@@ -39,7 +39,11 @@ must be running. The `steam_api` redistributables ship in the package.
 Full docs are in the [wiki](https://github.com/JDeffner/steamwand.js/wiki):
 [getting started](https://github.com/JDeffner/steamwand.js/wiki/Getting-Started),
 the [core API](https://github.com/JDeffner/steamwand.js/wiki/Core-API), the
-[workshop layer](https://github.com/JDeffner/steamwand.js/wiki/Workshop), the
+curated [workshop](https://github.com/JDeffner/steamwand.js/wiki/Workshop),
+[stats](https://github.com/JDeffner/steamwand.js/wiki/Stats),
+[cloud](https://github.com/JDeffner/steamwand.js/wiki/Cloud),
+[leaderboards](https://github.com/JDeffner/steamwand.js/wiki/Leaderboards), and
+[lobbies](https://github.com/JDeffner/steamwand.js/wiki/Lobbies) layers, the
 [raw flat API](https://github.com/JDeffner/steamwand.js/wiki/Flat-API),
 [recipes](https://github.com/JDeffner/steamwand.js/wiki/Recipes), and
 [troubleshooting](https://github.com/JDeffner/steamwand.js/wiki/Troubleshooting).
