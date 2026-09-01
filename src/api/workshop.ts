@@ -4,6 +4,7 @@ import { decodeStruct } from '../runtime/struct';
 import { stringArray } from '../runtime/types';
 import type { ISteamUGC } from '../generated/interfaces/ISteamUGC';
 import { layoutOf } from '../generated/structs';
+import { callbackIdByName } from '../generated/callbacks';
 import type {
   CreateItemResult_t,
   DeleteItemResult_t,
@@ -12,7 +13,7 @@ import type {
   SubmitItemUpdateResult_t,
 } from '../generated/structs';
 import { EItemStatistic, EResult, EUGCMatchingUGCType, EUserUGCList, EUserUGCListSortOrder, EWorkshopFileType } from '../generated/enums';
-import { SteamResultError } from './errors';
+import { ok, must } from './guards';
 
 /**
  * One workshop item update. Every field is optional; only the fields you set
@@ -156,24 +157,6 @@ export interface UserItemsPage {
 }
 
 /**
- * Throws unless the EResult is OK.
- *
- * @throws SteamResultError if `result` is not `k_EResultOK`.
- */
-function ok(operation: string, result: number): void {
-  if (result !== EResult.k_EResultOK) throw new SteamResultError(operation, result);
-}
-
-/**
- * Throws unless a boolean flat method returned true.
- *
- * @throws Error if `returned` is false, which means an invalid handle or argument.
- */
-function must(operation: string, returned: boolean): void {
-  if (!returned) throw new Error(`steamwand: ${operation} returned false (invalid handle or argument?)`);
-}
-
-/**
  * Task level wrapper over ISteamUGC: create, update, delete, and query
  * workshop items.
  *
@@ -229,7 +212,11 @@ export class Workshop {
     fileType: number = EWorkshopFileType.k_EWorkshopFileTypeCommunity,
   ): Promise<{ fileId: bigint; legalAgreementRequired: boolean }> {
     const call = this.ugc.CreateItem(appId, fileType);
-    const r = await this.dispatch.callResultStruct<CreateItemResult_t>(call, layoutOf('CreateItemResult_t'));
+    const r = await this.dispatch.callResultStruct<CreateItemResult_t>(
+      call,
+      layoutOf('CreateItemResult_t'),
+      callbackIdByName.CreateItemResult_t,
+    );
     ok('CreateItem', r.m_eResult);
     return { fileId: r.m_nPublishedFileId, legalAgreementRequired: r.m_bUserNeedsToAcceptWorkshopLegalAgreement };
   }
@@ -313,6 +300,7 @@ export class Workshop {
       const r = await this.dispatch.callResultStruct<SubmitItemUpdateResult_t>(
         call,
         layoutOf('SubmitItemUpdateResult_t'),
+        callbackIdByName.SubmitItemUpdateResult_t,
       );
       ok('SubmitItemUpdate', r.m_eResult);
       return { legalAgreementRequired: r.m_bUserNeedsToAcceptWorkshopLegalAgreement };
@@ -332,7 +320,11 @@ export class Workshop {
    */
   async deleteItem(fileId: bigint): Promise<void> {
     const call = this.ugc.DeleteItem(fileId);
-    const r = await this.dispatch.callResultStruct<DeleteItemResult_t>(call, layoutOf('DeleteItemResult_t'));
+    const r = await this.dispatch.callResultStruct<DeleteItemResult_t>(
+      call,
+      layoutOf('DeleteItemResult_t'),
+      callbackIdByName.DeleteItemResult_t,
+    );
     ok('DeleteItem', r.m_eResult);
   }
 
@@ -438,6 +430,7 @@ export class Workshop {
       const q = await this.dispatch.callResultStruct<SteamUGCQueryCompleted_t>(
         call,
         layoutOf('SteamUGCQueryCompleted_t'),
+        callbackIdByName.SteamUGCQueryCompleted_t,
       );
       ok('SendQueryUGCRequest', q.m_eResult);
       const items: WorkshopItem[] = [];

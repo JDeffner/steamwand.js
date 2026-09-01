@@ -5,7 +5,8 @@ step. A generator reads `steam_api.json` (Valve's machine-readable description
 of the flat C API) and emits a full TS binding layer; calls go through
 [koffi](https://koffi.dev) FFI at runtime. On top of that sits a small
 handwritten runtime (library loader, callback dispatch pump, struct decoder)
-and one curated ergonomic layer, `workshop`.
+and five curated ergonomic layers: `workshop`, `stats`, `cloud`,
+`leaderboards`, and `lobbies`.
 
 Treat these instructions as good defaults, not hard rules. When the developer
 asks for something that contradicts them, the developer wins.
@@ -41,10 +42,12 @@ repo. The answer is always more generator, more koffi, or a documented skip.
    no stack trace, suspect the binding layer, not the test.
 5. **Running `pnpm test:live` casually.** It talks to the real Steam client
    on appid 480: creates a private workshop item, uploads content, sets a
-   German translation, queries it back, deletes it. It cleans up after
-   itself, but it needs a running, logged-in Steam client and it touches real
-   Valve infrastructure. Run it when the change touches the runtime or the
-   workshop layer, not as a reflex.
+   German translation, queries it back, deletes it, then round-trips the
+   curated stats, cloud, leaderboards, and lobbies layers (one temp cloud
+   file, one private throwaway lobby). It cleans up after itself, but it
+   needs a running, logged-in Steam client and it touches real Valve
+   infrastructure. Run it when the change touches the runtime or a curated
+   layer, not as a reflex.
 
 ## Commands
 
@@ -58,7 +61,7 @@ Everything is pnpm.
 | `pnpm generate` | rebuild `src/generated/` from the SDK | SDK unpacked at `sdk/` (see `sdk/STEAMWAND.md`) |
 | `pnpm smoke` | ~30 read-only checks over 10 interfaces | running Steam client |
 | `pnpm workbench` | web UI over the whole binding, for manual poking | running Steam client |
-| `pnpm test:live` | full workshop round trip on appid 480 | running, logged-in Steam client |
+| `pnpm test:live` | workshop round trip plus curated stats/cloud/leaderboards/lobbies checks on appid 480 | running, logged-in Steam client |
 
 ## Where code lives
 
@@ -68,8 +71,11 @@ Everything is pnpm.
   callback structs from the offset tables. All of it together is about 650
   lines. Keep it that size; complexity belongs in the generator, which runs
   offline, not in the runtime, which runs in someone's game.
-- `src/api/` is the curated layer: `workshop.ts` and its typed errors in
-  `errors.ts`. This is the only place where ergonomics beat fidelity.
+- `src/api/` is the curated layer: `workshop.ts`, `stats.ts`, `cloud.ts`,
+  `leaderboards.ts`, `lobbies.ts`, the shared `ok`/`must` guards in
+  `guards.ts`, and the typed errors in `errors.ts`. This is the only place
+  where ergonomics beat fidelity. `workshop.ts` is the style template the
+  other four were written against.
 - `src/generated/` is generator output only: enums, consts, callback structs,
   offset tables, and one class per interface under `interfaces/`.
 - `scripts/generate.ts` is the generator itself. It hashes `steam_api.json`
@@ -84,7 +90,7 @@ Everything is pnpm.
 Smallest proof that it works. For most changes that is `pnpm typecheck` and
 `pnpm test`. After generator changes, also regenerate and read the diff in
 `src/generated/`; the diff is the review. Reach for `pnpm smoke` when the
-runtime changed, `pnpm test:live` when the workshop layer or dispatch pump
+runtime changed, `pnpm test:live` when a curated layer or the dispatch pump
 changed, and the workbench when you need to poke one call by hand. Do not
 add new smoke checks or live tests to prove a refactor; the existing ones
 already cover the surface.
@@ -97,8 +103,13 @@ already cover the surface.
   `EResult` attached. The generated layer returns whatever Valve returns,
   uninterpreted. Do not blur that line in either direction.
 - New curated wrappers need a reason. The generated layer already exposes all
-  801 functions; a wrapper earns its place by fixing real ergonomics (multi
+  807 functions; a wrapper earns its place by fixing real ergonomics (multi
   step flows, out-buffers, per-language variants), not by renaming one call.
+- The generated layer's out-buffer parameters stay raw `Buffer`s plus the
+  `out` helpers. Emitting value-returning variants for all 221 of them was
+  considered for 0.3 and rejected: it doubles the generated surface and the
+  SDK-bump churn, and the curated layers cover the flows that hurt.
+  Ergonomics wins go into curated layers, one domain at a time.
 - Public docs live in the GitHub wiki and in the generated doc comments
   (each function carries its C signature and a link to Valve's docs). The
   README is the front door; keep it honest about limits, including the list

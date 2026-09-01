@@ -2,6 +2,8 @@
 /* eslint-disable */
 
 import type { SteamNative } from '../../runtime/native';
+import { InputAnalogActionData_tValue, InputDigitalActionData_tValue, InputMotionData_tValue } from '../valuestructs';
+import type { InputAnalogActionData_t, InputDigitalActionData_t, InputMotionData_t } from '../structs';
 
 /**
  * ISteamInput (accessor SteamAPI_SteamInput_v007)
@@ -187,6 +189,18 @@ export class ISteamInput {
   }
 
   /**
+   * `InputDigitalActionData_t GetDigitalActionData(InputHandle_t inputHandle, InputDigitalActionHandle_t digitalActionHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetDigitalActionData`
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param digitalActionHandle `InputDigitalActionHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetDigitalActionData
+   */
+  GetDigitalActionData(inputHandle: bigint, digitalActionHandle: bigint): InputDigitalActionData_t {
+    return this.nat.func('SteamAPI_ISteamInput_GetDigitalActionData', InputDigitalActionData_tValue, ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, digitalActionHandle) as InputDigitalActionData_t;
+  }
+
+  /**
    * `int GetDigitalActionOrigins(InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle, InputDigitalActionHandle_t digitalActionHandle, EInputActionOrigin *originsOut)`
    *
    * Flat symbol: `SteamAPI_ISteamInput_GetDigitalActionOrigins`
@@ -219,6 +233,18 @@ export class ISteamInput {
    */
   GetAnalogActionHandle(pszActionName: string): bigint {
     return BigInt(this.nat.func('SteamAPI_ISteamInput_GetAnalogActionHandle', 'uint64', ['void *', 'str'])(this.ptr, pszActionName) as number | bigint);
+  }
+
+  /**
+   * `InputAnalogActionData_t GetAnalogActionData(InputHandle_t inputHandle, InputAnalogActionHandle_t analogActionHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetAnalogActionData`
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @param analogActionHandle `InputAnalogActionHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetAnalogActionData
+   */
+  GetAnalogActionData(inputHandle: bigint, analogActionHandle: bigint): InputAnalogActionData_t {
+    return this.nat.func('SteamAPI_ISteamInput_GetAnalogActionData', InputAnalogActionData_tValue, ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, analogActionHandle) as InputAnalogActionData_t;
   }
 
   /**
@@ -301,6 +327,17 @@ export class ISteamInput {
    */
   StopAnalogActionMomentum(inputHandle: bigint, eAction: bigint): void {
     this.nat.func('SteamAPI_ISteamInput_StopAnalogActionMomentum', 'void', ['void *', 'uint64', 'uint64'])(this.ptr, inputHandle, eAction);
+  }
+
+  /**
+   * `InputMotionData_t GetMotionData(InputHandle_t inputHandle)`
+   *
+   * Flat symbol: `SteamAPI_ISteamInput_GetMotionData`
+   * @param inputHandle `InputHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
+   * @see https://partner.steamgames.com/doc/api/ISteamInput#GetMotionData
+   */
+  GetMotionData(inputHandle: bigint): InputMotionData_t {
+    return this.nat.func('SteamAPI_ISteamInput_GetMotionData', InputMotionData_tValue, ['void *', 'uint64'])(this.ptr, inputHandle) as InputMotionData_t;
   }
 
   /**

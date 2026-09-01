@@ -7,6 +7,10 @@ import { SteamInterfaces } from './generated/accessors';
 import { SteamAsync } from './generated/async';
 import { SteamInitError } from './api/errors';
 import { Workshop } from './api/workshop';
+import { Stats } from './api/stats';
+import { Cloud } from './api/cloud';
+import { Leaderboards } from './api/leaderboards';
+import { Lobbies } from './api/lobbies';
 
 /**
  * Options for {@link init}.
@@ -34,8 +38,8 @@ export interface InitOptions {
 }
 
 /**
- * A live Steam API session: the interfaces, the workshop helper, and the
- * running dispatch pump.
+ * A live Steam API session: the interfaces, the curated helpers (workshop,
+ * stats, cloud, leaderboards, lobbies), and the running dispatch pump.
  *
  * Build one with {@link init}, and call {@link Steam.close} when you are done.
  * Interfaces are created on first use and cached.
@@ -46,6 +50,10 @@ export class Steam extends SteamInterfaces {
   /** The running manual-dispatch pump. Use it to await raw call handles. */
   readonly dispatch: SteamDispatch;
   private workshopHelper: Workshop | undefined;
+  private statsHelper: Stats | undefined;
+  private cloudHelper: Cloud | undefined;
+  private leaderboardsHelper: Leaderboards | undefined;
+  private lobbiesHelper: Lobbies | undefined;
   private asyncCalls: SteamAsync | undefined;
   private closed = false;
 
@@ -75,6 +83,46 @@ export class Steam extends SteamInterfaces {
   get workshop(): Workshop {
     if (!this.workshopHelper) this.workshopHelper = new Workshop(this.ugc, this.dispatch, this.appId);
     return this.workshopHelper;
+  }
+
+  /**
+   * Task level achievements and stats helper over {@link Steam.userStats}.
+   *
+   * @see Stats
+   */
+  get stats(): Stats {
+    if (!this.statsHelper) this.statsHelper = new Stats(this.userStats, this.dispatch);
+    return this.statsHelper;
+  }
+
+  /**
+   * Task level Steam Cloud helper over {@link Steam.remoteStorage}.
+   *
+   * @see Cloud
+   */
+  get cloud(): Cloud {
+    if (!this.cloudHelper) this.cloudHelper = new Cloud(this.remoteStorage, this.dispatch);
+    return this.cloudHelper;
+  }
+
+  /**
+   * Task level leaderboards helper over {@link Steam.userStats}.
+   *
+   * @see Leaderboards
+   */
+  get leaderboards(): Leaderboards {
+    if (!this.leaderboardsHelper) this.leaderboardsHelper = new Leaderboards(this.userStats, this.dispatch);
+    return this.leaderboardsHelper;
+  }
+
+  /**
+   * Task level lobbies helper over {@link Steam.matchmaking}.
+   *
+   * @see Lobbies
+   */
+  get lobbies(): Lobbies {
+    if (!this.lobbiesHelper) this.lobbiesHelper = new Lobbies(this.matchmaking, this.dispatch, (n, l) => this.on(n, l));
+    return this.lobbiesHelper;
   }
 
   /**
@@ -162,6 +210,9 @@ export class Steam extends SteamInterfaces {
    * Idempotent: a second call does nothing. Calls that are still in flight
    * reject. Do not use this `Steam` or its interfaces after it.
    *
+   * This also releases the one-session-per-process lock, so {@link init} may be
+   * called again afterwards.
+   *
    * @example
    * ```ts
    * import { init } from 'steamwand.js';
@@ -178,21 +229,31 @@ export class Steam extends SteamInterfaces {
   close(): void {
     if (this.closed) return;
     this.closed = true;
+    sessionActive = false;
     this.dispatch.stop();
     this.native.shutdown();
   }
 }
 
 /**
+ * True between a successful {@link init} and the matching {@link Steam.close}.
+ * The Steam API and its dispatch pump are process-global, so a second session
+ * would pump the same queue twice and steal the first one's callbacks.
+ */
+let sessionActive = false;
+
+/**
  * Initialize the Steam API (flat init + manual dispatch) and start the pump.
  * Steam must be running; init errors surface Valve's own diagnostic message.
  *
  * The process is switched to manual dispatch, so never call
- * SteamAPI_RunCallbacks after this. Call once per process, and call
- * {@link Steam.close} when you are done.
+ * SteamAPI_RunCallbacks after this. Only one session may be open at a time:
+ * calling this again before {@link Steam.close} throws. Init after close is
+ * allowed.
  *
  * @param opts - App id, library path, and pump interval.
  * @returns The live session.
+ * @throws Error if a session is already open. Close it first.
  * @throws SteamInitError if `SteamAPI_InitFlat` fails, for example because Steam is not running or the account does not own the app. `initResult` carries the `ESteamAPIInitResult`.
  * @throws Error if the library cannot be loaded from `libPath`.
  * @example
@@ -206,6 +267,9 @@ export class Steam extends SteamInterfaces {
  * @see Steam.close
  */
 export function init(opts: InitOptions = {}): Steam {
+  if (sessionActive) {
+    throw new Error('steamwand: a Steam session is already open (one init per process); call close() on it first');
+  }
   if (opts.appId !== undefined) {
     process.env.SteamAppId = String(opts.appId);
     process.env.SteamGameId = String(opts.appId);
@@ -220,6 +284,7 @@ export function init(opts: InitOptions = {}): Steam {
   native.manualDispatchInit();
   const dispatch = new SteamDispatch(native, native.getHSteamPipe());
   dispatch.start(opts.pumpIntervalMs);
+  sessionActive = true;
   const appId = opts.appId ?? Number(process.env.SteamAppId ?? 0);
   return new Steam(native, dispatch, appId);
 }
@@ -294,5 +359,17 @@ export type {
   WorkshopItemUpdate,
   WorkshopStatistic,
 } from './api/workshop';
+/** Task level achievements and stats helper. Usually reached as `steam.stats`. */
+export { Stats } from './api/stats';
+export type { AchievementDisplay, AchievementState } from './api/stats';
+/** Task level Steam Cloud helper. Usually reached as `steam.cloud`. */
+export { Cloud } from './api/cloud';
+export type { CloudFile, CloudFileInfo, CloudQuota } from './api/cloud';
+/** Task level leaderboards helper. Usually reached as `steam.leaderboards`. */
+export { Leaderboards } from './api/leaderboards';
+export type { DownloadOptions, LeaderboardEntry, LeaderboardInfo, ScoreUploadResult } from './api/leaderboards';
+/** Task level lobbies helper. Usually reached as `steam.lobbies`. */
+export { Lobbies } from './api/lobbies';
+export type { LobbyChatMessage, LobbySearchOptions } from './api/lobbies';
 /** The raw generated flat API: every interface class, enum, const, and layout. */
 export * as flat from './generated';

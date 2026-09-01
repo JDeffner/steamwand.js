@@ -115,12 +115,16 @@ export class SteamNative {
    * bound once per symbol and reused after that.
    *
    * @param name - Exported C symbol, for example `SteamAPI_ISteamUGC_CreateItem`.
-   * @param result - koffi type of the return value.
+   * @param result - koffi type of the return value, by name or as a registered struct type.
    * @param params - koffi types of the parameters, in order.
    * @returns The callable binding. The cached one wins, so the types of a repeat call are ignored.
    * @throws Error if the library does not export `name`.
    */
-  func(name: string, result: string, params: (string | koffi.IKoffiCType)[]): koffi.KoffiFunction {
+  func(
+    name: string,
+    result: string | koffi.IKoffiCType,
+    params: (string | koffi.IKoffiCType)[],
+  ): koffi.KoffiFunction {
     let fn = this.cache.get(name);
     if (!fn) {
       fn = this.lib.func(name, result, params);

@@ -22,7 +22,7 @@ workshop API. steamworks.js is solid but every contribution means Rust,
 napi-rs, and a three-platform build matrix; adding one setter
 (`SetItemUpdateLanguage`) took two forked repos and a patch file. steamwand
 has no native code of its own. One generic FFI dependency, one generated TS
-layer, and the whole flat API surface: 25 interfaces, 801 functions,
+layer, and the whole flat API surface: 25 interfaces, 807 functions,
 191 callback structs with per-platform offset tables.
 
 ## Install
@@ -73,15 +73,30 @@ await steam.workshop.submitUpdate(fileId, {
 
 const item = await steam.workshop.getItem(fileId, { language: 'german' });
 
-// The raw generated layer, when the curated one stops
+// Achievements, stats, cloud saves, leaderboards, lobbies: same treatment
+steam.stats.unlock('ACH_WIN_ONE_GAME');
+await steam.cloud.writeFile('save01.json', JSON.stringify({ level: 3 }));
+const board = await steam.leaderboards.findOrCreate('Fastest Lap', 1, 3);
+await steam.leaderboards.uploadScore(board.handle, 91_240);
+const lobbyId = await steam.lobbies.create(2, 4);
+steam.lobbies.setData(lobbyId, 'map', 'de_dust2');
+
+// The raw generated layer, when the curated ones stop
 const ticket = steam.apps.GetAppOwner();
 steam.on('ItemInstalled_t', (data) => console.log('installed', data));
+const found = await steam.async.userStats.FindLeaderboard('Fastest Lap');
 
 steam.close();
 ```
 
-Async Steam calls come back as promises through Valve's manual dispatch API.
-64-bit values (Steam ids, file ids, handles) are `bigint` everywhere.
+Five curated layers (`workshop`, `stats`, `cloud`, `leaderboards`, `lobbies`)
+cover the flows most games need, with typed errors that carry the `EResult`.
+For everything else, `steam.async` wraps each of the 76 call-result functions
+as a promise, `steam.on` gives typed callbacks by struct name, and the `out`
+helpers make the flat API's out-buffers safe. 64-bit values (Steam ids, file
+ids, handles) are `bigint` everywhere. The dispatch pump checks every async
+result against the callback id the caller expected, so a mixed-up completion
+rejects instead of decoding garbage.
 
 ## What is generated, what is not
 
@@ -96,7 +111,7 @@ zero differences. `test/offsets.test.ts` pins the workshop set so a future
 SDK bump cannot silently shift an offset.
 
 Handwritten and small: the library loader, the dispatch pump, the struct
-decoder, and the ergonomic `workshop` layer.
+decoder, and the five curated layers under `src/api/`.
 
 The SDK itself is not in this repo and must not be committed; Valve's license
 does not allow redistributing the headers or `steam_api.json`. To regenerate,
@@ -111,9 +126,12 @@ normal practice and allowed.
 
 ## Known limits
 
-- 18 of the 819 flat functions are skipped: those taking C function pointers
-  (debug hooks, netsockets status callbacks) or passing structs by value
-  (Steam Input action data). The generator lists every skip when it runs.
+- 12 of the 819 flat functions are skipped: 9 that take C function pointers
+  (debug hooks, netsockets status callbacks) and 3 whose by-value struct the
+  generator cannot prove safe (`SteamIPAddress_t` is a C union,
+  `SteamPartyBeaconLocation_t` packs differently per platform). The Steam
+  Input action-data calls, skipped before 0.3, are bound. The generator lists
+  every remaining skip when it runs.
 - Structs containing C unions (`SteamNetworkingIdentity` and relatives) get
   no layout table, because `steam_api.json` cannot express unions and a
   guessed layout would read garbage. They are excluded loudly, not wrongly.
@@ -124,10 +142,12 @@ normal practice and allowed.
 
 ## Tests
 
-`pnpm test` runs offline (layout regression tests). `pnpm test:live` runs the
-full workshop round trip against the running Steam client on appid 480
-(Spacewar): create a private item, upload content, set a German translation,
-query both languages back, delete the item. It cleans up after itself.
+`pnpm test` runs offline (layout regression tests). `pnpm test:live` runs
+against the running Steam client on appid 480 (Spacewar): the full workshop
+round trip (create a private item, upload content, set a German translation,
+query both languages back, delete the item) plus checks for the stats, cloud,
+leaderboards, and lobbies layers (one temporary cloud file, one private
+throwaway lobby). It cleans up after itself.
 
 ## License
 

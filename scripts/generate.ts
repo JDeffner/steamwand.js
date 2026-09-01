@@ -8,6 +8,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
+import koffi from 'koffi';
 
 // ---------------------------------------------------------------------------
 // steam_api.json shapes (the subset we consume)
@@ -160,6 +161,24 @@ const FORCED_PACK: Record<string, number> = {
 };
 
 /**
+ * Structs allowed to cross the ABI by value, as a koffi struct type rather
+ * than a pointer. Only the `#pragma pack(1)` action-data structs qualify:
+ * their layout is the same on every platform, and every field still lands on
+ * its natural offset, so the register/memory class koffi computes for the
+ * return value is the one the compiler that built steam_api used.
+ *
+ * A struct under the callback pack must never be added. On Linux and macOS
+ * that packing puts a `uint64` at offset 4, and the System V ABI sends an
+ * aggregate with an unaligned field through memory, a rule koffi does not
+ * implement; the call would return garbage with nothing to warn you. That is
+ * why `SteamAPI_ISteamParties_GetBeaconLocationData` stays skipped.
+ * `SteamIPAddress_t` stays skipped for the union reason below.
+ *
+ * `valueStructOf` re-checks both conditions against koffi at generation time.
+ */
+const BY_VALUE_STRUCTS = ['InputDigitalActionData_t', 'InputAnalogActionData_t', 'InputMotionData_t'];
+
+/**
  * Structs containing C unions, which steam_api.json cannot express; a layout
  * computed from its field list would be silently wrong. Excluded, along with
  * every struct that embeds them.
@@ -275,6 +294,89 @@ function computeLayout(s: JStruct, pack: number, stack: string[] = []): GLayout 
 function emitLayout(l: GLayout): string {
   const fields = l.fields.map((f) => `{ name: '${f.name}', offset: ${f.offset}, type: ${f.type} }`).join(', ');
   return `{ size: ${l.size}, fields: [${fields}] }`;
+}
+
+// ---------------------------------------------------------------------------
+// By-value struct types, checked against koffi before anything is emitted.
+
+interface ValueStruct {
+  name: string;
+  size: number;
+  members: { name: string; koffi: string; offset: number }[];
+}
+
+function abort(why: string): never {
+  console.error(`by-value struct check failed: ${why}`);
+  process.exit(1);
+}
+
+/**
+ * Builds the koffi member list for a by-value struct and proves it is safe to
+ * pass through the ABI: the layout must be platform independent, packed, made
+ * only of primitives, and every field must sit on its natural offset. Then the
+ * type koffi actually builds is compared field by field against our own table.
+ */
+function valueStructOf(name: string): ValueStruct {
+  const s = structByName.get(name);
+  if (!s) abort(`${name} is not in steam_api.json`);
+  const win64 = computeLayout(s, 8);
+  const posix = computeLayout(s, 4);
+  if (typeof win64 === 'string') abort(win64);
+  if (typeof posix === 'string') abort(posix);
+  if (JSON.stringify(win64) !== JSON.stringify(posix)) abort(`${name} is not pack(1): its layout differs by platform`);
+  if (win64.align !== 1) abort(`${name} is not pack(1): alignment ${win64.align}`);
+
+  const members = win64.fields.map((f) => {
+    const prim = /^'(\w+)'$/.exec(f.type);
+    if (!prim) abort(`${name}.${f.name}: only primitive fields can cross the ABI by value`);
+    return { name: f.name, koffi: prim[1], offset: f.offset };
+  });
+
+  const type = koffi.pack(Object.fromEntries(members.map((m) => [m.name, m.koffi])));
+  if (koffi.sizeof(type) !== win64.size) abort(`${name}: koffi size ${koffi.sizeof(type)}, ours ${win64.size}`);
+  for (const m of members) {
+    const natural = koffi.alignof(m.koffi);
+    if (m.offset % natural !== 0) {
+      abort(`${name}.${m.name}: offset ${m.offset} is not ${natural}-byte aligned, so its ABI class is not koffi's`);
+    }
+    const got = koffi.offsetof(type, m.name);
+    if (got !== m.offset) abort(`${name}.${m.name}: koffi offset ${got}, ours ${m.offset}`);
+  }
+  return { name, size: win64.size, members };
+}
+
+/** koffi type identifier emitted for a by-value struct, e.g. `InputMotionData_tValue`. */
+function valueTypeName(name: string): string {
+  return `${name}Value`;
+}
+
+function emitValueStructs(structs: ValueStruct[]): string {
+  const out: string[] = [
+    HEADER,
+    `/*`,
+    ` * koffi types for the SDK structs that cross the ABI by value.`,
+    ` *`,
+    ` * These are the #pragma pack(1) action-data structs of the Steam Input API,`,
+    ` * the only Steamworks structs a flat function returns whole instead of`,
+    ` * writing through a pointer. koffi.pack reproduces that packing, so koffi`,
+    ` * hands the call the same registers or hidden pointer the C compiler did.`,
+    ` * The generator checks every size and offset below against its own layout`,
+    ` * table before writing this file.`,
+    ` */`,
+    '',
+    `import koffi from 'koffi';`,
+  ];
+  for (const s of structs) {
+    out.push(
+      '',
+      `/** \`${s.name}\` by value: ${s.size} bytes, pack(1). Decodes to the \`${s.name}\` interface in \`./structs\`. */`,
+      `export const ${valueTypeName(s.name)} = koffi.pack({`,
+      ...s.members.map((m) => `  ${m.name}: '${m.koffi}',`),
+      `});`,
+    );
+  }
+  out.push('');
+  return out.join('\n');
 }
 
 // ---------------------------------------------------------------------------
@@ -504,6 +606,13 @@ function emitCallbacks(cbs: { def: JCallbackStruct; layout: EmittedStruct }[]): 
   }
   out.push(`} as const;`, '');
   out.push(`/**`);
+  out.push(` * The same ids, indexable by a name that is only known at runtime.`);
+  out.push(` *`);
+  out.push(` * Handwritten code pins a call result to its struct with this:`);
+  out.push(` * \`dispatch.callResultStruct(call, layoutOf(n), callbackIdByName[n])\`.`);
+  out.push(` */`);
+  out.push(`export const callbackIdByName: Readonly<Record<string, number>> = callbackId;`, '');
+  out.push(`/**`);
   out.push(` * Every subscribable callback name, mapped to the struct its listener gets.`);
   out.push(` *`);
   out.push(` * \`Steam.on\` is keyed on this, so the callback name is checked at compile time`);
@@ -544,9 +653,15 @@ function mapParam(p: JParam): MappedParam | undefined {
   return { name, koffi: `'${scalar.koffi}'`, ts: scalar.ts };
 }
 
-function mapReturn(t: string): { koffi: string; ts: string; wrap: 'big' | 'str' | 'none' } | undefined {
+function mapReturn(
+  t: string,
+): { koffi: string; ts: string; wrap: 'big' | 'str' | 'none'; struct?: string } | undefined {
   if (t === 'void') return { koffi: `'void'`, ts: 'void', wrap: 'none' };
   if (t === 'const char *') return { koffi: `'str'`, ts: 'string', wrap: 'str' };
+  const byValue = stripConst(t);
+  if (BY_VALUE_STRUCTS.includes(byValue)) {
+    return { koffi: valueTypeName(byValue), ts: byValue, wrap: 'none', struct: byValue };
+  }
   if (OPAQUE_HANDLES.has(t) || t.includes('*') || t.includes('&'))
     return { koffi: `'void *'`, ts: 'unknown', wrap: 'none' };
   const scalar = resolveScalar(t);
@@ -565,6 +680,8 @@ interface AsyncMethod {
   args: string;
   /** Result struct name, e.g. `LeaderboardFindResult_t`. */
   result: string;
+  /** Callback id of the result struct, pinned so a mismatched completion rejects. */
+  resultId: number | undefined;
   /** TSDoc block, indented for a class body. */
   doc: string;
   /** True if a parameter takes a `SteamParamStringArray_t *`. */
@@ -578,6 +695,7 @@ function emitInterface(
   const cls = iface.classname;
   const methods: string[] = [];
   const asyncMethods: AsyncMethod[] = [];
+  const valueStructs = new Set<string>();
   let usesStringArray = false;
 
   for (const m of iface.methods) {
@@ -587,6 +705,7 @@ function emitInterface(
       skippedMethods.push(`${m.methodname_flat} (return ${m.returntype})`);
       continue;
     }
+    if (ret.struct) valueStructs.add(ret.struct);
     const params: MappedParam[] = [];
     let bad: string | undefined;
     for (const p of m.params) {
@@ -619,6 +738,7 @@ function emitInterface(
         sig,
         args: params.map((p) => p.name).join(', '),
         result: m.callresult,
+        resultId: callbackIdByStruct.get(m.callresult),
         doc: asyncMethodDoc(cls, m),
         usesStringArray: params.some((p) => p.koffi === 'SteamParamStringArrayPtr'),
       });
@@ -626,6 +746,11 @@ function emitInterface(
   }
 
   const imports = [`import type { SteamNative } from '../../runtime/native';`];
+  if (valueStructs.size > 0) {
+    const names = [...valueStructs].sort();
+    imports.push(`import { ${names.map(valueTypeName).join(', ')} } from '../valuestructs';`);
+    imports.push(`import type { ${names.join(', ')} } from '../structs';`);
+  }
   if (usesStringArray) {
     imports.push(
       `import { SteamParamStringArrayPtr, type SteamParamStringArrayJs } from '../../runtime/types';`,
@@ -798,6 +923,7 @@ function emitAsync(entries: { cls: string; methods: AsyncMethod[] }[]): string {
         `    return this.dispatch.callResultStruct<${m.result}>(`,
         `      this.iface.${m.short}(${m.args}),`,
         `      layoutOf('${m.result}'),`,
+        ...(m.resultId === undefined ? [] : [`      ${m.resultId},`]),
         `    );`,
         `  }`,
       );
@@ -867,6 +993,9 @@ for (const s of [...api.structs, ...api.callback_structs]) {
 for (const e of emittedStructs) layoutNames.add(e.name);
 fs.writeFileSync(path.join(genDir, 'structs.ts'), emitStructs(emittedStructs));
 
+const valueStructs = BY_VALUE_STRUCTS.map(valueStructOf);
+fs.writeFileSync(path.join(genDir, 'valuestructs.ts'), emitValueStructs(valueStructs));
+
 const cbs: { def: JCallbackStruct; layout: EmittedStruct }[] = [];
 const seenCbIds = new Set<number>();
 for (const def of api.callback_structs) {
@@ -919,7 +1048,8 @@ fs.writeFileSync(path.join(genDir, 'index.ts'), index);
 
 const asyncCount = asyncEntries.reduce((n, e) => n + e.methods.length, 0);
 console.log(
-  `generated: ${emittedIfaces.length} interfaces, ${emittedStructs.length} struct layouts, ${cbs.length} callbacks, ` +
+  `generated: ${emittedIfaces.length} interfaces, ${emittedStructs.length} struct layouts, ` +
+    `${valueStructs.length} by-value struct types, ${cbs.length} callbacks, ` +
     `${asyncCount} async wrappers over ${asyncEntries.length} interfaces`,
 );
 if (layoutFailures.size > 0) {

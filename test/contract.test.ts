@@ -17,9 +17,9 @@ const sumMethods = (names: string[]) =>
   names.reduce((n, k) => n + methodCount((flat as Record<string, unknown>)[k]), 0);
 
 describe('generated API surface', () => {
-  it('exposes 25 interface classes with 801 flat methods', () => {
+  it('exposes 25 interface classes with 807 flat methods', () => {
     expect(ifaceNames.length).toBe(25);
-    expect(sumMethods(ifaceNames)).toBe(801);
+    expect(sumMethods(ifaceNames)).toBe(807);
   });
 
   it('exposes 76 async wrappers across 12 companion classes', () => {

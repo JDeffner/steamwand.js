@@ -98,6 +98,22 @@ describe('call results', () => {
     await expect(result).rejects.toThrow(SteamApiCallError);
   });
 
+  test('a completion with the wrong callback id rejects instead of decoding', async () => {
+    const { nat, dispatch } = makeDispatch();
+    let read = false;
+    nat.manualDispatchGetAPICallResult = () => {
+      read = true;
+      return true;
+    };
+
+    const result = dispatch.callResult(5n, 3401);
+    nat.queue.push({ id: 703, param: completion(5n, 3403, 8) });
+    dispatch.runFrame();
+
+    await expect(result).rejects.toThrow(/3401.*3403/);
+    expect(read).toBe(false);
+  });
+
   test('stop() rejects a call that is still in flight', async () => {
     const { dispatch } = makeDispatch();
     const result = dispatch.callResult(42n);

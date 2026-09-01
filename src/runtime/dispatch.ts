@@ -26,6 +26,8 @@ interface CallbackMsgJs {
 interface PendingCall {
   resolve: (buf: Buffer) => void;
   reject: (err: Error) => void;
+  /** Callback id the caller expects. A completion carrying any other id is rejected. */
+  expectedCallbackId?: number;
 }
 
 /**
@@ -125,17 +127,18 @@ export class SteamDispatch {
    * `bigint`. Pass that handle here to wait for its result struct.
    *
    * @param call - Call handle from a flat method. `0n` means Steam refused the call.
+   * @param expectedCallbackId - Callback id of the result struct you expect. Pass it to reject a completion that carries a different struct instead of decoding it blindly. Omit to accept whatever Steam sends.
    * @returns The result struct bytes. Decode them with {@link decodeStruct}.
-   * @throws SteamApiCallError if the handle is `0n`, if the result cannot be read, or if Steam reports an IO failure.
+   * @throws SteamApiCallError if the handle is `0n`, if the completion carries another callback id, if the result cannot be read, or if Steam reports an IO failure.
    * @throws Error if `stop()` runs while the call is in flight.
    * @see callResultStruct
    */
-  callResult(call: bigint): Promise<Buffer> {
+  callResult(call: bigint, expectedCallbackId?: number): Promise<Buffer> {
     if (call === 0n) {
       return Promise.reject(new SteamApiCallError('Steam returned an invalid API call handle', 0));
     }
     return new Promise((resolve, reject) => {
-      this.pending.set(call, { resolve, reject });
+      this.pending.set(call, { resolve, reject, expectedCallbackId });
       this.updateRef();
     });
   }
@@ -158,6 +161,7 @@ export class SteamDispatch {
    *
    * @param call - Call handle from a flat method.
    * @param layout - Layout of the expected result struct, from `layoutOf(name)`.
+   * @param expectedCallbackId - Callback id of that struct, from `callbackIdByName`. Pass it so a completion carrying another struct rejects instead of being decoded with the wrong layout.
    * @typeParam T - Generated struct interface to type the result as.
    * @returns The decoded result struct. 64-bit fields are `bigint`.
    * @throws SteamApiCallError if the call cannot be completed.
@@ -171,13 +175,14 @@ export class SteamDispatch {
    * const r = await steam.dispatch.callResultStruct<flat.CreateItemResult_t>(
    *   call,
    *   flat.layoutOf('CreateItemResult_t'),
+   *   flat.callbackIdByName.CreateItemResult_t,
    * );
    * console.log(r.m_nPublishedFileId); // bigint
    * ```
    * @see callResult
    */
-  async callResultStruct<T>(call: bigint, layout: StructLayout): Promise<T> {
-    const buf = await this.callResult(call);
+  async callResultStruct<T>(call: bigint, layout: StructLayout, expectedCallbackId?: number): Promise<T> {
+    const buf = await this.callResult(call, expectedCallbackId);
     return decodeStruct<T>(buf, layout);
   }
 
@@ -261,6 +266,16 @@ export class SteamDispatch {
     if (!pending) return; // not ours (or already handled)
     this.pending.delete(call);
     this.updateRef();
+
+    if (pending.expectedCallbackId !== undefined && pending.expectedCallbackId !== callbackId) {
+      pending.reject(
+        new SteamApiCallError(
+          `expected callback id ${pending.expectedCallbackId} for this call, Steam completed it with id ${callbackId}`,
+          pending.expectedCallbackId,
+        ),
+      );
+      return;
+    }
 
     const out = Buffer.alloc(Math.max(size, 1));
     const failed = Buffer.alloc(1);

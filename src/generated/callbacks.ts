@@ -778,6 +778,14 @@ export const callbackId = {
 } as const;
 
 /**
+ * The same ids, indexable by a name that is only known at runtime.
+ *
+ * Handwritten code pins a call result to its struct with this:
+ * `dispatch.callResultStruct(call, layoutOf(n), callbackIdByName[n])`.
+ */
+export const callbackIdByName: Readonly<Record<string, number>> = callbackId;
+
+/**
  * Every subscribable callback name, mapped to the struct its listener gets.
  *
  * `Steam.on` is keyed on this, so the callback name is checked at compile time

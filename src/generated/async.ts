@@ -112,6 +112,7 @@ export class ISteamUserAsync {
     return this.dispatch.callResultStruct<EncryptedAppTicketResponse_t>(
       this.iface.RequestEncryptedAppTicket(pDataToInclude, cbDataToInclude),
       layoutOf('EncryptedAppTicketResponse_t'),
+      154,
     );
   }
 
@@ -125,6 +126,7 @@ export class ISteamUserAsync {
     return this.dispatch.callResultStruct<StoreAuthURLResponse_t>(
       this.iface.RequestStoreAuthURL(pchRedirectURL),
       layoutOf('StoreAuthURLResponse_t'),
+      165,
     );
   }
 
@@ -138,6 +140,7 @@ export class ISteamUserAsync {
     return this.dispatch.callResultStruct<MarketEligibilityResponse_t>(
       this.iface.GetMarketEligibility(),
       layoutOf('MarketEligibilityResponse_t'),
+      166,
     );
   }
 
@@ -151,6 +154,7 @@ export class ISteamUserAsync {
     return this.dispatch.callResultStruct<DurationControl_t>(
       this.iface.GetDurationControl(),
       layoutOf('DurationControl_t'),
+      167,
     );
   }
 }
@@ -181,6 +185,7 @@ export class ISteamFriendsAsync {
     return this.dispatch.callResultStruct<DownloadClanActivityCountsResult_t>(
       this.iface.DownloadClanActivityCounts(psteamIDClans, cClansToRequest),
       layoutOf('DownloadClanActivityCountsResult_t'),
+      341,
     );
   }
 
@@ -194,6 +199,7 @@ export class ISteamFriendsAsync {
     return this.dispatch.callResultStruct<ClanOfficerListResponse_t>(
       this.iface.RequestClanOfficerList(steamIDClan),
       layoutOf('ClanOfficerListResponse_t'),
+      335,
     );
   }
 
@@ -207,6 +213,7 @@ export class ISteamFriendsAsync {
     return this.dispatch.callResultStruct<JoinClanChatRoomCompletionResult_t>(
       this.iface.JoinClanChatRoom(steamIDClan),
       layoutOf('JoinClanChatRoomCompletionResult_t'),
+      342,
     );
   }
 
@@ -220,6 +227,7 @@ export class ISteamFriendsAsync {
     return this.dispatch.callResultStruct<FriendsGetFollowerCount_t>(
       this.iface.GetFollowerCount(steamID),
       layoutOf('FriendsGetFollowerCount_t'),
+      344,
     );
   }
 
@@ -233,6 +241,7 @@ export class ISteamFriendsAsync {
     return this.dispatch.callResultStruct<FriendsIsFollowing_t>(
       this.iface.IsFollowing(steamID),
       layoutOf('FriendsIsFollowing_t'),
+      345,
     );
   }
 
@@ -246,6 +255,7 @@ export class ISteamFriendsAsync {
     return this.dispatch.callResultStruct<FriendsEnumerateFollowingList_t>(
       this.iface.EnumerateFollowingList(unStartIndex),
       layoutOf('FriendsEnumerateFollowingList_t'),
+      346,
     );
   }
 
@@ -259,6 +269,7 @@ export class ISteamFriendsAsync {
     return this.dispatch.callResultStruct<EquippedProfileItems_t>(
       this.iface.RequestEquippedProfileItems(steamID),
       layoutOf('EquippedProfileItems_t'),
+      351,
     );
   }
 }
@@ -289,6 +300,7 @@ export class ISteamUtilsAsync {
     return this.dispatch.callResultStruct<CheckFileSignature_t>(
       this.iface.CheckFileSignature(szFileName),
       layoutOf('CheckFileSignature_t'),
+      705,
     );
   }
 }
@@ -319,6 +331,7 @@ export class ISteamMatchmakingAsync {
     return this.dispatch.callResultStruct<LobbyMatchList_t>(
       this.iface.RequestLobbyList(),
       layoutOf('LobbyMatchList_t'),
+      510,
     );
   }
 
@@ -332,6 +345,7 @@ export class ISteamMatchmakingAsync {
     return this.dispatch.callResultStruct<LobbyCreated_t>(
       this.iface.CreateLobby(eLobbyType, cMaxMembers),
       layoutOf('LobbyCreated_t'),
+      513,
     );
   }
 
@@ -345,6 +359,7 @@ export class ISteamMatchmakingAsync {
     return this.dispatch.callResultStruct<LobbyEnter_t>(
       this.iface.JoinLobby(steamIDLobby),
       layoutOf('LobbyEnter_t'),
+      504,
     );
   }
 }
@@ -375,6 +390,7 @@ export class ISteamPartiesAsync {
     return this.dispatch.callResultStruct<JoinPartyCallback_t>(
       this.iface.JoinParty(ulBeaconID),
       layoutOf('JoinPartyCallback_t'),
+      5301,
     );
   }
 
@@ -388,6 +404,7 @@ export class ISteamPartiesAsync {
     return this.dispatch.callResultStruct<CreateBeaconCallback_t>(
       this.iface.CreateBeacon(unOpenSlots, pBeaconLocation, pchConnectString, pchMetadata),
       layoutOf('CreateBeaconCallback_t'),
+      5302,
     );
   }
 
@@ -401,6 +418,7 @@ export class ISteamPartiesAsync {
     return this.dispatch.callResultStruct<ChangeNumOpenSlotsCallback_t>(
       this.iface.ChangeNumOpenSlots(ulBeacon, unOpenSlots),
       layoutOf('ChangeNumOpenSlotsCallback_t'),
+      5304,
     );
   }
 }
@@ -431,6 +449,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageFileWriteAsyncComplete_t>(
       this.iface.FileWriteAsync(pchFile, pvData, cubData),
       layoutOf('RemoteStorageFileWriteAsyncComplete_t'),
+      1331,
     );
   }
 
@@ -444,6 +463,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageFileReadAsyncComplete_t>(
       this.iface.FileReadAsync(pchFile, nOffset, cubToRead),
       layoutOf('RemoteStorageFileReadAsyncComplete_t'),
+      1332,
     );
   }
 
@@ -457,6 +477,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageFileShareResult_t>(
       this.iface.FileShare(pchFile),
       layoutOf('RemoteStorageFileShareResult_t'),
+      1307,
     );
   }
 
@@ -470,6 +491,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageDownloadUGCResult_t>(
       this.iface.UGCDownload(hContent, unPriority),
       layoutOf('RemoteStorageDownloadUGCResult_t'),
+      1317,
     );
   }
 
@@ -483,6 +505,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStoragePublishFileProgress_t>(
       this.iface.PublishWorkshopFile(pchFile, pchPreviewFile, nConsumerAppId, pchTitle, pchDescription, eVisibility, pTags, eWorkshopFileType),
       layoutOf('RemoteStoragePublishFileProgress_t'),
+      1329,
     );
   }
 
@@ -496,6 +519,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageUpdatePublishedFileResult_t>(
       this.iface.CommitPublishedFileUpdate(updateHandle),
       layoutOf('RemoteStorageUpdatePublishedFileResult_t'),
+      1316,
     );
   }
 
@@ -509,6 +533,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageGetPublishedFileDetailsResult_t>(
       this.iface.GetPublishedFileDetails(unPublishedFileId, unMaxSecondsOld),
       layoutOf('RemoteStorageGetPublishedFileDetailsResult_t'),
+      1318,
     );
   }
 
@@ -522,6 +547,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageDeletePublishedFileResult_t>(
       this.iface.DeletePublishedFile(unPublishedFileId),
       layoutOf('RemoteStorageDeletePublishedFileResult_t'),
+      1311,
     );
   }
 
@@ -535,6 +561,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageEnumerateUserPublishedFilesResult_t>(
       this.iface.EnumerateUserPublishedFiles(unStartIndex),
       layoutOf('RemoteStorageEnumerateUserPublishedFilesResult_t'),
+      1312,
     );
   }
 
@@ -548,6 +575,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageSubscribePublishedFileResult_t>(
       this.iface.SubscribePublishedFile(unPublishedFileId),
       layoutOf('RemoteStorageSubscribePublishedFileResult_t'),
+      1313,
     );
   }
 
@@ -561,6 +589,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageEnumerateUserSubscribedFilesResult_t>(
       this.iface.EnumerateUserSubscribedFiles(unStartIndex),
       layoutOf('RemoteStorageEnumerateUserSubscribedFilesResult_t'),
+      1314,
     );
   }
 
@@ -574,6 +603,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageUnsubscribePublishedFileResult_t>(
       this.iface.UnsubscribePublishedFile(unPublishedFileId),
       layoutOf('RemoteStorageUnsubscribePublishedFileResult_t'),
+      1315,
     );
   }
 
@@ -587,6 +617,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageGetPublishedItemVoteDetailsResult_t>(
       this.iface.GetPublishedItemVoteDetails(unPublishedFileId),
       layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t'),
+      1320,
     );
   }
 
@@ -600,6 +631,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageUpdateUserPublishedItemVoteResult_t>(
       this.iface.UpdateUserPublishedItemVote(unPublishedFileId, bVoteUp),
       layoutOf('RemoteStorageUpdateUserPublishedItemVoteResult_t'),
+      1324,
     );
   }
 
@@ -613,6 +645,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageGetPublishedItemVoteDetailsResult_t>(
       this.iface.GetUserPublishedItemVoteDetails(unPublishedFileId),
       layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t'),
+      1320,
     );
   }
 
@@ -626,6 +659,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageEnumerateUserPublishedFilesResult_t>(
       this.iface.EnumerateUserSharedWorkshopFiles(steamId, unStartIndex, pRequiredTags, pExcludedTags),
       layoutOf('RemoteStorageEnumerateUserPublishedFilesResult_t'),
+      1312,
     );
   }
 
@@ -639,6 +673,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStoragePublishFileProgress_t>(
       this.iface.PublishVideo(eVideoProvider, pchVideoAccount, pchVideoIdentifier, pchPreviewFile, nConsumerAppId, pchTitle, pchDescription, eVisibility, pTags),
       layoutOf('RemoteStoragePublishFileProgress_t'),
+      1329,
     );
   }
 
@@ -652,6 +687,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageSetUserPublishedFileActionResult_t>(
       this.iface.SetUserPublishedFileAction(unPublishedFileId, eAction),
       layoutOf('RemoteStorageSetUserPublishedFileActionResult_t'),
+      1327,
     );
   }
 
@@ -665,6 +701,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageEnumeratePublishedFilesByUserActionResult_t>(
       this.iface.EnumeratePublishedFilesByUserAction(eAction, unStartIndex),
       layoutOf('RemoteStorageEnumeratePublishedFilesByUserActionResult_t'),
+      1328,
     );
   }
 
@@ -678,6 +715,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageEnumerateWorkshopFilesResult_t>(
       this.iface.EnumeratePublishedWorkshopFiles(eEnumerationType, unStartIndex, unCount, unDays, pTags, pUserTags),
       layoutOf('RemoteStorageEnumerateWorkshopFilesResult_t'),
+      1319,
     );
   }
 
@@ -691,6 +729,7 @@ export class ISteamRemoteStorageAsync {
     return this.dispatch.callResultStruct<RemoteStorageDownloadUGCResult_t>(
       this.iface.UGCDownloadToLocation(hContent, pchLocation, unPriority),
       layoutOf('RemoteStorageDownloadUGCResult_t'),
+      1317,
     );
   }
 }
@@ -721,6 +760,7 @@ export class ISteamUserStatsAsync {
     return this.dispatch.callResultStruct<UserStatsReceived_t>(
       this.iface.RequestUserStats(steamIDUser),
       layoutOf('UserStatsReceived_t'),
+      1101,
     );
   }
 
@@ -734,6 +774,7 @@ export class ISteamUserStatsAsync {
     return this.dispatch.callResultStruct<LeaderboardFindResult_t>(
       this.iface.FindOrCreateLeaderboard(pchLeaderboardName, eLeaderboardSortMethod, eLeaderboardDisplayType),
       layoutOf('LeaderboardFindResult_t'),
+      1104,
     );
   }
 
@@ -747,6 +788,7 @@ export class ISteamUserStatsAsync {
     return this.dispatch.callResultStruct<LeaderboardFindResult_t>(
       this.iface.FindLeaderboard(pchLeaderboardName),
       layoutOf('LeaderboardFindResult_t'),
+      1104,
     );
   }
 
@@ -760,6 +802,7 @@ export class ISteamUserStatsAsync {
     return this.dispatch.callResultStruct<LeaderboardScoresDownloaded_t>(
       this.iface.DownloadLeaderboardEntries(hSteamLeaderboard, eLeaderboardDataRequest, nRangeStart, nRangeEnd),
       layoutOf('LeaderboardScoresDownloaded_t'),
+      1105,
     );
   }
 
@@ -773,6 +816,7 @@ export class ISteamUserStatsAsync {
     return this.dispatch.callResultStruct<LeaderboardScoresDownloaded_t>(
       this.iface.DownloadLeaderboardEntriesForUsers(hSteamLeaderboard, prgUsers, cUsers),
       layoutOf('LeaderboardScoresDownloaded_t'),
+      1105,
     );
   }
 
@@ -786,6 +830,7 @@ export class ISteamUserStatsAsync {
     return this.dispatch.callResultStruct<LeaderboardScoreUploaded_t>(
       this.iface.UploadLeaderboardScore(hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, pScoreDetails, cScoreDetailsCount),
       layoutOf('LeaderboardScoreUploaded_t'),
+      1106,
     );
   }
 
@@ -799,6 +844,7 @@ export class ISteamUserStatsAsync {
     return this.dispatch.callResultStruct<LeaderboardUGCSet_t>(
       this.iface.AttachLeaderboardUGC(hSteamLeaderboard, hUGC),
       layoutOf('LeaderboardUGCSet_t'),
+      1111,
     );
   }
 
@@ -812,6 +858,7 @@ export class ISteamUserStatsAsync {
     return this.dispatch.callResultStruct<NumberOfCurrentPlayers_t>(
       this.iface.GetNumberOfCurrentPlayers(),
       layoutOf('NumberOfCurrentPlayers_t'),
+      1107,
     );
   }
 
@@ -825,6 +872,7 @@ export class ISteamUserStatsAsync {
     return this.dispatch.callResultStruct<GlobalAchievementPercentagesReady_t>(
       this.iface.RequestGlobalAchievementPercentages(),
       layoutOf('GlobalAchievementPercentagesReady_t'),
+      1110,
     );
   }
 
@@ -838,6 +886,7 @@ export class ISteamUserStatsAsync {
     return this.dispatch.callResultStruct<GlobalStatsReceived_t>(
       this.iface.RequestGlobalStats(nHistoryDays),
       layoutOf('GlobalStatsReceived_t'),
+      1112,
     );
   }
 }
@@ -868,6 +917,7 @@ export class ISteamAppsAsync {
     return this.dispatch.callResultStruct<FileDetailsResult_t>(
       this.iface.GetFileDetails(pszFileName),
       layoutOf('FileDetailsResult_t'),
+      1023,
     );
   }
 }
@@ -898,6 +948,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<SteamUGCQueryCompleted_t>(
       this.iface.SendQueryUGCRequest(handle),
       layoutOf('SteamUGCQueryCompleted_t'),
+      3401,
     );
   }
 
@@ -911,6 +962,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<SteamUGCRequestUGCDetailsResult_t>(
       this.iface.RequestUGCDetails(nPublishedFileID, unMaxAgeSeconds),
       layoutOf('SteamUGCRequestUGCDetailsResult_t'),
+      3402,
     );
   }
 
@@ -924,6 +976,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<CreateItemResult_t>(
       this.iface.CreateItem(nConsumerAppId, eFileType),
       layoutOf('CreateItemResult_t'),
+      3403,
     );
   }
 
@@ -937,6 +990,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<SubmitItemUpdateResult_t>(
       this.iface.SubmitItemUpdate(handle, pchChangeNote),
       layoutOf('SubmitItemUpdateResult_t'),
+      3404,
     );
   }
 
@@ -950,6 +1004,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<SetUserItemVoteResult_t>(
       this.iface.SetUserItemVote(nPublishedFileID, bVoteUp),
       layoutOf('SetUserItemVoteResult_t'),
+      3408,
     );
   }
 
@@ -963,6 +1018,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<GetUserItemVoteResult_t>(
       this.iface.GetUserItemVote(nPublishedFileID),
       layoutOf('GetUserItemVoteResult_t'),
+      3409,
     );
   }
 
@@ -976,6 +1032,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<UserFavoriteItemsListChanged_t>(
       this.iface.AddItemToFavorites(nAppId, nPublishedFileID),
       layoutOf('UserFavoriteItemsListChanged_t'),
+      3407,
     );
   }
 
@@ -989,6 +1046,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<UserFavoriteItemsListChanged_t>(
       this.iface.RemoveItemFromFavorites(nAppId, nPublishedFileID),
       layoutOf('UserFavoriteItemsListChanged_t'),
+      3407,
     );
   }
 
@@ -1002,6 +1060,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<RemoteStorageSubscribePublishedFileResult_t>(
       this.iface.SubscribeItem(nPublishedFileID),
       layoutOf('RemoteStorageSubscribePublishedFileResult_t'),
+      1313,
     );
   }
 
@@ -1015,6 +1074,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<RemoteStorageUnsubscribePublishedFileResult_t>(
       this.iface.UnsubscribeItem(nPublishedFileID),
       layoutOf('RemoteStorageUnsubscribePublishedFileResult_t'),
+      1315,
     );
   }
 
@@ -1028,6 +1088,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<StartPlaytimeTrackingResult_t>(
       this.iface.StartPlaytimeTracking(pvecPublishedFileID, unNumPublishedFileIDs),
       layoutOf('StartPlaytimeTrackingResult_t'),
+      3410,
     );
   }
 
@@ -1041,6 +1102,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<StopPlaytimeTrackingResult_t>(
       this.iface.StopPlaytimeTracking(pvecPublishedFileID, unNumPublishedFileIDs),
       layoutOf('StopPlaytimeTrackingResult_t'),
+      3411,
     );
   }
 
@@ -1054,6 +1116,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<StopPlaytimeTrackingResult_t>(
       this.iface.StopPlaytimeTrackingForAllItems(),
       layoutOf('StopPlaytimeTrackingResult_t'),
+      3411,
     );
   }
 
@@ -1067,6 +1130,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<AddUGCDependencyResult_t>(
       this.iface.AddDependency(nParentPublishedFileID, nChildPublishedFileID),
       layoutOf('AddUGCDependencyResult_t'),
+      3412,
     );
   }
 
@@ -1080,6 +1144,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<RemoveUGCDependencyResult_t>(
       this.iface.RemoveDependency(nParentPublishedFileID, nChildPublishedFileID),
       layoutOf('RemoveUGCDependencyResult_t'),
+      3413,
     );
   }
 
@@ -1093,6 +1158,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<AddAppDependencyResult_t>(
       this.iface.AddAppDependency(nPublishedFileID, nAppID),
       layoutOf('AddAppDependencyResult_t'),
+      3414,
     );
   }
 
@@ -1106,6 +1172,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<RemoveAppDependencyResult_t>(
       this.iface.RemoveAppDependency(nPublishedFileID, nAppID),
       layoutOf('RemoveAppDependencyResult_t'),
+      3415,
     );
   }
 
@@ -1119,6 +1186,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<GetAppDependenciesResult_t>(
       this.iface.GetAppDependencies(nPublishedFileID),
       layoutOf('GetAppDependenciesResult_t'),
+      3416,
     );
   }
 
@@ -1132,6 +1200,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<DeleteItemResult_t>(
       this.iface.DeleteItem(nPublishedFileID),
       layoutOf('DeleteItemResult_t'),
+      3417,
     );
   }
 
@@ -1145,6 +1214,7 @@ export class ISteamUGCAsync {
     return this.dispatch.callResultStruct<WorkshopEULAStatus_t>(
       this.iface.GetWorkshopEULAStatus(),
       layoutOf('WorkshopEULAStatus_t'),
+      3420,
     );
   }
 }
@@ -1175,6 +1245,7 @@ export class ISteamHTMLSurfaceAsync {
     return this.dispatch.callResultStruct<HTML_BrowserReady_t>(
       this.iface.CreateBrowser(pchUserAgent, pchUserCSS),
       layoutOf('HTML_BrowserReady_t'),
+      4501,
     );
   }
 }
@@ -1205,6 +1276,7 @@ export class ISteamInventoryAsync {
     return this.dispatch.callResultStruct<SteamInventoryEligiblePromoItemDefIDs_t>(
       this.iface.RequestEligiblePromoItemDefinitionsIDs(steamID),
       layoutOf('SteamInventoryEligiblePromoItemDefIDs_t'),
+      4703,
     );
   }
 
@@ -1218,6 +1290,7 @@ export class ISteamInventoryAsync {
     return this.dispatch.callResultStruct<SteamInventoryStartPurchaseResult_t>(
       this.iface.StartPurchase(pArrayItemDefs, punArrayQuantity, unArrayLength),
       layoutOf('SteamInventoryStartPurchaseResult_t'),
+      4704,
     );
   }
 
@@ -1231,6 +1304,7 @@ export class ISteamInventoryAsync {
     return this.dispatch.callResultStruct<SteamInventoryRequestPricesResult_t>(
       this.iface.RequestPrices(),
       layoutOf('SteamInventoryRequestPricesResult_t'),
+      4705,
     );
   }
 }
@@ -1261,6 +1335,7 @@ export class ISteamTimelineAsync {
     return this.dispatch.callResultStruct<SteamTimelineEventRecordingExists_t>(
       this.iface.DoesEventRecordingExist(ulEvent),
       layoutOf('SteamTimelineEventRecordingExists_t'),
+      6002,
     );
   }
 
@@ -1274,6 +1349,7 @@ export class ISteamTimelineAsync {
     return this.dispatch.callResultStruct<SteamTimelineGamePhaseRecordingExists_t>(
       this.iface.DoesGamePhaseRecordingExist(pchPhaseID),
       layoutOf('SteamTimelineGamePhaseRecordingExists_t'),
+      6001,
     );
   }
 }
