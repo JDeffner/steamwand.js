@@ -77,6 +77,19 @@ await steam.workshop.submitUpdate(fileId, {
 
 const item = await steam.workshop.getItem(fileId, { language: 'german' });
 
+// Workshop item wiring: required DLC, collection children, extra previews,
+// metadata and key/value tags, plus the running app's DLC list
+await steam.workshop.addAppDependency(fileId, 1_234_567);
+await steam.workshop.addDependency(9_876_543_210n, fileId); // collection, child
+await steam.workshop.submitUpdate(fileId, {
+  metadata: JSON.stringify({ buildId: 42 }),
+  keyValueTags: { engineVersion: '1.14' },
+  previewImages: ['C:/mods/my-mod/screenshot.png'],
+  previewVideos: ['dQw4w9WgXcQ'],
+});
+const full = await steam.workshop.getItem(fileId, { children: true, additionalPreviews: true });
+const dlc = steam.dlc.listDlc();
+
 // Achievements, stats, cloud saves, leaderboards, lobbies: same treatment
 steam.stats.unlock('ACH_WIN_ONE_GAME');
 await steam.cloud.writeFile('save01.json', JSON.stringify({ level: 3 }));
@@ -93,8 +106,8 @@ const found = await steam.async.userStats.FindLeaderboard('Fastest Lap');
 steam.close();
 ```
 
-Five curated layers (`workshop`, `stats`, `cloud`, `leaderboards`, `lobbies`)
-cover the flows most games need, with typed errors that carry the `EResult`.
+Six curated layers (`workshop`, `stats`, `cloud`, `leaderboards`, `lobbies`,
+`dlc`) cover the flows most games need, with typed errors that carry the `EResult`.
 For everything else, `steam.async` wraps each of the 76 call-result functions
 as a promise, `steam.on` gives typed callbacks by struct name, and the `out`
 helpers make the flat API's out-buffers safe. 64-bit values (Steam ids, file
@@ -115,7 +128,7 @@ zero differences. `test/offsets.test.ts` pins the workshop set so a future
 SDK bump cannot silently shift an offset.
 
 Handwritten and small: the library loader, the dispatch pump, the struct
-decoder, and the five curated layers under `src/api/`.
+decoder, and the six curated layers under `src/api/`.
 
 The SDK itself is not in this repo and must not be committed; Valve's license
 does not allow redistributing the headers or `steam_api.json`. To regenerate,

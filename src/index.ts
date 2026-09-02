@@ -11,6 +11,7 @@ import { Stats } from './api/stats';
 import { Cloud } from './api/cloud';
 import { Leaderboards } from './api/leaderboards';
 import { Lobbies } from './api/lobbies';
+import { Apps } from './api/apps';
 
 /**
  * Options for {@link init}.
@@ -39,7 +40,7 @@ export interface InitOptions {
 
 /**
  * A live Steam API session: the interfaces, the curated helpers (workshop,
- * stats, cloud, leaderboards, lobbies), and the running dispatch pump.
+ * stats, cloud, leaderboards, lobbies, dlc), and the running dispatch pump.
  *
  * Build one with {@link init}, and call {@link Steam.close} when you are done.
  * Interfaces are created on first use and cached.
@@ -54,6 +55,7 @@ export class Steam extends SteamInterfaces {
   private cloudHelper: Cloud | undefined;
   private leaderboardsHelper: Leaderboards | undefined;
   private lobbiesHelper: Lobbies | undefined;
+  private appsHelper: Apps | undefined;
   private asyncCalls: SteamAsync | undefined;
   private closed = false;
 
@@ -123,6 +125,17 @@ export class Steam extends SteamInterfaces {
   get lobbies(): Lobbies {
     if (!this.lobbiesHelper) this.lobbiesHelper = new Lobbies(this.matchmaking, this.dispatch, (n, l) => this.on(n, l));
     return this.lobbiesHelper;
+  }
+
+  /**
+   * Task level DLC helper over {@link Steam.apps}. Named `dlc` because the
+   * generated ISteamApps accessor already owns `apps`.
+   *
+   * @see Apps
+   */
+  get dlc(): Apps {
+    if (!this.appsHelper) this.appsHelper = new Apps(this.apps);
+    return this.appsHelper;
   }
 
   /**
@@ -352,6 +365,7 @@ export { SteamInitError, SteamResultError, eResultName } from './api/errors';
 /** Task level workshop helper. Usually reached as `steam.workshop`. */
 export { Workshop } from './api/workshop';
 export type {
+  AdditionalPreview,
   QueryOptions,
   UpdateProgress,
   UserItemsPage,
@@ -371,5 +385,8 @@ export type { DownloadOptions, LeaderboardEntry, LeaderboardInfo, ScoreUploadRes
 /** Task level lobbies helper. Usually reached as `steam.lobbies`. */
 export { Lobbies } from './api/lobbies';
 export type { LobbyChatMessage, LobbySearchOptions } from './api/lobbies';
+/** Task level DLC helper. Usually reached as `steam.dlc`. */
+export { Apps } from './api/apps';
+export type { DlcInfo } from './api/apps';
 /** The raw generated flat API: every interface class, enum, const, and layout. */
 export * as flat from './generated';

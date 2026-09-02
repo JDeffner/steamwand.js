@@ -73,6 +73,23 @@ describe.skipIf(!live)('workshop round trip (Spacewar, live)', () => {
     expect(german!.title).toBe('steamwand Wegwerfartikel');
   }, 60_000);
 
+  test('metadata + key/value tag round trip', async () => {
+    await steam.workshop.submitUpdate(fileId!, {
+      metadata: 'steamwand-live-metadata',
+      keyValueTags: { steamwand: 'live' },
+    });
+    // The curated query does not expose metadata or key/value tags, so the
+    // proof here is that Steam accepted the update and the item still reads back.
+    const item = await steam.workshop.getItem(fileId!, { children: true, additionalPreviews: true });
+    expect(item).not.toBeNull();
+    expect(item!.children).toEqual([]);
+    expect(item!.additionalPreviews).toEqual([]);
+  }, 120_000);
+
+  test('dlc list of the running app', () => {
+    expect(Array.isArray(steam.dlc.listDlc())).toBe(true);
+  });
+
   test('user items list contains the throwaway', async () => {
     const page = await steam.workshop.getUserItems(1, steam.accountId());
     expect(page.items.map((i) => i.fileId)).toContain(fileId!);

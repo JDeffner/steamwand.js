@@ -2,17 +2,23 @@ import * as fs from 'node:fs';
 import type { SteamDispatch } from '../runtime/dispatch';
 import { decodeStruct } from '../runtime/struct';
 import { stringArray } from '../runtime/types';
+import { out } from '../runtime/out';
 import type { ISteamUGC } from '../generated/interfaces/ISteamUGC';
 import { layoutOf } from '../generated/structs';
 import { callbackIdByName } from '../generated/callbacks';
 import type {
+  AddAppDependencyResult_t,
+  AddUGCDependencyResult_t,
   CreateItemResult_t,
   DeleteItemResult_t,
+  GetAppDependenciesResult_t,
+  RemoveAppDependencyResult_t,
+  RemoveUGCDependencyResult_t,
   SteamUGCDetails_t,
   SteamUGCQueryCompleted_t,
   SubmitItemUpdateResult_t,
 } from '../generated/structs';
-import { EItemStatistic, EResult, EUGCMatchingUGCType, EUserUGCList, EUserUGCListSortOrder, EWorkshopFileType } from '../generated/enums';
+import { EItemPreviewType, EItemStatistic, EResult, EUGCMatchingUGCType, EUserUGCList, EUserUGCListSortOrder, EWorkshopFileType } from '../generated/enums';
 import { ok, must } from './guards';
 
 /**
@@ -38,6 +44,16 @@ export interface WorkshopItemUpdate {
   tags?: string[];
   /** ERemoteStoragePublishedFileVisibility (0 public, 1 friends-only, 2 private, 3 unlisted). */
   visibility?: number;
+  /** Free-form developer metadata, max 5000 UTF-8 bytes. Only the item owner reads it back. */
+  metadata?: string;
+  /** Key/value tags to set. Every key is cleared first, so one call replaces that key's values. */
+  keyValueTags?: Record<string, string>;
+  /** Absolute paths of extra preview images to add. Max 1 MB each, PNG or JPG. */
+  previewImages?: string[];
+  /** YouTube video ids to add as extra previews. */
+  previewVideos?: string[];
+  /** Indexes of existing additional previews to remove. Applied before the adds. */
+  removePreviewIndexes?: number[];
 }
 
 /**
@@ -112,6 +128,29 @@ export interface WorkshopItem {
   previewUrl: string | null;
   /** Counters Steam returned for this item. A key is absent if Steam did not return it. */
   statistics: Partial<Record<WorkshopStatistic, bigint>>;
+  /** Child items of a collection. Empty unless the query set `children`. 64-bit, so `bigint`s. */
+  children: bigint[];
+  /** Extra previews beyond the main image. Empty unless the query set `additionalPreviews`. */
+  additionalPreviews: AdditionalPreview[];
+}
+
+/**
+ * One extra preview of an item, beyond the main preview image.
+ *
+ * @see WorkshopItem.additionalPreviews
+ */
+export interface AdditionalPreview {
+  /** EItemPreviewType (0 image, 1 YouTube video, 2 Sketchfab, ...). */
+  type: number;
+  /** Image URL, or the YouTube video id for a video preview. */
+  urlOrVideoId: string;
+  /** File name the preview was uploaded under. Empty for videos. */
+  originalFileName: string;
+}
+
+/** Reads a NUL-terminated string out of a buffer a flat call wrote into. */
+function cstr(buf: Buffer): string {
+  return buf.toString('utf8', 0, Math.max(buf.indexOf(0), 0));
 }
 
 const STATISTICS: Record<string, number> = {
@@ -142,6 +181,10 @@ export interface QueryOptions {
   language?: string;
   /** Return the full description instead of the truncated one. */
   longDescription?: boolean;
+  /** Return the child items of a collection, in `WorkshopItem.children`. */
+  children?: boolean;
+  /** Return the extra previews, in `WorkshopItem.additionalPreviews`. */
+  additionalPreviews?: boolean;
 }
 
 /**
@@ -267,6 +310,8 @@ export class Workshop {
       throw new Error(`steamwand: content folder does not exist: ${update.contentPath}`);
     if (update.previewPath !== undefined && !fs.existsSync(update.previewPath))
       throw new Error(`steamwand: preview image does not exist: ${update.previewPath}`);
+    for (const p of update.previewImages ?? [])
+      if (!fs.existsSync(p)) throw new Error(`steamwand: preview image does not exist: ${p}`);
 
     const h = this.ugc.StartItemUpdate(appId, fileId);
     if (update.language !== undefined) must('SetItemUpdateLanguage', this.ugc.SetItemUpdateLanguage(h, update.language));
@@ -276,6 +321,18 @@ export class Workshop {
     if (update.previewPath !== undefined) must('SetItemPreview', this.ugc.SetItemPreview(h, update.previewPath));
     if (update.visibility !== undefined) must('SetItemVisibility', this.ugc.SetItemVisibility(h, update.visibility));
     if (update.tags !== undefined) must('SetItemTags', this.ugc.SetItemTags(h, stringArray(update.tags), false));
+    if (update.metadata !== undefined) must('SetItemMetadata', this.ugc.SetItemMetadata(h, update.metadata));
+    for (const [key, value] of Object.entries(update.keyValueTags ?? {})) {
+      must('RemoveItemKeyValueTags', this.ugc.RemoveItemKeyValueTags(h, key));
+      must('AddItemKeyValueTag', this.ugc.AddItemKeyValueTag(h, key, value));
+    }
+    // Descending, so removing one preview does not shift the indexes still to remove.
+    for (const index of [...(update.removePreviewIndexes ?? [])].sort((a, b) => b - a))
+      must('RemoveItemPreview', this.ugc.RemoveItemPreview(h, index));
+    for (const p of update.previewImages ?? [])
+      must('AddItemPreviewFile', this.ugc.AddItemPreviewFile(h, p, EItemPreviewType.k_EItemPreviewType_Image));
+    for (const videoId of update.previewVideos ?? [])
+      must('AddItemPreviewVideo', this.ugc.AddItemPreviewVideo(h, videoId));
 
     // NULL change note = "no change note"; koffi passes null for 'str' fine.
     const note = update.changeNote ?? (null as unknown as string);
@@ -326,6 +383,111 @@ export class Workshop {
       callbackIdByName.DeleteItemResult_t,
     );
     ok('DeleteItem', r.m_eResult);
+  }
+
+  /**
+   * Marks an app (usually a DLC) as required by an item.
+   *
+   * Steam shows it as a required DLC on the item page. Only the item owner can
+   * do this.
+   *
+   * @param fileId - Item to change. 64-bit, so a `bigint`.
+   * @param appId - App id of the required app.
+   * @throws SteamResultError if Steam refused the call, for example with `k_EResultAccessDenied`.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see removeAppDependency
+   * @see getAppDependencies
+   */
+  async addAppDependency(fileId: bigint, appId: number): Promise<void> {
+    const call = this.ugc.AddAppDependency(fileId, appId);
+    const r = await this.dispatch.callResultStruct<AddAppDependencyResult_t>(
+      call,
+      layoutOf('AddAppDependencyResult_t'),
+      callbackIdByName.AddAppDependencyResult_t,
+    );
+    ok('AddAppDependency', r.m_eResult);
+  }
+
+  /**
+   * Drops an app requirement added with `addAppDependency`.
+   *
+   * @param fileId - Item to change. 64-bit, so a `bigint`.
+   * @param appId - App id to remove.
+   * @throws SteamResultError if Steam refused the call.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see addAppDependency
+   */
+  async removeAppDependency(fileId: bigint, appId: number): Promise<void> {
+    const call = this.ugc.RemoveAppDependency(fileId, appId);
+    const r = await this.dispatch.callResultStruct<RemoveAppDependencyResult_t>(
+      call,
+      layoutOf('RemoveAppDependencyResult_t'),
+      callbackIdByName.RemoveAppDependencyResult_t,
+    );
+    ok('RemoveAppDependency', r.m_eResult);
+  }
+
+  /**
+   * Lists the apps an item requires.
+   *
+   * Steam returns at most 32 app ids per call, so a longer list comes back
+   * truncated.
+   *
+   * @param fileId - Item to read. 64-bit, so a `bigint`.
+   * @returns The required app ids, in Steam's order.
+   * @throws SteamResultError if Steam refused the call.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see addAppDependency
+   */
+  async getAppDependencies(fileId: bigint): Promise<number[]> {
+    const call = this.ugc.GetAppDependencies(fileId);
+    const r = await this.dispatch.callResultStruct<GetAppDependenciesResult_t>(
+      call,
+      layoutOf('GetAppDependenciesResult_t'),
+      callbackIdByName.GetAppDependenciesResult_t,
+    );
+    ok('GetAppDependencies', r.m_eResult);
+    const appIds: number[] = [];
+    for (let i = 0; i < r.m_nNumAppDependencies; i++) appIds.push(r.m_rgAppIDs.readUInt32LE(i * 4));
+    return appIds;
+  }
+
+  /**
+   * Adds a child item to a collection, or a required item to an item.
+   *
+   * @param parentId - Collection or parent item. 64-bit, so a `bigint`.
+   * @param childId - Item to add. 64-bit, so a `bigint`.
+   * @throws SteamResultError if Steam refused the call, for example with `k_EResultAccessDenied`.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see removeDependency
+   */
+  async addDependency(parentId: bigint, childId: bigint): Promise<void> {
+    const call = this.ugc.AddDependency(parentId, childId);
+    const r = await this.dispatch.callResultStruct<AddUGCDependencyResult_t>(
+      call,
+      layoutOf('AddUGCDependencyResult_t'),
+      callbackIdByName.AddUGCDependencyResult_t,
+    );
+    ok('AddDependency', r.m_eResult);
+  }
+
+  /**
+   * Removes a child item added with `addDependency`.
+   *
+   * @param parentId - Collection or parent item. 64-bit, so a `bigint`.
+   * @param childId - Item to remove. 64-bit, so a `bigint`.
+   * @throws SteamResultError if Steam refused the call.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see addDependency
+   */
+  async removeDependency(parentId: bigint, childId: bigint): Promise<void> {
+    const call = this.ugc.RemoveDependency(parentId, childId);
+    const r = await this.dispatch.callResultStruct<RemoveUGCDependencyResult_t>(
+      call,
+      layoutOf('RemoveUGCDependencyResult_t'),
+      callbackIdByName.RemoveUGCDependencyResult_t,
+    );
+    ok('RemoveDependency', r.m_eResult);
   }
 
   /**
@@ -425,6 +587,9 @@ export class Workshop {
   private async runQuery(handle: bigint, opts: QueryOptions): Promise<UserItemsPage> {
     if (opts.language !== undefined) must('SetLanguage', this.ugc.SetLanguage(handle, opts.language));
     if (opts.longDescription) must('SetReturnLongDescription', this.ugc.SetReturnLongDescription(handle, true));
+    if (opts.children) must('SetReturnChildren', this.ugc.SetReturnChildren(handle, true));
+    if (opts.additionalPreviews)
+      must('SetReturnAdditionalPreviews', this.ugc.SetReturnAdditionalPreviews(handle, true));
     try {
       const call = this.ugc.SendQueryUGCRequest(handle);
       const q = await this.dispatch.callResultStruct<SteamUGCQueryCompleted_t>(
@@ -462,7 +627,7 @@ export class Workshop {
   private toItem(handle: bigint, index: number, d: SteamUGCDetails_t): WorkshopItem {
     const urlBuf = Buffer.alloc(256);
     const previewUrl = this.ugc.GetQueryUGCPreviewURL(handle, index, urlBuf, 256)
-      ? urlBuf.toString('utf8', 0, Math.max(urlBuf.indexOf(0), 0)) || null
+      ? cstr(urlBuf) || null
       : null;
     const statistics: Partial<Record<WorkshopStatistic, bigint>> = {};
     const statBuf = Buffer.alloc(8);
@@ -470,6 +635,28 @@ export class Workshop {
       if (this.ugc.GetQueryUGCStatistic(handle, index, stat, statBuf)) {
         statistics[key as WorkshopStatistic] = statBuf.readBigUInt64LE(0);
       }
+    }
+    // Both calls come back empty unless the query asked for them, which is
+    // exactly the documented "option off" behaviour.
+    const children: bigint[] = [];
+    if (d.m_unNumChildren > 0) {
+      const childBuf = Buffer.alloc(d.m_unNumChildren * 8);
+      if (this.ugc.GetQueryUGCChildren(handle, index, childBuf, d.m_unNumChildren)) {
+        for (let i = 0; i < d.m_unNumChildren; i++) children.push(childBuf.readBigUInt64LE(i * 8));
+      }
+    }
+    const additionalPreviews: AdditionalPreview[] = [];
+    const numPreviews = this.ugc.GetQueryUGCNumAdditionalPreviews(handle, index);
+    for (let i = 0; i < numPreviews; i++) {
+      const urlBuf2 = Buffer.alloc(256);
+      const nameBuf = Buffer.alloc(260);
+      const typeBuf = out.int32();
+      if (!this.ugc.GetQueryUGCAdditionalPreview(handle, index, i, urlBuf2, 256, nameBuf, 260, typeBuf.buffer)) continue;
+      additionalPreviews.push({
+        type: typeBuf.value,
+        urlOrVideoId: cstr(urlBuf2),
+        originalFileName: cstr(nameBuf),
+      });
     }
     return {
       fileId: d.m_nPublishedFileId,
@@ -497,6 +684,8 @@ export class Workshop {
       totalFilesSize: d.m_ulTotalFilesSize,
       previewUrl,
       statistics,
+      children,
+      additionalPreviews,
     };
   }
 }
