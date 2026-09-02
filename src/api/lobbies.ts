@@ -296,7 +296,9 @@ export class Lobbies {
    * Reads every lobby data key and value.
    *
    * @param lobbyId - Lobby to read. 64-bit, so a `bigint`.
-   * @returns Key to value. Empty if the lobby is not in the local cache.
+   * @returns Key to value. Empty if the lobby is not in the local cache. Keys
+   * are case-insensitive on Steam's side and may come back recased (`Map` for
+   * a key set as `map`); `getData` with the original key still works.
    * @example
    * ```ts
    * import { init } from 'steamwand.js';
