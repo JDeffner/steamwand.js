@@ -79,7 +79,10 @@ describe.skipIf(!live)('curated layers (Spacewar, live)', () => {
   test('lobbies: create, data, chat echo, leave', async () => {
     lobbyId = await steam.lobbies.create(0, 2); // 0 = private
     steam.lobbies.setData(lobbyId, 'map', 'live-check');
-    expect(steam.lobbies.listData(lobbyId).map).toBe('live-check');
+    expect(steam.lobbies.getData(lobbyId, 'map')).toBe('live-check');
+    // Steam treats lobby data keys case-insensitively and may hand them back
+    // recased ('Map' was observed on the live client), so match by value.
+    expect(Object.values(steam.lobbies.listData(lobbyId))).toContain('live-check');
     expect(steam.lobbies.getMembers(lobbyId)).toContain(steam.steamId());
 
     const echoed = new Promise<string>((resolve, reject) => {
