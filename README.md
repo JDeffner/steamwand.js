@@ -146,7 +146,7 @@ archaeology project), and struct layouts as explicit per-platform offset
 tables. Windows packs callback structs at 8 bytes, Linux and macOS at 4,
 `CSteamID` is pack(1); the generator encodes those rules and its output has
 been verified against steamworks-sys's bindgen layouts, 428 comparisons with
-zero differences. `test/offsets.test.ts` pins the workshop set so a future
+zero differences. `test/offsets.test.ts` and `test/offsets.curated.test.ts` pin every struct the curated layers decode so a future
 SDK bump cannot silently shift an offset.
 
 Handwritten and small: the library loader, the dispatch pump, the struct

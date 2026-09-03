@@ -8,6 +8,8 @@ follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Offline offset regression tests for the 39 structs the curated layers
+  decode, cross-checked against steamworks-sys bindgen layouts.
 - CI packs the tarball and imports it from CommonJS and ESM on Windows, Linux,
   and macOS across Node 20, 22, and 24.
 - Generated doc remarks on call-result methods point at `steam.async` and pass

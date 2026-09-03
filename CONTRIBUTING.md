@@ -55,7 +55,7 @@ Find the smallest proof that it works.
 - Most changes: `pnpm typecheck` and `pnpm test`.
 - Generator changes: regenerate and read the diff in `src/generated/`. The diff
   is the review. If it touches files you did not expect, find out why before
-  committing. `test/offsets.test.ts` pins the workshop struct offsets and is
+  committing. `test/offsets.test.ts` and `test/offsets.curated.test.ts` pin the struct offsets and are
   the first thing to run after any generator or SDK change.
 - Runtime changes: add `pnpm smoke`.
 - Curated layer or dispatch pump changes: `pnpm test:live`. It needs a running,
