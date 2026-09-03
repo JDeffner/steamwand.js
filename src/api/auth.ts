@@ -86,7 +86,10 @@ export class Auth {
    * resolved ticket is one the server can accept. Cancel it with
    * `cancelTicket` when the session ends, or the handle stays allocated.
    *
-   * @param _identity - Reserved. The `SteamNetworkingIdentity` parameter carries a C union, which this binding excludes on purpose, so only `null` (any identity) can be passed and this argument is ignored.
+   * Valve's `GetAuthSessionTicket` also takes a `SteamNetworkingIdentity *`
+   * naming the peer the ticket is for. That struct carries a C union, which
+   * this binding excludes on purpose, so `null` (any identity) is always passed.
+   *
    * @returns The handle, the raw bytes, and their hex form.
    * @throws Error if Steam refused to issue a ticket at all.
    * @throws SteamResultError if Steam refused the ticket, for example with `k_EResultNoConnection` when the client is offline.
@@ -103,7 +106,7 @@ export class Auth {
    * @see cancelTicket
    * @see beginSession
    */
-  async getSessionTicket(_identity?: null): Promise<AuthTicket> {
+  async getSessionTicket(): Promise<AuthTicket> {
     const buffer = Buffer.alloc(TICKET_BYTES);
     const written = out.uint32();
     const handle = this.user.GetAuthSessionTicket(buffer, TICKET_BYTES, written.buffer, null);
