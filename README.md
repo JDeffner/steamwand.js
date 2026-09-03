@@ -31,8 +31,12 @@ layer, and the whole flat API surface: 25 interfaces, 807 functions,
 pnpm add steamwand.js
 ```
 
-Node 18+. Windows x64, Linux x64, and macOS are wired up; the Steam client
-must be running. The `steam_api` redistributables ship in the package.
+Node 18+. Windows x64, Linux x64, Linux ARM64, and macOS (x64 and Apple
+silicon, one universal library) are wired up; the Steam client must be
+running. The `steam_api` redistributables ship in the package. koffi's own
+native binary comes as a separate `@koromix/koffi-<os>-<arch>` package next to
+`koffi` in `node_modules`, so a bundler or Electron packager rule that only
+keeps `steamwand.js/**` must also keep `koffi/**` and `@koromix/**`.
 
 ## Documentation
 
@@ -43,7 +47,14 @@ curated [workshop](https://github.com/JDeffner/steamwand.js/wiki/Workshop),
 [stats](https://github.com/JDeffner/steamwand.js/wiki/Stats),
 [cloud](https://github.com/JDeffner/steamwand.js/wiki/Cloud),
 [leaderboards](https://github.com/JDeffner/steamwand.js/wiki/Leaderboards), and
-[lobbies](https://github.com/JDeffner/steamwand.js/wiki/Lobbies) layers, the
+[lobbies](https://github.com/JDeffner/steamwand.js/wiki/Lobbies),
+[social](https://github.com/JDeffner/steamwand.js/wiki/Social),
+[overlay](https://github.com/JDeffner/steamwand.js/wiki/Overlay),
+[auth](https://github.com/JDeffner/steamwand.js/wiki/Auth),
+[system](https://github.com/JDeffner/steamwand.js/wiki/System),
+[capture](https://github.com/JDeffner/steamwand.js/wiki/Capture),
+[controllers](https://github.com/JDeffner/steamwand.js/wiki/Controllers), and
+[DLC](https://github.com/JDeffner/steamwand.js/wiki/DLC) layers, the
 [raw flat API](https://github.com/JDeffner/steamwand.js/wiki/Flat-API),
 [recipes](https://github.com/JDeffner/steamwand.js/wiki/Recipes), and
 [troubleshooting](https://github.com/JDeffner/steamwand.js/wiki/Troubleshooting).
@@ -98,6 +109,13 @@ await steam.leaderboards.uploadScore(board.handle, 91_240);
 const lobbyId = await steam.lobbies.create(2, 4);
 steam.lobbies.setData(lobbyId, 'map', 'de_dust2');
 
+// Friends, rich presence, overlay, auth tickets, system facts, Steam Input
+const friends = steam.social.listFriends();
+steam.social.setRichPresence('status', 'In the menu');
+steam.overlay.activateInviteDialog(lobbyId);
+const { hex } = await steam.auth.getWebApiTicket('my-backend');
+if (steam.system.isSteamDeck()) steam.controllers.init();
+
 // The raw generated layer, when the curated ones stop
 const ticket = steam.apps.GetAppOwner();
 steam.on('ItemInstalled_t', (data) => console.log('installed', data));
@@ -106,11 +124,12 @@ const found = await steam.async.userStats.FindLeaderboard('Fastest Lap');
 steam.close();
 ```
 
-Six curated layers (`workshop`, `stats`, `cloud`, `leaderboards`, `lobbies`,
-`dlc`) cover the flows most games need, with typed errors that carry the `EResult`.
-For everything else, `steam.async` wraps each of the 76 call-result functions
-as a promise, `steam.on` gives typed callbacks by struct name, and the `out`
-helpers make the flat API's out-buffers safe. 64-bit values (Steam ids, file
+Twelve curated layers (`workshop`, `stats`, `cloud`, `leaderboards`,
+`lobbies`, `social`, `overlay`, `auth`, `system`, `capture`, `controllers`,
+`dlc`) cover the flows most games need, with typed errors that carry the
+`EResult`. For everything else, `steam.async` wraps each of the 76 call-result
+functions as a promise, `steam.on` and `steam.once` give typed callbacks by
+struct name, and the `out` helpers make the flat API's out-buffers safe. 64-bit values (Steam ids, file
 ids, handles) are `bigint` everywhere. The dispatch pump checks every async
 result against the callback id the caller expected, so a mixed-up completion
 rejects instead of decoding garbage.
@@ -128,7 +147,8 @@ zero differences. `test/offsets.test.ts` pins the workshop set so a future
 SDK bump cannot silently shift an offset.
 
 Handwritten and small: the library loader, the dispatch pump, the struct
-decoder, and the six curated layers under `src/api/`.
+decoder, and the twelve curated layers under `src/api/`. After `close()`,
+every call through the session throws instead of reaching the unloaded API.
 
 The SDK itself is not in this repo and must not be committed; Valve's license
 does not allow redistributing the headers or `steam_api.json`. To regenerate,
@@ -155,16 +175,23 @@ normal practice and allowed.
 - An FFI mistake crashes the process instead of throwing. If you embed this
   in something that must survive (a VS Code extension, an editor), run it in
   a child process. That is how the CK3 modding toolkit uses it.
-- Game server APIs are not wired up.
+- Game server APIs are not wired up. There is no curated networking layer
+  either: `ISteamNetworkingSockets` and `ISteamNetworkingMessages` take
+  `SteamNetworkingIdentity`, one of the union structs above, so only the
+  generated methods that avoid it are usable today.
+- The Steam overlay draws into the game's own renderer. Node has none, so an
+  Electron app gets no overlay from this package; that needs a native hook.
 
 ## Tests
 
-`pnpm test` runs offline (layout regression tests). `pnpm test:live` runs
-against the running Steam client on appid 480 (Spacewar): the full workshop
-round trip (create a private item, upload content, set a German translation,
-query both languages back, delete the item) plus checks for the stats, cloud,
-leaderboards, and lobbies layers (one temporary cloud file, one private
-throwaway lobby). It cleans up after itself.
+`pnpm test` runs offline (layout regression, dispatch pump, platform, and
+close-guard tests). `pnpm test:live` runs against the running Steam client on
+appid 480 (Spacewar): the full workshop round trip (create a private item,
+upload content and a preview image, set a German translation, metadata and
+key/value tags, an app dependency, query everything back, delete the item)
+plus checks for the stats, cloud, leaderboards, lobbies, social, auth, system,
+capture, and controllers layers (one temporary cloud file, one private
+throwaway lobby, one cancelled auth ticket). It cleans up after itself.
 
 ## License
 

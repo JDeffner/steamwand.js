@@ -5,8 +5,9 @@ step. A generator reads `steam_api.json` (Valve's machine-readable description
 of the flat C API) and emits a full TS binding layer; calls go through
 [koffi](https://koffi.dev) FFI at runtime. On top of that sits a small
 handwritten runtime (library loader, callback dispatch pump, struct decoder)
-and five curated ergonomic layers: `workshop`, `stats`, `cloud`,
-`leaderboards`, and `lobbies`.
+and twelve curated ergonomic layers: `workshop`, `stats`, `cloud`,
+`leaderboards`, `lobbies`, `social`, `overlay`, `auth`, `system`, `capture`,
+`controllers`, and `dlc`.
 
 Treat these instructions as good defaults, not hard rules. When the developer
 asks for something that contradicts them, the developer wins.
@@ -28,7 +29,7 @@ repo. The answer is always more generator, more koffi, or a documented skip.
 2. **Committing the SDK.** Valve's license forbids redistributing the SDK
    headers and `steam_api.json`. `sdk/` is gitignored except for its
    `STEAMWAND.md`, and the `steamworks_sdk_*.zip` at the repo root must never
-   be committed either. The four redistributable binaries under `runtime/`
+   be committed either. The five redistributable binaries under `runtime/`
    are the only Valve files allowed in git.
 3. **Guessing a struct layout.** The per-platform offset tables in
    `src/generated/structs.ts` are load-bearing: a wrong offset reads garbage
@@ -43,8 +44,9 @@ repo. The answer is always more generator, more koffi, or a documented skip.
 5. **Running `pnpm test:live` casually.** It talks to the real Steam client
    on appid 480: creates a private workshop item, uploads content, sets a
    German translation, queries it back, deletes it, then round-trips the
-   curated stats, cloud, leaderboards, and lobbies layers (one temp cloud
-   file, one private throwaway lobby). It cleans up after itself, but it
+   curated stats, cloud, leaderboards, lobbies, social, auth, system,
+   capture, and controllers layers (one temp cloud file, one private
+   throwaway lobby, one cancelled auth ticket). It cleans up after itself, but it
    needs a running, logged-in Steam client and it touches real Valve
    infrastructure. Run it when the change touches the runtime or a curated
    layer, not as a reflex.
@@ -61,7 +63,7 @@ Everything is pnpm.
 | `pnpm generate` | rebuild `src/generated/` from the SDK | SDK unpacked at `sdk/` (see `sdk/STEAMWAND.md`) |
 | `pnpm smoke` | ~30 read-only checks over 10 interfaces | running Steam client |
 | `pnpm workbench` | web UI over the whole binding, for manual poking | running Steam client |
-| `pnpm test:live` | workshop round trip plus curated stats/cloud/leaderboards/lobbies checks on appid 480 | running, logged-in Steam client |
+| `pnpm test:live` | workshop round trip plus checks for every other curated layer on appid 480 | running, logged-in Steam client |
 
 ## Where code lives
 
@@ -72,10 +74,14 @@ Everything is pnpm.
   lines. Keep it that size; complexity belongs in the generator, which runs
   offline, not in the runtime, which runs in someone's game.
 - `src/api/` is the curated layer: `workshop.ts`, `stats.ts`, `cloud.ts`,
-  `leaderboards.ts`, `lobbies.ts`, the shared `ok`/`must` guards in
-  `guards.ts`, and the typed errors in `errors.ts`. This is the only place
-  where ergonomics beat fidelity. `workshop.ts` is the style template the
-  other four were written against.
+  `leaderboards.ts`, `lobbies.ts`, `social.ts`, `overlay.ts`, `auth.ts`,
+  `system.ts`, `capture.ts`, `controllers.ts`, `apps.ts` (exposed as `dlc`),
+  the shared `ok`/`must` guards in `guards.ts`, and the typed errors in
+  `errors.ts`. This is the only place where ergonomics beat fidelity.
+  `workshop.ts` is the style template the others were written against. A
+  curated layer whose natural name is taken by a generated accessor
+  (`friends`, `user`, `utils`, `screenshots`, `input`, `apps`) gets a
+  different one; do not shadow the generated accessors.
 - `src/generated/` is generator output only: enums, consts, callback structs,
   offset tables, and one class per interface under `interfaces/`.
 - `scripts/generate.ts` is the generator itself. It hashes `steam_api.json`
