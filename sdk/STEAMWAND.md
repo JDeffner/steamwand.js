@@ -42,7 +42,7 @@ read the diff carefully, because the SDK moved under you.
 
 ## Bumping the SDK version
 
-The four native libraries under `runtime/` are committed, and they come
+The five native files under `runtime/` are committed, and they come
 straight out of the same archive:
 
 | in the zip | in this repo |
@@ -50,9 +50,10 @@ straight out of the same archive:
 | `sdk/redistributable_bin/win64/steam_api64.dll` | `runtime/win64/steam_api64.dll` |
 | `sdk/redistributable_bin/win64/steam_api64.lib` | `runtime/win64/steam_api64.lib` |
 | `sdk/redistributable_bin/linux64/libsteam_api.so` | `runtime/linux64/libsteam_api.so` |
+| `sdk/redistributable_bin/linuxarm64/libsteam_api.so` | `runtime/linuxarm64/libsteam_api.so` |
 | `sdk/redistributable_bin/osx/libsteam_api.dylib` | `runtime/osx/libsteam_api.dylib` |
 
-A bump is therefore: unzip the new SDK, copy those four files across, update
+A bump is therefore: unzip the new SDK, copy those five files across, update
 all three fields in `sdk.lock.json`, run `pnpm generate`, then read the diff in
 `src/generated/`. Callback struct offsets change between SDK versions, so
 `test/offsets.test.ts` is the first thing to run afterwards.

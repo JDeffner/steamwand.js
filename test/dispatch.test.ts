@@ -139,3 +139,28 @@ describe('plain callbacks', () => {
     expect(nat.freed).toBe(2);
   });
 });
+
+describe('once', () => {
+  test('resolves with the first matching callback and unsubscribes', () => {
+    const { nat, dispatch } = makeDispatch();
+    let calls = 0;
+    const result = dispatch.once(1234, (buf) => {
+      calls++;
+      return buf[0] === 2;
+    });
+    nat.queue.push({ id: 1234, param: Buffer.from([1]) }, { id: 1234, param: Buffer.from([2]) });
+    dispatch.runFrame();
+    nat.queue.push({ id: 1234, param: Buffer.from([3]) });
+    dispatch.runFrame();
+
+    expect(calls).toBe(2);
+    return expect(result).resolves.toEqual(Buffer.from([2]));
+  });
+
+  test('stop() rejects a once() that is still waiting', async () => {
+    const { dispatch } = makeDispatch();
+    const result = dispatch.once(1234);
+    dispatch.stop();
+    await expect(result).rejects.toThrow(/waiting for a callback/);
+  });
+});

@@ -1,4 +1,7 @@
-import koffi from 'koffi';
+import koffi, { type LibraryHandle, type TypeObject } from 'koffi';
+
+/** A bound flat export, as `LibraryHandle.func` returns it. koffi 3 does not export the type by name. */
+export type KoffiFunction = ReturnType<LibraryHandle['func']>;
 import { defaultLibPath } from './platform';
 
 /**
@@ -13,8 +16,9 @@ import { defaultLibPath } from './platform';
  */
 export class SteamNative {
   /** The loaded koffi library handle. Use `func()` instead of calling into it directly. */
-  readonly lib: koffi.IKoffiLib;
-  private readonly cache = new Map<string, koffi.KoffiFunction>();
+  readonly lib: LibraryHandle;
+  private readonly cache = new Map<string, KoffiFunction>();
+  private closed = false;
 
   /**
    * SteamAPI_InitFlat. Starts the Steam API for the app id in the environment.
@@ -23,7 +27,12 @@ export class SteamNative {
    * @returns An `ESteamAPIInitResult`. Anything other than `k_ESteamAPIInitResult_OK` is a failure.
    */
   readonly initFlat: (errMsg: Buffer) => number;
-  /** SteamAPI_Shutdown. Releases the Steam API. Stop the pump first. */
+  /**
+   * SteamAPI_Shutdown. Releases the Steam API. Stop the pump first.
+   *
+   * After this, every call through `func()` throws instead of reaching the
+   * unloaded API, which would crash the process.
+   */
   readonly shutdown: () => void;
   /** SteamAPI_GetHSteamPipe. Returns the pipe handle every dispatch call takes. */
   readonly getHSteamPipe: () => number;
@@ -87,7 +96,11 @@ export class SteamNative {
   constructor(libPath: string = defaultLibPath()) {
     this.lib = koffi.load(libPath);
     this.initFlat = this.func('SteamAPI_InitFlat', 'int32', ['void *']) as never;
-    this.shutdown = this.func('SteamAPI_Shutdown', 'void', []) as never;
+    const shutdown = this.func('SteamAPI_Shutdown', 'void', []);
+    this.shutdown = () => {
+      this.closed = true;
+      shutdown();
+    };
     this.getHSteamPipe = this.func('SteamAPI_GetHSteamPipe', 'int32', []) as never;
     this.manualDispatchInit = this.func('SteamAPI_ManualDispatch_Init', 'void', []) as never;
     this.manualDispatchRunFrame = this.func('SteamAPI_ManualDispatch_RunFrame', 'void', ['int32']) as never;
@@ -118,13 +131,14 @@ export class SteamNative {
    * @param result - koffi type of the return value, by name or as a registered struct type.
    * @param params - koffi types of the parameters, in order.
    * @returns The callable binding. The cached one wins, so the types of a repeat call are ignored.
-   * @throws Error if the library does not export `name`.
+   * @throws Error if the library does not export `name`, or if `shutdown` already ran.
    */
   func(
     name: string,
-    result: string | koffi.IKoffiCType,
-    params: (string | koffi.IKoffiCType)[],
-  ): koffi.KoffiFunction {
+    result: string | TypeObject,
+    params: (string | TypeObject)[],
+  ): KoffiFunction {
+    if (this.closed) throw new Error(`steamwand: ${name} called after close(); call init() again for a new session`);
     let fn = this.cache.get(name);
     if (!fn) {
       fn = this.lib.func(name, result, params);

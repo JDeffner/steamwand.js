@@ -1,5 +1,5 @@
 import koffi from 'koffi';
-import type { SteamNative } from './native';
+import type { KoffiFunction, SteamNative } from './native';
 import { decodeStruct, type StructLayout } from './struct';
 
 /** SteamAPICallCompleted_t (id 703). Same layout under pack(8) and pack(4). */
@@ -65,10 +65,12 @@ export class SteamApiCallError extends Error {
  * @see Steam.dispatch
  */
 export class SteamDispatch {
-  private readonly getNextCallback: koffi.KoffiFunction;
+  private readonly getNextCallback: KoffiFunction;
   private timer: NodeJS.Timeout | undefined;
   private readonly pending = new Map<bigint, PendingCall>();
   private readonly listeners = new Map<number, Set<(buf: Buffer) => void>>();
+  /** Rejecters of `once()` promises still waiting, so `stop()` can settle them. */
+  private readonly waiting = new Set<(err: Error) => void>();
 
   /**
    * @param nat - Loaded library. `SteamAPI_ManualDispatch_Init` must already have run on it.
@@ -104,7 +106,7 @@ export class SteamDispatch {
   }
 
   /**
-   * Stops the pump and rejects every call that is still in flight.
+   * Stops the pump and rejects every call and every `once()` still waiting.
    *
    * Safe to call more than once. Listeners stay registered, so a later
    * `start()` resumes them.
@@ -118,6 +120,8 @@ export class SteamDispatch {
       p.reject(new Error('steamwand: dispatch stopped while call was in flight'));
     }
     this.pending.clear();
+    for (const reject of this.waiting) reject(new Error('steamwand: dispatch stopped while waiting for a callback'));
+    this.waiting.clear();
   }
 
   /**
@@ -146,13 +150,13 @@ export class SteamDispatch {
   /**
    * Re-evaluates whether the pump timer keeps the event loop alive.
    *
-   * The pump must not keep an idle process alive, but a pending Steam call
-   * must: ref the interval while calls are in flight, unref when drained.
-   * Called on every add to and removal from the pending map.
+   * The pump must not keep an idle process alive, but a pending Steam call or
+   * an awaited callback must: ref the interval while either is outstanding,
+   * unref when drained. Called on every change to `pending` and `waiting`.
    */
   private updateRef(): void {
     if (!this.timer) return;
-    if (this.pending.size > 0) this.timer.ref();
+    if (this.pending.size > 0 || this.waiting.size > 0) this.timer.ref();
     else this.timer.unref();
   }
 
@@ -205,6 +209,37 @@ export class SteamDispatch {
     }
     set.add(listener);
     return () => set.delete(listener);
+  }
+
+  /**
+   * Awaits the first plain callback of `callbackId` that `match` accepts.
+   *
+   * Some flat calls answer through a broadcast callback instead of a call
+   * result (auth tickets, the gamepad keyboard). This is the awaitable form of
+   * `on` for those: the pump timer is ref'd while the promise is pending, so a
+   * script that only awaits the callback does not exit before it arrives.
+   * `Steam.once` wraps this and decodes the bytes for you.
+   *
+   * @param callbackId - Numeric callback id, for example from `callbacksById`.
+   * @param match - Runs on every such callback with the raw bytes. The first true one settles the promise.
+   * @defaultValue accept the first callback
+   * @returns The raw struct bytes of the accepted callback.
+   * @throws Error if `stop()` runs while still waiting.
+   * @see on
+   * @see Steam.once
+   */
+  once(callbackId: number, match: (buf: Buffer) => boolean = () => true): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      this.waiting.add(reject);
+      this.updateRef();
+      const off = this.on(callbackId, (buf) => {
+        if (!match(buf)) return;
+        off();
+        this.waiting.delete(reject);
+        this.updateRef();
+        resolve(buf);
+      });
+    });
   }
 
   /**

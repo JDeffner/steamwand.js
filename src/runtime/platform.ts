@@ -1,15 +1,17 @@
 import * as path from 'node:path';
 
 /**
- * The three platforms Valve ships a 64-bit redistributable for. The name is
- * also the folder name under `runtime/` in this package.
+ * The four platforms Valve ships a 64-bit redistributable for that Node runs
+ * on. The name is also the folder name under `runtime/` in this package. The
+ * macOS library is a universal binary (x64 and arm64); Valve ships no Windows
+ * arm64 library.
  */
-export type SteamPlatform = 'win64' | 'linux64' | 'osx';
+export type SteamPlatform = 'win64' | 'linux64' | 'linuxarm64' | 'osx';
 
 /**
  * Maps `process.platform` to the matching Steam platform name.
  *
- * @returns `'win64'`, `'linux64'`, or `'osx'`.
+ * @returns `'win64'`, `'linux64'`, `'linuxarm64'`, or `'osx'`.
  * @throws Error if the current platform is not one of win32, linux, or darwin.
  */
 export function detectPlatform(): SteamPlatform {
@@ -17,7 +19,7 @@ export function detectPlatform(): SteamPlatform {
     case 'win32':
       return 'win64';
     case 'linux':
-      return 'linux64';
+      return process.arch === 'arm64' ? 'linuxarm64' : 'linux64';
     case 'darwin':
       return 'osx';
     default:
@@ -28,6 +30,7 @@ export function detectPlatform(): SteamPlatform {
 const LIB_NAMES: Record<SteamPlatform, string> = {
   win64: 'steam_api64.dll',
   linux64: 'libsteam_api.so',
+  linuxarm64: 'libsteam_api.so',
   osx: 'libsteam_api.dylib',
 };
 
