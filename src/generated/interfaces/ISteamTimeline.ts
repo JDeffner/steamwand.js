@@ -116,7 +116,8 @@ export class ISteamTimeline {
    * `SteamAPICall_t DoesEventRecordingExist(TimelineEventHandle_t ulEvent)`
    *
    * Flat symbol: `SteamAPI_ISteamTimeline_DoesEventRecordingExist`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamTimelineEventRecordingExists_t>(handle, layoutOf('SteamTimelineEventRecordingExists_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.timeline.DoesEventRecordingExist(...)`, which awaits and decodes `SteamTimelineEventRecordingExists_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<SteamTimelineEventRecordingExists_t>(handle, layoutOf('SteamTimelineEventRecordingExists_t'), callbackIdByName.SteamTimelineEventRecordingExists_t)`.
    * @param ulEvent `TimelineEventHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamTimeline#DoesEventRecordingExist
    */
@@ -158,7 +159,8 @@ export class ISteamTimeline {
    * `SteamAPICall_t DoesGamePhaseRecordingExist(const char *pchPhaseID)`
    *
    * Flat symbol: `SteamAPI_ISteamTimeline_DoesGamePhaseRecordingExist`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamTimelineGamePhaseRecordingExists_t>(handle, layoutOf('SteamTimelineGamePhaseRecordingExists_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.timeline.DoesGamePhaseRecordingExist(...)`, which awaits and decodes `SteamTimelineGamePhaseRecordingExists_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<SteamTimelineGamePhaseRecordingExists_t>(handle, layoutOf('SteamTimelineGamePhaseRecordingExists_t'), callbackIdByName.SteamTimelineGamePhaseRecordingExists_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamTimeline#DoesGamePhaseRecordingExist
    */
   DoesGamePhaseRecordingExist(pchPhaseID: string): bigint {

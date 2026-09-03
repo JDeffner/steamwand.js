@@ -38,7 +38,8 @@ export class ISteamHTMLSurface {
    * `SteamAPICall_t CreateBrowser(const char *pchUserAgent, const char *pchUserCSS)`
    *
    * Flat symbol: `SteamAPI_ISteamHTMLSurface_CreateBrowser`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<HTML_BrowserReady_t>(handle, layoutOf('HTML_BrowserReady_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.htmlSurface.CreateBrowser(...)`, which awaits and decodes `HTML_BrowserReady_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<HTML_BrowserReady_t>(handle, layoutOf('HTML_BrowserReady_t'), callbackIdByName.HTML_BrowserReady_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamHTMLSurface#CreateBrowser
    */
   CreateBrowser(pchUserAgent: string, pchUserCSS: string): bigint {

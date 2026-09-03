@@ -2,7 +2,7 @@ import { SteamNative } from './runtime/native';
 import { SteamDispatch } from './runtime/dispatch';
 import { decodeStruct, type StructLayout } from './runtime/struct';
 import { ESteamAPIInitResult } from './generated/enums';
-import { callbacksById, type SteamCallbackMap } from './generated/callbacks';
+import { callbackIdByName, callbacksById, type SteamCallbackMap } from './generated/callbacks';
 import { SteamInterfaces } from './generated/accessors';
 import { SteamAsync } from './generated/async';
 import { SteamInitError } from './api/errors';
@@ -270,6 +270,14 @@ export class Steam extends SteamInterfaces {
     return Number(this.steamId() & 0xffffffffn);
   }
 
+  /** Callback id and this platform's layout for a callback struct name. */
+  private callbackDef(callbackName: string): { id: number; layout: StructLayout } {
+    const id = callbackIdByName[callbackName];
+    const def = id === undefined ? undefined : callbacksById[id];
+    if (!def) throw new Error(`steamwand: unknown callback struct '${callbackName}'`);
+    return { id, layout: process.platform === 'win32' ? def.win64 : def.posix };
+  }
+
   /**
    * Subscribe to a plain Steam callback by struct name (e.g. 'ItemInstalled_t'),
    * decoded via the generated layout. Returns an unsubscribe function.
@@ -298,10 +306,8 @@ export class Steam extends SteamInterfaces {
     callbackName: K,
     listener: (data: SteamCallbackMap[K]) => void,
   ): () => void {
-    const def = Object.values(callbacksById).find((c) => c.name === callbackName);
-    if (!def) throw new Error(`steamwand: unknown callback struct '${callbackName}'`);
-    const layout: StructLayout = process.platform === 'win32' ? def.win64 : def.posix;
-    return this.dispatch.on(def.id, (buf) => listener(decodeStruct<SteamCallbackMap[K]>(buf, layout)));
+    const { id, layout } = this.callbackDef(callbackName);
+    return this.dispatch.on(id, (buf) => listener(decodeStruct<SteamCallbackMap[K]>(buf, layout)));
   }
 
   /**
@@ -335,11 +341,9 @@ export class Steam extends SteamInterfaces {
     callbackName: K,
     match: (data: SteamCallbackMap[K]) => boolean = () => true,
   ): Promise<SteamCallbackMap[K]> {
-    const def = Object.values(callbacksById).find((c) => c.name === callbackName);
-    if (!def) throw new Error(`steamwand: unknown callback struct '${callbackName}'`);
-    const layout: StructLayout = process.platform === 'win32' ? def.win64 : def.posix;
+    const { id, layout } = this.callbackDef(callbackName);
     const decode = (buf: Buffer) => decodeStruct<SteamCallbackMap[K]>(buf, layout);
-    return this.dispatch.once(def.id, (buf) => match(decode(buf))).then(decode);
+    return this.dispatch.once(id, (buf) => match(decode(buf))).then(decode);
   }
 
   /**

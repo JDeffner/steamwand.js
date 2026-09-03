@@ -64,7 +64,8 @@ export class ISteamMatchmaking {
    * `SteamAPICall_t RequestLobbyList()`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_RequestLobbyList`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LobbyMatchList_t>(handle, layoutOf('LobbyMatchList_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.matchmaking.RequestLobbyList(...)`, which awaits and decodes `LobbyMatchList_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<LobbyMatchList_t>(handle, layoutOf('LobbyMatchList_t'), callbackIdByName.LobbyMatchList_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyList
    */
   RequestLobbyList(): bigint {
@@ -159,7 +160,8 @@ export class ISteamMatchmaking {
    * `SteamAPICall_t CreateLobby(ELobbyType eLobbyType, int cMaxMembers)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_CreateLobby`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LobbyCreated_t>(handle, layoutOf('LobbyCreated_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.matchmaking.CreateLobby(...)`, which awaits and decodes `LobbyCreated_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<LobbyCreated_t>(handle, layoutOf('LobbyCreated_t'), callbackIdByName.LobbyCreated_t)`.
    * @param eLobbyType enum `ELobbyType`; values on `flat.ELobbyType`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#CreateLobby
    */
@@ -171,7 +173,8 @@ export class ISteamMatchmaking {
    * `SteamAPICall_t JoinLobby(CSteamID steamIDLobby)`
    *
    * Flat symbol: `SteamAPI_ISteamMatchmaking_JoinLobby`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LobbyEnter_t>(handle, layoutOf('LobbyEnter_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.matchmaking.JoinLobby(...)`, which awaits and decodes `LobbyEnter_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<LobbyEnter_t>(handle, layoutOf('LobbyEnter_t'), callbackIdByName.LobbyEnter_t)`.
    * @param steamIDLobby `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamMatchmaking#JoinLobby
    */

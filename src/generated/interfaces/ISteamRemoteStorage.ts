@@ -41,7 +41,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t FileWriteAsync(const char *pchFile, const void *pvData, uint32 cubData)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileWriteAsync`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageFileWriteAsyncComplete_t>(handle, layoutOf('RemoteStorageFileWriteAsyncComplete_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.FileWriteAsync(...)`, which awaits and decodes `RemoteStorageFileWriteAsyncComplete_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageFileWriteAsyncComplete_t>(handle, layoutOf('RemoteStorageFileWriteAsyncComplete_t'), callbackIdByName.RemoteStorageFileWriteAsyncComplete_t)`.
    * @param pvData Buffer you allocate for `const void *`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteAsync
    */
@@ -53,7 +54,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t FileReadAsync(const char *pchFile, uint32 nOffset, uint32 cubToRead)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileReadAsync`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageFileReadAsyncComplete_t>(handle, layoutOf('RemoteStorageFileReadAsyncComplete_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.FileReadAsync(...)`, which awaits and decodes `RemoteStorageFileReadAsyncComplete_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageFileReadAsyncComplete_t>(handle, layoutOf('RemoteStorageFileReadAsyncComplete_t'), callbackIdByName.RemoteStorageFileReadAsyncComplete_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsync
    */
   FileReadAsync(pchFile: string, nOffset: number, cubToRead: number): bigint {
@@ -96,7 +98,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t FileShare(const char *pchFile)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_FileShare`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageFileShareResult_t>(handle, layoutOf('RemoteStorageFileShareResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.FileShare(...)`, which awaits and decodes `RemoteStorageFileShareResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageFileShareResult_t>(handle, layoutOf('RemoteStorageFileShareResult_t'), callbackIdByName.RemoteStorageFileShareResult_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileShare
    */
   FileShare(pchFile: string): bigint {
@@ -275,7 +278,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t UGCDownload(UGCHandle_t hContent, uint32 unPriority)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UGCDownload`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageDownloadUGCResult_t>(handle, layoutOf('RemoteStorageDownloadUGCResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.UGCDownload(...)`, which awaits and decodes `RemoteStorageDownloadUGCResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageDownloadUGCResult_t>(handle, layoutOf('RemoteStorageDownloadUGCResult_t'), callbackIdByName.RemoteStorageDownloadUGCResult_t)`.
    * @param hContent `UGCHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownload
    */
@@ -348,7 +352,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t PublishWorkshopFile(const char *pchFile, const char *pchPreviewFile, AppId_t nConsumerAppId, const char *pchTitle, const char *pchDescription, ERemoteStoragePublishedFileVisibility eVisibility, SteamParamStringArray_t *pTags, EWorkshopFileType eWorkshopFileType)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_PublishWorkshopFile`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStoragePublishFileProgress_t>(handle, layoutOf('RemoteStoragePublishFileProgress_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.PublishWorkshopFile(...)`, which awaits and decodes `RemoteStoragePublishFileProgress_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStoragePublishFileProgress_t>(handle, layoutOf('RemoteStoragePublishFileProgress_t'), callbackIdByName.RemoteStoragePublishFileProgress_t)`.
    * @param eVisibility enum `ERemoteStoragePublishedFileVisibility`; values on `flat.ERemoteStoragePublishedFileVisibility`.
    * @param pTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
    * @param eWorkshopFileType enum `EWorkshopFileType`; values on `flat.EWorkshopFileType`.
@@ -441,7 +446,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t CommitPublishedFileUpdate(PublishedFileUpdateHandle_t updateHandle)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_CommitPublishedFileUpdate`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUpdatePublishedFileResult_t>(handle, layoutOf('RemoteStorageUpdatePublishedFileResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.CommitPublishedFileUpdate(...)`, which awaits and decodes `RemoteStorageUpdatePublishedFileResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageUpdatePublishedFileResult_t>(handle, layoutOf('RemoteStorageUpdatePublishedFileResult_t'), callbackIdByName.RemoteStorageUpdatePublishedFileResult_t)`.
    * @param updateHandle `PublishedFileUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#CommitPublishedFileUpdate
    */
@@ -453,7 +459,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t GetPublishedFileDetails(PublishedFileId_t unPublishedFileId, uint32 unMaxSecondsOld)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetPublishedFileDetails`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageGetPublishedFileDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedFileDetailsResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.GetPublishedFileDetails(...)`, which awaits and decodes `RemoteStorageGetPublishedFileDetailsResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageGetPublishedFileDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedFileDetailsResult_t'), callbackIdByName.RemoteStorageGetPublishedFileDetailsResult_t)`.
    * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetPublishedFileDetails
    */
@@ -465,7 +472,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t DeletePublishedFile(PublishedFileId_t unPublishedFileId)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_DeletePublishedFile`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageDeletePublishedFileResult_t>(handle, layoutOf('RemoteStorageDeletePublishedFileResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.DeletePublishedFile(...)`, which awaits and decodes `RemoteStorageDeletePublishedFileResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageDeletePublishedFileResult_t>(handle, layoutOf('RemoteStorageDeletePublishedFileResult_t'), callbackIdByName.RemoteStorageDeletePublishedFileResult_t)`.
    * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#DeletePublishedFile
    */
@@ -477,7 +485,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t EnumerateUserPublishedFiles(uint32 unStartIndex)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumerateUserPublishedFiles`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumerateUserPublishedFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateUserPublishedFilesResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.EnumerateUserPublishedFiles(...)`, which awaits and decodes `RemoteStorageEnumerateUserPublishedFilesResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageEnumerateUserPublishedFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateUserPublishedFilesResult_t'), callbackIdByName.RemoteStorageEnumerateUserPublishedFilesResult_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumerateUserPublishedFiles
    */
   EnumerateUserPublishedFiles(unStartIndex: number): bigint {
@@ -488,7 +497,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t SubscribePublishedFile(PublishedFileId_t unPublishedFileId)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_SubscribePublishedFile`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageSubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageSubscribePublishedFileResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.SubscribePublishedFile(...)`, which awaits and decodes `RemoteStorageSubscribePublishedFileResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageSubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageSubscribePublishedFileResult_t'), callbackIdByName.RemoteStorageSubscribePublishedFileResult_t)`.
    * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SubscribePublishedFile
    */
@@ -500,7 +510,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t EnumerateUserSubscribedFiles(uint32 unStartIndex)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumerateUserSubscribedFiles`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumerateUserSubscribedFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateUserSubscribedFilesResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.EnumerateUserSubscribedFiles(...)`, which awaits and decodes `RemoteStorageEnumerateUserSubscribedFilesResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageEnumerateUserSubscribedFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateUserSubscribedFilesResult_t'), callbackIdByName.RemoteStorageEnumerateUserSubscribedFilesResult_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumerateUserSubscribedFiles
    */
   EnumerateUserSubscribedFiles(unStartIndex: number): bigint {
@@ -511,7 +522,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t UnsubscribePublishedFile(PublishedFileId_t unPublishedFileId)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UnsubscribePublishedFile`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUnsubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageUnsubscribePublishedFileResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.UnsubscribePublishedFile(...)`, which awaits and decodes `RemoteStorageUnsubscribePublishedFileResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageUnsubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageUnsubscribePublishedFileResult_t'), callbackIdByName.RemoteStorageUnsubscribePublishedFileResult_t)`.
    * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UnsubscribePublishedFile
    */
@@ -534,7 +546,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t GetPublishedItemVoteDetails(PublishedFileId_t unPublishedFileId)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetPublishedItemVoteDetails`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageGetPublishedItemVoteDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.GetPublishedItemVoteDetails(...)`, which awaits and decodes `RemoteStorageGetPublishedItemVoteDetailsResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageGetPublishedItemVoteDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t'), callbackIdByName.RemoteStorageGetPublishedItemVoteDetailsResult_t)`.
    * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetPublishedItemVoteDetails
    */
@@ -546,7 +559,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t UpdateUserPublishedItemVote(PublishedFileId_t unPublishedFileId, bool bVoteUp)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UpdateUserPublishedItemVote`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUpdateUserPublishedItemVoteResult_t>(handle, layoutOf('RemoteStorageUpdateUserPublishedItemVoteResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.UpdateUserPublishedItemVote(...)`, which awaits and decodes `RemoteStorageUpdateUserPublishedItemVoteResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageUpdateUserPublishedItemVoteResult_t>(handle, layoutOf('RemoteStorageUpdateUserPublishedItemVoteResult_t'), callbackIdByName.RemoteStorageUpdateUserPublishedItemVoteResult_t)`.
    * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdateUserPublishedItemVote
    */
@@ -558,7 +572,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t GetUserPublishedItemVoteDetails(PublishedFileId_t unPublishedFileId)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_GetUserPublishedItemVoteDetails`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageGetPublishedItemVoteDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.GetUserPublishedItemVoteDetails(...)`, which awaits and decodes `RemoteStorageGetPublishedItemVoteDetailsResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageGetPublishedItemVoteDetailsResult_t>(handle, layoutOf('RemoteStorageGetPublishedItemVoteDetailsResult_t'), callbackIdByName.RemoteStorageGetPublishedItemVoteDetailsResult_t)`.
    * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUserPublishedItemVoteDetails
    */
@@ -570,7 +585,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t EnumerateUserSharedWorkshopFiles(CSteamID steamId, uint32 unStartIndex, SteamParamStringArray_t *pRequiredTags, SteamParamStringArray_t *pExcludedTags)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumerateUserSharedWorkshopFiles`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumerateUserPublishedFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateUserPublishedFilesResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.EnumerateUserSharedWorkshopFiles(...)`, which awaits and decodes `RemoteStorageEnumerateUserPublishedFilesResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageEnumerateUserPublishedFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateUserPublishedFilesResult_t'), callbackIdByName.RemoteStorageEnumerateUserPublishedFilesResult_t)`.
    * @param steamId `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @param pRequiredTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
    * @param pExcludedTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
@@ -584,7 +600,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t PublishVideo(EWorkshopVideoProvider eVideoProvider, const char *pchVideoAccount, const char *pchVideoIdentifier, const char *pchPreviewFile, AppId_t nConsumerAppId, const char *pchTitle, const char *pchDescription, ERemoteStoragePublishedFileVisibility eVisibility, SteamParamStringArray_t *pTags)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_PublishVideo`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStoragePublishFileProgress_t>(handle, layoutOf('RemoteStoragePublishFileProgress_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.PublishVideo(...)`, which awaits and decodes `RemoteStoragePublishFileProgress_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStoragePublishFileProgress_t>(handle, layoutOf('RemoteStoragePublishFileProgress_t'), callbackIdByName.RemoteStoragePublishFileProgress_t)`.
    * @param eVideoProvider enum `EWorkshopVideoProvider`; values on `flat.EWorkshopVideoProvider`.
    * @param eVisibility enum `ERemoteStoragePublishedFileVisibility`; values on `flat.ERemoteStoragePublishedFileVisibility`.
    * @param pTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
@@ -598,7 +615,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t SetUserPublishedFileAction(PublishedFileId_t unPublishedFileId, EWorkshopFileAction eAction)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_SetUserPublishedFileAction`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageSetUserPublishedFileActionResult_t>(handle, layoutOf('RemoteStorageSetUserPublishedFileActionResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.SetUserPublishedFileAction(...)`, which awaits and decodes `RemoteStorageSetUserPublishedFileActionResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageSetUserPublishedFileActionResult_t>(handle, layoutOf('RemoteStorageSetUserPublishedFileActionResult_t'), callbackIdByName.RemoteStorageSetUserPublishedFileActionResult_t)`.
    * @param unPublishedFileId `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eAction enum `EWorkshopFileAction`; values on `flat.EWorkshopFileAction`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetUserPublishedFileAction
@@ -611,7 +629,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t EnumeratePublishedFilesByUserAction(EWorkshopFileAction eAction, uint32 unStartIndex)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumeratePublishedFilesByUserAction`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumeratePublishedFilesByUserActionResult_t>(handle, layoutOf('RemoteStorageEnumeratePublishedFilesByUserActionResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.EnumeratePublishedFilesByUserAction(...)`, which awaits and decodes `RemoteStorageEnumeratePublishedFilesByUserActionResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageEnumeratePublishedFilesByUserActionResult_t>(handle, layoutOf('RemoteStorageEnumeratePublishedFilesByUserActionResult_t'), callbackIdByName.RemoteStorageEnumeratePublishedFilesByUserActionResult_t)`.
    * @param eAction enum `EWorkshopFileAction`; values on `flat.EWorkshopFileAction`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumeratePublishedFilesByUserAction
    */
@@ -623,7 +642,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t EnumeratePublishedWorkshopFiles(EWorkshopEnumerationType eEnumerationType, uint32 unStartIndex, uint32 unCount, uint32 unDays, SteamParamStringArray_t *pTags, SteamParamStringArray_t *pUserTags)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_EnumeratePublishedWorkshopFiles`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageEnumerateWorkshopFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateWorkshopFilesResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.EnumeratePublishedWorkshopFiles(...)`, which awaits and decodes `RemoteStorageEnumerateWorkshopFilesResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageEnumerateWorkshopFilesResult_t>(handle, layoutOf('RemoteStorageEnumerateWorkshopFilesResult_t'), callbackIdByName.RemoteStorageEnumerateWorkshopFilesResult_t)`.
    * @param eEnumerationType enum `EWorkshopEnumerationType`; values on `flat.EWorkshopEnumerationType`.
    * @param pTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
    * @param pUserTags `SteamParamStringArray_t *`. Pass `stringArray(['a', 'b'])`.
@@ -637,7 +657,8 @@ export class ISteamRemoteStorage {
    * `SteamAPICall_t UGCDownloadToLocation(UGCHandle_t hContent, const char *pchLocation, uint32 unPriority)`
    *
    * Flat symbol: `SteamAPI_ISteamRemoteStorage_UGCDownloadToLocation`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageDownloadUGCResult_t>(handle, layoutOf('RemoteStorageDownloadUGCResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.remoteStorage.UGCDownloadToLocation(...)`, which awaits and decodes `RemoteStorageDownloadUGCResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageDownloadUGCResult_t>(handle, layoutOf('RemoteStorageDownloadUGCResult_t'), callbackIdByName.RemoteStorageDownloadUGCResult_t)`.
    * @param hContent `UGCHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownloadToLocation
    */

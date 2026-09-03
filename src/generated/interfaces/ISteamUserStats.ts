@@ -173,7 +173,8 @@ export class ISteamUserStats {
    * `SteamAPICall_t RequestUserStats(CSteamID steamIDUser)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_RequestUserStats`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<UserStatsReceived_t>(handle, layoutOf('UserStatsReceived_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.userStats.RequestUserStats(...)`, which awaits and decodes `UserStatsReceived_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<UserStatsReceived_t>(handle, layoutOf('UserStatsReceived_t'), callbackIdByName.UserStatsReceived_t)`.
    * @param steamIDUser `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#RequestUserStats
    */
@@ -244,7 +245,8 @@ export class ISteamUserStats {
    * `SteamAPICall_t FindOrCreateLeaderboard(const char *pchLeaderboardName, ELeaderboardSortMethod eLeaderboardSortMethod, ELeaderboardDisplayType eLeaderboardDisplayType)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_FindOrCreateLeaderboard`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardFindResult_t>(handle, layoutOf('LeaderboardFindResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.userStats.FindOrCreateLeaderboard(...)`, which awaits and decodes `LeaderboardFindResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<LeaderboardFindResult_t>(handle, layoutOf('LeaderboardFindResult_t'), callbackIdByName.LeaderboardFindResult_t)`.
    * @param eLeaderboardSortMethod enum `ELeaderboardSortMethod`; values on `flat.ELeaderboardSortMethod`.
    * @param eLeaderboardDisplayType enum `ELeaderboardDisplayType`; values on `flat.ELeaderboardDisplayType`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#FindOrCreateLeaderboard
@@ -257,7 +259,8 @@ export class ISteamUserStats {
    * `SteamAPICall_t FindLeaderboard(const char *pchLeaderboardName)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_FindLeaderboard`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardFindResult_t>(handle, layoutOf('LeaderboardFindResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.userStats.FindLeaderboard(...)`, which awaits and decodes `LeaderboardFindResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<LeaderboardFindResult_t>(handle, layoutOf('LeaderboardFindResult_t'), callbackIdByName.LeaderboardFindResult_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#FindLeaderboard
    */
   FindLeaderboard(pchLeaderboardName: string): bigint {
@@ -312,7 +315,8 @@ export class ISteamUserStats {
    * `SteamAPICall_t DownloadLeaderboardEntries(SteamLeaderboard_t hSteamLeaderboard, ELeaderboardDataRequest eLeaderboardDataRequest, int nRangeStart, int nRangeEnd)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_DownloadLeaderboardEntries`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardScoresDownloaded_t>(handle, layoutOf('LeaderboardScoresDownloaded_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.userStats.DownloadLeaderboardEntries(...)`, which awaits and decodes `LeaderboardScoresDownloaded_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<LeaderboardScoresDownloaded_t>(handle, layoutOf('LeaderboardScoresDownloaded_t'), callbackIdByName.LeaderboardScoresDownloaded_t)`.
    * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eLeaderboardDataRequest enum `ELeaderboardDataRequest`; values on `flat.ELeaderboardDataRequest`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntries
@@ -325,7 +329,8 @@ export class ISteamUserStats {
    * `SteamAPICall_t DownloadLeaderboardEntriesForUsers(SteamLeaderboard_t hSteamLeaderboard, CSteamID *prgUsers, int cUsers)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardScoresDownloaded_t>(handle, layoutOf('LeaderboardScoresDownloaded_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.userStats.DownloadLeaderboardEntriesForUsers(...)`, which awaits and decodes `LeaderboardScoresDownloaded_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<LeaderboardScoresDownloaded_t>(handle, layoutOf('LeaderboardScoresDownloaded_t'), callbackIdByName.LeaderboardScoresDownloaded_t)`.
    * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param prgUsers Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntriesForUsers
@@ -351,7 +356,8 @@ export class ISteamUserStats {
    * `SteamAPICall_t UploadLeaderboardScore(SteamLeaderboard_t hSteamLeaderboard, ELeaderboardUploadScoreMethod eLeaderboardUploadScoreMethod, int32 nScore, const int32 *pScoreDetails, int cScoreDetailsCount)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_UploadLeaderboardScore`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardScoreUploaded_t>(handle, layoutOf('LeaderboardScoreUploaded_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.userStats.UploadLeaderboardScore(...)`, which awaits and decodes `LeaderboardScoreUploaded_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<LeaderboardScoreUploaded_t>(handle, layoutOf('LeaderboardScoreUploaded_t'), callbackIdByName.LeaderboardScoreUploaded_t)`.
    * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param eLeaderboardUploadScoreMethod enum `ELeaderboardUploadScoreMethod`; values on `flat.ELeaderboardUploadScoreMethod`.
    * @param pScoreDetails Buffer you allocate for `const int32 *`: `Buffer.alloc(4)` per element.
@@ -365,7 +371,8 @@ export class ISteamUserStats {
    * `SteamAPICall_t AttachLeaderboardUGC(SteamLeaderboard_t hSteamLeaderboard, UGCHandle_t hUGC)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_AttachLeaderboardUGC`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<LeaderboardUGCSet_t>(handle, layoutOf('LeaderboardUGCSet_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.userStats.AttachLeaderboardUGC(...)`, which awaits and decodes `LeaderboardUGCSet_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<LeaderboardUGCSet_t>(handle, layoutOf('LeaderboardUGCSet_t'), callbackIdByName.LeaderboardUGCSet_t)`.
    * @param hSteamLeaderboard `SteamLeaderboard_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param hUGC `UGCHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#AttachLeaderboardUGC
@@ -378,7 +385,8 @@ export class ISteamUserStats {
    * `SteamAPICall_t GetNumberOfCurrentPlayers()`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_GetNumberOfCurrentPlayers`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<NumberOfCurrentPlayers_t>(handle, layoutOf('NumberOfCurrentPlayers_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.userStats.GetNumberOfCurrentPlayers(...)`, which awaits and decodes `NumberOfCurrentPlayers_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<NumberOfCurrentPlayers_t>(handle, layoutOf('NumberOfCurrentPlayers_t'), callbackIdByName.NumberOfCurrentPlayers_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumberOfCurrentPlayers
    */
   GetNumberOfCurrentPlayers(): bigint {
@@ -389,7 +397,8 @@ export class ISteamUserStats {
    * `SteamAPICall_t RequestGlobalAchievementPercentages()`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_RequestGlobalAchievementPercentages`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<GlobalAchievementPercentagesReady_t>(handle, layoutOf('GlobalAchievementPercentagesReady_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.userStats.RequestGlobalAchievementPercentages(...)`, which awaits and decodes `GlobalAchievementPercentagesReady_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<GlobalAchievementPercentagesReady_t>(handle, layoutOf('GlobalAchievementPercentagesReady_t'), callbackIdByName.GlobalAchievementPercentagesReady_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalAchievementPercentages
    */
   RequestGlobalAchievementPercentages(): bigint {
@@ -437,7 +446,8 @@ export class ISteamUserStats {
    * `SteamAPICall_t RequestGlobalStats(int nHistoryDays)`
    *
    * Flat symbol: `SteamAPI_ISteamUserStats_RequestGlobalStats`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<GlobalStatsReceived_t>(handle, layoutOf('GlobalStatsReceived_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.userStats.RequestGlobalStats(...)`, which awaits and decodes `GlobalStatsReceived_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<GlobalStatsReceived_t>(handle, layoutOf('GlobalStatsReceived_t'), callbackIdByName.GlobalStatsReceived_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalStats
    */
   RequestGlobalStats(nHistoryDays: number): bigint {

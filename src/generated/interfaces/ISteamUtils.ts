@@ -188,7 +188,8 @@ export class ISteamUtils {
    * `SteamAPICall_t CheckFileSignature(const char *szFileName)`
    *
    * Flat symbol: `SteamAPI_ISteamUtils_CheckFileSignature`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<CheckFileSignature_t>(handle, layoutOf('CheckFileSignature_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.utils.CheckFileSignature(...)`, which awaits and decodes `CheckFileSignature_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<CheckFileSignature_t>(handle, layoutOf('CheckFileSignature_t'), callbackIdByName.CheckFileSignature_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUtils#CheckFileSignature
    */
   CheckFileSignature(szFileName: string): bigint {

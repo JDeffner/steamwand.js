@@ -288,7 +288,8 @@ export class ISteamInventory {
    * `SteamAPICall_t RequestEligiblePromoItemDefinitionsIDs(CSteamID steamID)`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_RequestEligiblePromoItemDefinitionsIDs`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamInventoryEligiblePromoItemDefIDs_t>(handle, layoutOf('SteamInventoryEligiblePromoItemDefIDs_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.inventory.RequestEligiblePromoItemDefinitionsIDs(...)`, which awaits and decodes `SteamInventoryEligiblePromoItemDefIDs_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<SteamInventoryEligiblePromoItemDefIDs_t>(handle, layoutOf('SteamInventoryEligiblePromoItemDefIDs_t'), callbackIdByName.SteamInventoryEligiblePromoItemDefIDs_t)`.
    * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#RequestEligiblePromoItemDefinitionsIDs
    */
@@ -313,7 +314,8 @@ export class ISteamInventory {
    * `SteamAPICall_t StartPurchase(const SteamItemDef_t *pArrayItemDefs, const uint32 *punArrayQuantity, uint32 unArrayLength)`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_StartPurchase`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamInventoryStartPurchaseResult_t>(handle, layoutOf('SteamInventoryStartPurchaseResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.inventory.StartPurchase(...)`, which awaits and decodes `SteamInventoryStartPurchaseResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<SteamInventoryStartPurchaseResult_t>(handle, layoutOf('SteamInventoryStartPurchaseResult_t'), callbackIdByName.SteamInventoryStartPurchaseResult_t)`.
    * @param pArrayItemDefs Buffer you allocate for `const SteamItemDef_t *`: `Buffer.alloc(4)` per element.
    * @param punArrayQuantity Buffer you allocate for `const uint32 *`: `Buffer.alloc(4)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#StartPurchase
@@ -326,7 +328,8 @@ export class ISteamInventory {
    * `SteamAPICall_t RequestPrices()`
    *
    * Flat symbol: `SteamAPI_ISteamInventory_RequestPrices`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamInventoryRequestPricesResult_t>(handle, layoutOf('SteamInventoryRequestPricesResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.inventory.RequestPrices(...)`, which awaits and decodes `SteamInventoryRequestPricesResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<SteamInventoryRequestPricesResult_t>(handle, layoutOf('SteamInventoryRequestPricesResult_t'), callbackIdByName.SteamInventoryRequestPricesResult_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamInventory#RequestPrices
    */
   RequestPrices(): bigint {

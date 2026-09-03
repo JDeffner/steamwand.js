@@ -444,11 +444,22 @@ function methodDoc(cls: string, m: JMethod, mapped: MappedParam[]): string {
     ` * Flat symbol: \`${m.methodname_flat}\``,
   ];
   if (m.callresult) {
-    lines.push(
-      layoutNames.has(m.callresult)
-        ? ` * @remarks Returns an API call handle. Await it with \`steam.dispatch.callResultStruct<${m.callresult}>(handle, layoutOf('${m.callresult}'))\`.`
-        : ` * @remarks Returns an API call handle for \`${m.callresult}\`.`,
-    );
+    if (layoutNames.has(m.callresult)) {
+      const id = callbackIdByStruct.get(m.callresult);
+      const manual = `\`steam.dispatch.callResultStruct<${m.callresult}>(handle, layoutOf('${m.callresult}')${id === undefined ? '' : `, callbackIdByName.${m.callresult}`})\``;
+      // Same condition emitAsync's companion is built on: a generated wrapper exists.
+      if (m.returntype === 'SteamAPICall_t') {
+        const short = m.methodname_flat.replace(`SteamAPI_${cls}_`, '');
+        lines.push(
+          ` * @remarks Returns an API call handle. The easy path is \`steam.async.${getterName(cls)}.${short}(...)\`, which awaits and decodes \`${m.callresult}\`.`,
+          ` * To await the handle yourself: ${manual}.`,
+        );
+      } else {
+        lines.push(` * @remarks Returns an API call handle. Await it with ${manual}.`);
+      }
+    } else {
+      lines.push(` * @remarks Returns an API call handle for \`${m.callresult}\`.`);
+    }
   } else if (m.callback) {
     lines.push(
       layoutNames.has(m.callback)
