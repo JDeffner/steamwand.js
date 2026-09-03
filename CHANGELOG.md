@@ -6,6 +6,18 @@ follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- CI packs the tarball and imports it from CommonJS and ESM on Windows, Linux,
+  and macOS across Node 20, 22, and 24.
+- Generated doc remarks on call-result methods point at `steam.async` and pass
+  the callback id to `callResultStruct`.
+
+### Changed
+
+- Node 20 or newer is required. pnpm is pinned through `packageManager`, and
+  build scripts for koffi and esbuild are declared off so installs stay quiet.
+
 ## [0.5.0] - 2026-09-03
 
 ### Added

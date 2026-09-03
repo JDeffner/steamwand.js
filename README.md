@@ -31,12 +31,14 @@ layer, and the whole flat API surface: 25 interfaces, 807 functions,
 pnpm add steamwand.js
 ```
 
-Node 18+. Windows x64, Linux x64, Linux ARM64, and macOS (x64 and Apple
+Node 20+. Windows x64, Linux x64, Linux ARM64, and macOS (x64 and Apple
 silicon, one universal library) are wired up; the Steam client must be
 running. The `steam_api` redistributables ship in the package. koffi's own
 native binary comes as a separate `@koromix/koffi-<os>-<arch>` package next to
 `koffi` in `node_modules`, so a bundler or Electron packager rule that only
 keeps `steamwand.js/**` must also keep `koffi/**` and `@koromix/**`.
+
+[CHANGELOG.md](CHANGELOG.md) records what each release changed.
 
 ## Documentation
 
@@ -60,7 +62,8 @@ curated [workshop](https://github.com/JDeffner/steamwand.js/wiki/Workshop),
 [troubleshooting](https://github.com/JDeffner/steamwand.js/wiki/Troubleshooting).
 Every generated function also carries its original C signature, its out-buffer
 sizes, and a link to Valve's documentation, so hovering it in an editor is
-usually enough.
+usually enough. To work on steamwand itself, start at
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Use
 

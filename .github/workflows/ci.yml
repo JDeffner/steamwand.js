@@ -11,18 +11,51 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
+        node: [20, 22, 24]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
-        with:
-          version: 10
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: ${{ matrix.node }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       # Offline tests only; the live workshop tests need a logged-in Steam client.
       - run: pnpm test
       - run: pnpm build
+
+      # The published tarball has to resolve runtime/<platform>/ from the
+      # installed package layout, from both CommonJS and ESM. isSteamRunning()
+      # returns false on a runner with no Steam client, but only after the
+      # bundled steam_api library has loaded.
+      - name: Pack and import the tarball
+        shell: bash
+        run: |
+          set -eu
+          tarball="$PWD/$(npm pack --silent)"
+          scratch="$(mktemp -d)"
+          cd "$scratch"
+          npm init -y > /dev/null
+          npm install "$tarball" > /dev/null
+          cat > cjs.js <<'EOF'
+          const sw = require('steamwand.js');
+          for (const name of ['init', 'flat', 'isSteamRunning']) {
+            if (sw[name] === undefined) throw new Error(`cjs: missing export ${name}`);
+          }
+          const running = sw.isSteamRunning();
+          if (typeof running !== 'boolean') throw new Error('cjs: isSteamRunning did not return a boolean');
+          console.log('cjs isSteamRunning ->', running);
+          EOF
+          cat > esm.mjs <<'EOF'
+          import { init, flat, isSteamRunning } from 'steamwand.js';
+          for (const [name, value] of Object.entries({ init, flat, isSteamRunning })) {
+            if (value === undefined) throw new Error(`esm: missing export ${name}`);
+          }
+          const running = isSteamRunning();
+          if (typeof running !== 'boolean') throw new Error('esm: isSteamRunning did not return a boolean');
+          console.log('esm isSteamRunning ->', running);
+          EOF
+          node cjs.js
+          node esm.mjs

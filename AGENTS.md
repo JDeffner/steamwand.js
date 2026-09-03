@@ -129,5 +129,8 @@ already cover the surface.
 - The local `sdk/` directory often contains an unpacked SDK. It is gitignored
   along with the SDK zip; never stage either, and never quote SDK header
   contents into committed files.
+- pnpm 11 holds back packages published in the last day. Right after a
+  dependency bump, install once with `--config.minimumReleaseAge=0`; do not
+  put that override in the repo config.
 - Prefer editing `scripts/generate.ts` and regenerating over any change
   inside `src/generated/`, even for a one-character fix.
