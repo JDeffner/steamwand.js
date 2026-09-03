@@ -36,8 +36,9 @@ repo. The answer is always more generator, more koffi, or a documented skip.
    or crashes, and nothing warns you. Windows packs callback structs at 8
    bytes, Linux and macOS at 4, `CSteamID` at 1. Structs with C unions are
    excluded on purpose because `steam_api.json` cannot express them; do not
-   "helpfully" add a layout for one. `test/offsets.test.ts` pins the workshop
-   set and is the first thing to run after any generator or SDK change.
+   "helpfully" add a layout for one. `test/offsets.test.ts` and
+   `test/offsets.curated.test.ts` pin every struct the curated layers decode
+   and are the first thing to run after any generator or SDK change.
 4. **Forgetting that FFI failures are fatal.** A bad signature or pointer
    crashes the Node process. It does not throw. When a live script dies with
    no stack trace, suspect the binding layer, not the test.
