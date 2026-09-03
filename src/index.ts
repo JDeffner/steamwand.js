@@ -11,7 +11,13 @@ import { Stats } from './api/stats';
 import { Cloud } from './api/cloud';
 import { Leaderboards } from './api/leaderboards';
 import { Lobbies } from './api/lobbies';
+import { Social } from './api/social';
+import { Overlay } from './api/overlay';
 import { Apps } from './api/apps';
+import { Auth } from './api/auth';
+import { System } from './api/system';
+import { Capture } from './api/capture';
+import { Controllers } from './api/controllers';
 
 /**
  * Options for {@link init}.
@@ -40,7 +46,8 @@ export interface InitOptions {
 
 /**
  * A live Steam API session: the interfaces, the curated helpers (workshop,
- * stats, cloud, leaderboards, lobbies, dlc), and the running dispatch pump.
+ * stats, cloud, leaderboards, lobbies, social, overlay, auth, system, capture,
+ * controllers, dlc), and the running dispatch pump.
  *
  * Build one with {@link init}, and call {@link Steam.close} when you are done.
  * Interfaces are created on first use and cached.
@@ -55,7 +62,13 @@ export class Steam extends SteamInterfaces {
   private cloudHelper: Cloud | undefined;
   private leaderboardsHelper: Leaderboards | undefined;
   private lobbiesHelper: Lobbies | undefined;
+  private socialHelper: Social | undefined;
+  private overlayHelper: Overlay | undefined;
   private appsHelper: Apps | undefined;
+  private authHelper: Auth | undefined;
+  private systemHelper: System | undefined;
+  private captureHelper: Capture | undefined;
+  private controllersHelper: Controllers | undefined;
   private asyncCalls: SteamAsync | undefined;
   private closed = false;
 
@@ -128,6 +141,33 @@ export class Steam extends SteamInterfaces {
   }
 
   /**
+   * Task level friends, presence, and avatar helper over
+   * {@link Steam.friends}. Named `social` because the generated ISteamFriends
+   * accessor already owns `friends`.
+   *
+   * @see Social
+   */
+  get social(): Social {
+    if (!this.socialHelper) {
+      this.socialHelper = new Social(this.friends, this.utils, (n, l) => this.on(n, l));
+    }
+    return this.socialHelper;
+  }
+
+  /**
+   * Task level Steam overlay helper over {@link Steam.friends} and
+   * {@link Steam.utils}.
+   *
+   * @see Overlay
+   */
+  get overlay(): Overlay {
+    if (!this.overlayHelper) {
+      this.overlayHelper = new Overlay(this.friends, this.utils, (n, l) => this.on(n, l));
+    }
+    return this.overlayHelper;
+  }
+
+  /**
    * Task level DLC helper over {@link Steam.apps}. Named `dlc` because the
    * generated ISteamApps accessor already owns `apps`.
    *
@@ -136,6 +176,53 @@ export class Steam extends SteamInterfaces {
   get dlc(): Apps {
     if (!this.appsHelper) this.appsHelper = new Apps(this.apps);
     return this.appsHelper;
+  }
+
+  /**
+   * Task level auth ticket helper over {@link Steam.user}. Named `auth`
+   * because the generated ISteamUser accessor already owns `user`.
+   *
+   * @see Auth
+   */
+  get auth(): Auth {
+    if (!this.authHelper) this.authHelper = new Auth(this.user, this.dispatch, (n, l) => this.on(n, l), (n, m) => this.once(n, m));
+    return this.authHelper;
+  }
+
+  /**
+   * Task level machine and client facts helper over {@link Steam.utils} and
+   * {@link Steam.apps}. Named `system` because the generated ISteamUtils
+   * accessor already owns `utils`.
+   *
+   * @see System
+   */
+  get system(): System {
+    if (!this.systemHelper) this.systemHelper = new System(this.utils, this.apps, (n, l) => this.on(n, l), (n, m) => this.once(n, m));
+    return this.systemHelper;
+  }
+
+  /**
+   * Task level screenshot helper over {@link Steam.screenshots}. Named
+   * `capture` because the generated ISteamScreenshots accessor already owns
+   * `screenshots`.
+   *
+   * @see Capture
+   */
+  get capture(): Capture {
+    if (!this.captureHelper) this.captureHelper = new Capture(this.screenshots, (n, l) => this.on(n, l));
+    return this.captureHelper;
+  }
+
+  /**
+   * Task level Steam Input helper over {@link Steam.input}. Named
+   * `controllers` because the generated ISteamInput accessor already owns
+   * `input`.
+   *
+   * @see Controllers
+   */
+  get controllers(): Controllers {
+    if (!this.controllersHelper) this.controllersHelper = new Controllers(this.input, (n, l) => this.on(n, l));
+    return this.controllersHelper;
   }
 
   /**
@@ -215,6 +302,44 @@ export class Steam extends SteamInterfaces {
     if (!def) throw new Error(`steamwand: unknown callback struct '${callbackName}'`);
     const layout: StructLayout = process.platform === 'win32' ? def.win64 : def.posix;
     return this.dispatch.on(def.id, (buf) => listener(decodeStruct<SteamCallbackMap[K]>(buf, layout)));
+  }
+
+  /**
+   * Awaits the first plain callback of `callbackName` that `match` accepts,
+   * decoded via the generated layout.
+   *
+   * The awaitable form of {@link Steam.on}, for the flat calls that answer
+   * through a broadcast callback instead of a call result. The pump keeps the
+   * process alive while the promise is pending.
+   *
+   * @param callbackName - Struct name exactly as in the SDK, for example `GetAuthSessionTicketResponse_t`.
+   * @param match - Runs on every such callback with the decoded struct. The first true one settles the promise.
+   * @defaultValue accept the first callback
+   * @typeParam K - The callback name, which decides the result type.
+   * @returns The decoded callback struct. 64-bit fields are `bigint`.
+   * @throws Error if no generated callback carries that name, or if {@link Steam.close} runs while still waiting.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const ticket = Buffer.alloc(1024);
+   * const size = Buffer.alloc(4);
+   * const handle = steam.user.GetAuthSessionTicket(ticket, ticket.length, size, null);
+   * const r = await steam.once('GetAuthSessionTicketResponse_t', (e) => e.m_hAuthTicket === handle);
+   * console.log(r.m_eResult);
+   * ```
+   * @see SteamDispatch.once
+   */
+  once<K extends keyof SteamCallbackMap & string>(
+    callbackName: K,
+    match: (data: SteamCallbackMap[K]) => boolean = () => true,
+  ): Promise<SteamCallbackMap[K]> {
+    const def = Object.values(callbacksById).find((c) => c.name === callbackName);
+    if (!def) throw new Error(`steamwand: unknown callback struct '${callbackName}'`);
+    const layout: StructLayout = process.platform === 'win32' ? def.win64 : def.posix;
+    const decode = (buf: Buffer) => decodeStruct<SteamCallbackMap[K]>(buf, layout);
+    return this.dispatch.once(def.id, (buf) => match(decode(buf))).then(decode);
   }
 
   /**
@@ -385,8 +510,33 @@ export type { DownloadOptions, LeaderboardEntry, LeaderboardInfo, ScoreUploadRes
 /** Task level lobbies helper. Usually reached as `steam.lobbies`. */
 export { Lobbies } from './api/lobbies';
 export type { LobbyChatMessage, LobbySearchOptions } from './api/lobbies';
+/** Task level friends, presence, and avatar helper. Usually reached as `steam.social`. */
+export { Social } from './api/social';
+export type {
+  Avatar,
+  AvatarSize,
+  Friend,
+  LobbyJoinRequest,
+  PersonaStateChange,
+  RichPresenceJoinRequest,
+} from './api/social';
+/** Task level Steam overlay helper. Usually reached as `steam.overlay`. */
+export { Overlay } from './api/overlay';
+export type { OverlayActivation, OverlayDialog, OverlayUserDialog } from './api/overlay';
 /** Task level DLC helper. Usually reached as `steam.dlc`. */
 export { Apps } from './api/apps';
 export type { DlcInfo } from './api/apps';
+/** Task level auth ticket helper. Usually reached as `steam.auth`. */
+export { Auth } from './api/auth';
+export type { AuthTicket, ValidateTicketResult } from './api/auth';
+/** Task level machine and client facts helper. Usually reached as `steam.system`. */
+export { System } from './api/system';
+export type { GamepadTextInputOptions, SteamImage } from './api/system';
+/** Task level screenshot helper. Usually reached as `steam.capture`. */
+export { Capture } from './api/capture';
+export type { ScreenshotReady } from './api/capture';
+/** Task level Steam Input helper. Usually reached as `steam.controllers`. */
+export { Controllers } from './api/controllers';
+export type { AnalogAction, DigitalAction } from './api/controllers';
 /** The raw generated flat API: every interface class, enum, const, and layout. */
 export * as flat from './generated';
