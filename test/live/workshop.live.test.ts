@@ -14,6 +14,12 @@ import { flat } from '../../src';
 
 const live = !!process.env.STEAM_LIVE;
 
+/** A real, 70 byte 1x1 PNG. Steam rejects a preview that is not a valid image. */
+const ONE_PIXEL_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+  'base64',
+);
+
 describe.skipIf(!live)('workshop round trip (Spacewar, live)', () => {
   let steam: Steam;
   let fileId: bigint | undefined;
@@ -78,12 +84,37 @@ describe.skipIf(!live)('workshop round trip (Spacewar, live)', () => {
       metadata: 'steamwand-live-metadata',
       keyValueTags: { steamwand: 'live' },
     });
-    // The curated query does not expose metadata or key/value tags, so the
-    // proof here is that Steam accepted the update and the item still reads back.
-    const item = await steam.workshop.getItem(fileId!, { children: true, additionalPreviews: true });
+    const item = await steam.workshop.getItem(fileId!, {
+      children: true,
+      additionalPreviews: true,
+      metadata: true,
+      keyValueTags: true,
+    });
     expect(item).not.toBeNull();
     expect(item!.children).toEqual([]);
     expect(item!.additionalPreviews).toEqual([]);
+    expect(item!.metadata).toBe('steamwand-live-metadata');
+    expect(item!.keyValueTags).toBeDefined();
+    expect({ ...item!.keyValueTags }).toEqual({ steamwand: 'live' });
+  }, 120_000);
+
+  test('preview image round trip', async () => {
+    const previewDir = fs.mkdtempSync(path.join(os.tmpdir(), 'steamwand-preview-'));
+    const previewPath = path.join(previewDir, 'preview.png');
+    fs.writeFileSync(previewPath, ONE_PIXEL_PNG);
+    await steam.workshop.submitUpdate(fileId!, { previewImages: [previewPath] });
+
+    const item = await steam.workshop.getItem(fileId!, { additionalPreviews: true });
+    expect(item).not.toBeNull();
+    expect(item!.additionalPreviews.length).toBeGreaterThanOrEqual(1);
+  }, 120_000);
+
+  test('app dependency round trip', async () => {
+    // Not 480: Steam refuses an item depending on its own consumer app and
+    // returns an invalid call handle. 481 is Spacewar's dedicated server app.
+    await steam.workshop.addAppDependency(fileId!, 481);
+    expect(await steam.workshop.getAppDependencies(fileId!)).toContain(481);
+    await steam.workshop.removeAppDependency(fileId!, 481);
   }, 120_000);
 
   test('dlc list of the running app', () => {

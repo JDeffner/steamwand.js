@@ -315,7 +315,9 @@ export class Lobbies {
     const count = this.matchmaking.GetLobbyDataCount(lobbyId);
     const key = out.string(KEY_BYTES);
     const value = out.string(VALUE_BYTES);
-    const data: Record<string, string> = {};
+    // A prototype-free object, so a lobby key named __proto__ or constructor
+    // stays a normal entry instead of touching the prototype chain.
+    const data: Record<string, string> = Object.create(null);
     for (let i = 0; i < count; i++) {
       if (!this.matchmaking.GetLobbyDataByIndex(lobbyId, i, key.buffer, KEY_BYTES, value.buffer, VALUE_BYTES)) continue;
       data[key.value] = value.value;

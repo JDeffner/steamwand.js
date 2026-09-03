@@ -364,7 +364,9 @@ export class Stats {
       callbackIdByName.GlobalAchievementPercentagesReady_t,
     );
     ok('RequestGlobalAchievementPercentages', r.m_eResult);
-    const percentages: Record<string, number> = {};
+    // A prototype-free object, so an achievement API name like __proto__ stays
+    // a normal entry instead of touching the prototype chain.
+    const percentages: Record<string, number> = Object.create(null);
     const percent = out.float();
     for (const name of this.listAchievements()) {
       if (this.userStats.GetAchievementAchievedPercent(name, percent.buffer)) percentages[name] = percent.value;

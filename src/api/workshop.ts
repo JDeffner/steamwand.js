@@ -19,7 +19,11 @@ import type {
   SubmitItemUpdateResult_t,
 } from '../generated/structs';
 import { EItemPreviewType, EItemStatistic, EResult, EUGCMatchingUGCType, EUserUGCList, EUserUGCListSortOrder, EWorkshopFileType } from '../generated/enums';
+import { k_cchDeveloperMetadataMax } from '../generated/consts';
 import { ok, must } from './guards';
+
+/** Steam caps a key/value tag key and value at 255 bytes each, so this buffer always holds one. */
+const KEY_VALUE_TAG_BYTES = 256;
 
 /**
  * One workshop item update. Every field is optional; only the fields you set
@@ -132,6 +136,13 @@ export interface WorkshopItem {
   children: bigint[];
   /** Extra previews beyond the main image. Empty unless the query set `additionalPreviews`. */
   additionalPreviews: AdditionalPreview[];
+  /**
+   * Free-form developer metadata. Absent unless the query set `metadata`, and
+   * Steam only returns it to the item owner.
+   */
+  metadata?: string;
+  /** Key/value tags. Absent unless the query set `keyValueTags`. */
+  keyValueTags?: Record<string, string>;
 }
 
 /**
@@ -185,6 +196,10 @@ export interface QueryOptions {
   children?: boolean;
   /** Return the extra previews, in `WorkshopItem.additionalPreviews`. */
   additionalPreviews?: boolean;
+  /** Return the developer metadata, in `WorkshopItem.metadata`. Only the item owner gets a value. */
+  metadata?: boolean;
+  /** Return the key/value tags, in `WorkshopItem.keyValueTags`. */
+  keyValueTags?: boolean;
 }
 
 /**
@@ -590,6 +605,8 @@ export class Workshop {
     if (opts.children) must('SetReturnChildren', this.ugc.SetReturnChildren(handle, true));
     if (opts.additionalPreviews)
       must('SetReturnAdditionalPreviews', this.ugc.SetReturnAdditionalPreviews(handle, true));
+    if (opts.metadata) must('SetReturnMetadata', this.ugc.SetReturnMetadata(handle, true));
+    if (opts.keyValueTags) must('SetReturnKeyValueTags', this.ugc.SetReturnKeyValueTags(handle, true));
     try {
       const call = this.ugc.SendQueryUGCRequest(handle);
       const q = await this.dispatch.callResultStruct<SteamUGCQueryCompleted_t>(
@@ -604,7 +621,7 @@ export class Workshop {
         if (!this.ugc.GetQueryUGCResult(q.m_handle, i, detailsBuf)) continue;
         const d = decodeStruct<SteamUGCDetails_t>(detailsBuf, layoutOf('SteamUGCDetails_t'));
         if (d.m_eResult === EResult.k_EResultFileNotFound) continue;
-        items.push(this.toItem(q.m_handle, i, d));
+        items.push(this.toItem(q.m_handle, i, d, opts));
       }
       return { items, totalResults: q.m_unTotalMatchingResults };
     } finally {
@@ -622,9 +639,10 @@ export class Workshop {
    * @param handle - The open query handle.
    * @param index - Row index inside the query result.
    * @param d - The decoded `SteamUGCDetails_t` for that row.
+   * @param opts - The options the query ran with, which decide whether metadata and key/value tags are read.
    * @returns The item. `previewUrl` is null and a statistic key is absent when Steam returned neither.
    */
-  private toItem(handle: bigint, index: number, d: SteamUGCDetails_t): WorkshopItem {
+  private toItem(handle: bigint, index: number, d: SteamUGCDetails_t, opts: QueryOptions): WorkshopItem {
     const urlBuf = Buffer.alloc(256);
     const previewUrl = this.ugc.GetQueryUGCPreviewURL(handle, index, urlBuf, 256)
       ? cstr(urlBuf) || null
@@ -658,6 +676,33 @@ export class Workshop {
         originalFileName: cstr(nameBuf),
       });
     }
+    let metadata: string | undefined;
+    if (opts.metadata) {
+      const metaBuf = Buffer.alloc(k_cchDeveloperMetadataMax);
+      if (this.ugc.GetQueryUGCMetadata(handle, index, metaBuf, k_cchDeveloperMetadataMax)) metadata = cstr(metaBuf);
+    }
+    let keyValueTags: Record<string, string> | undefined;
+    if (opts.keyValueTags) {
+      // A prototype-free object, so a tag named __proto__ or constructor stays
+      // a normal entry instead of touching the prototype chain.
+      const tags: Record<string, string> = Object.create(null);
+      const numTags = this.ugc.GetQueryUGCNumKeyValueTags(handle, index);
+      for (let i = 0; i < numTags; i++) {
+        const keyBuf = Buffer.alloc(KEY_VALUE_TAG_BYTES);
+        const valueBuf = Buffer.alloc(KEY_VALUE_TAG_BYTES);
+        const read = this.ugc.GetQueryUGCKeyValueTag(
+          handle,
+          index,
+          i,
+          keyBuf,
+          KEY_VALUE_TAG_BYTES,
+          valueBuf,
+          KEY_VALUE_TAG_BYTES,
+        );
+        if (read) tags[cstr(keyBuf)] = cstr(valueBuf);
+      }
+      keyValueTags = tags;
+    }
     return {
       fileId: d.m_nPublishedFileId,
       title: d.m_rgchTitle,
@@ -686,6 +731,8 @@ export class Workshop {
       statistics,
       children,
       additionalPreviews,
+      metadata,
+      keyValueTags,
     };
   }
 }
