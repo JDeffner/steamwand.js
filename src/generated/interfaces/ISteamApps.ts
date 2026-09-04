@@ -276,7 +276,8 @@ export class ISteamApps {
    * `SteamAPICall_t GetFileDetails(const char *pszFileName)`
    *
    * Flat symbol: `SteamAPI_ISteamApps_GetFileDetails`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<FileDetailsResult_t>(handle, layoutOf('FileDetailsResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.apps.GetFileDetails(...)`, which awaits and decodes `FileDetailsResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<FileDetailsResult_t>(handle, layoutOf('FileDetailsResult_t'), callbackIdByName.FileDetailsResult_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamApps#GetFileDetails
    */
   GetFileDetails(pszFileName: string): bigint {

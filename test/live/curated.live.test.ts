@@ -36,6 +36,19 @@ describe.skipIf(!live)('curated layers (Spacewar, live)', () => {
     expect(typeof steam.stats.getAchievement(names[0]).achieved).toBe('boolean');
   });
 
+  test('stats: own user-scoped read matches, and the achievement icon resolves', async () => {
+    const name = steam.stats.listAchievements()[0];
+    // The current user's stats are already cached, so no requestUserStats is
+    // needed to read them back through the user-scoped call.
+    expect(steam.stats.getUserAchievement(steam.steamId(), name)).toEqual(steam.stats.getAchievement(name));
+    const icon = await steam.stats.achievementIcon(name);
+    expect(icon === null || typeof icon === 'number').toBe(true);
+  }, 30_000);
+
+  test('cloud: local change list reads', () => {
+    expect(Array.isArray(steam.cloud.listLocalChanges())).toBe(true);
+  });
+
   test('stats: current players and global percentages (async)', async () => {
     expect(await steam.stats.getNumberOfCurrentPlayers()).toBeGreaterThan(0);
     // Valve keeps no global achievement data for Spacewar, so Steam may refuse
@@ -84,6 +97,13 @@ describe.skipIf(!live)('curated layers (Spacewar, live)', () => {
     // recased ('Map' was observed on the live client), so match by value.
     expect(Object.values(steam.lobbies.listData(lobbyId))).toContain('live-check');
     expect(steam.lobbies.getMembers(lobbyId)).toContain(steam.steamId());
+
+    steam.lobbies.setJoinable(lobbyId, false);
+    steam.lobbies.setType(lobbyId, 0);
+
+    expect(steam.lobbies.getGameServer(lobbyId)).toBeNull();
+    steam.lobbies.setGameServer(lobbyId, { ip: '192.168.0.10', port: 27015 });
+    expect(steam.lobbies.getGameServer(lobbyId)).toEqual({ steamId: 0n, ip: '192.168.0.10', port: 27015 });
 
     const echoed = new Promise<string>((resolve, reject) => {
       const t = setTimeout(() => reject(new Error('lobby chat timed out')), 10_000);

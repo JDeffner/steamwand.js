@@ -1,0 +1,6 @@
+# koffi 3 ships its native binary in sibling @koromix/koffi-<os>-<arch> packages,
+# so its cnoke prebuild script is not needed. esbuild (via vitest) resolves the
+# same way. Neither build script runs; declaring that keeps installs quiet.
+allowBuilds:
+  esbuild: false
+  koffi: false

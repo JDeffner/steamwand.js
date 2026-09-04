@@ -67,7 +67,8 @@ export class ISteamUGC {
    * `SteamAPICall_t SendQueryUGCRequest(UGCQueryHandle_t handle)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SendQueryUGCRequest`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamUGCQueryCompleted_t>(handle, layoutOf('SteamUGCQueryCompleted_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.SendQueryUGCRequest(...)`, which awaits and decodes `SteamUGCQueryCompleted_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<SteamUGCQueryCompleted_t>(handle, layoutOf('SteamUGCQueryCompleted_t'), callbackIdByName.SteamUGCQueryCompleted_t)`.
    * @param handle `UGCQueryHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SendQueryUGCRequest
    */
@@ -515,7 +516,8 @@ export class ISteamUGC {
    * `SteamAPICall_t RequestUGCDetails(PublishedFileId_t nPublishedFileID, uint32 unMaxAgeSeconds)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RequestUGCDetails`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SteamUGCRequestUGCDetailsResult_t>(handle, layoutOf('SteamUGCRequestUGCDetailsResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.RequestUGCDetails(...)`, which awaits and decodes `SteamUGCRequestUGCDetailsResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<SteamUGCRequestUGCDetailsResult_t>(handle, layoutOf('SteamUGCRequestUGCDetailsResult_t'), callbackIdByName.SteamUGCRequestUGCDetailsResult_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RequestUGCDetails
    */
@@ -527,7 +529,8 @@ export class ISteamUGC {
    * `SteamAPICall_t CreateItem(AppId_t nConsumerAppId, EWorkshopFileType eFileType)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_CreateItem`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<CreateItemResult_t>(handle, layoutOf('CreateItemResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.CreateItem(...)`, which awaits and decodes `CreateItemResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<CreateItemResult_t>(handle, layoutOf('CreateItemResult_t'), callbackIdByName.CreateItemResult_t)`.
    * @param eFileType enum `EWorkshopFileType`; values on `flat.EWorkshopFileType`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#CreateItem
    */
@@ -775,7 +778,8 @@ export class ISteamUGC {
    * `SteamAPICall_t SubmitItemUpdate(UGCUpdateHandle_t handle, const char *pchChangeNote)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SubmitItemUpdate`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SubmitItemUpdateResult_t>(handle, layoutOf('SubmitItemUpdateResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.SubmitItemUpdate(...)`, which awaits and decodes `SubmitItemUpdateResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<SubmitItemUpdateResult_t>(handle, layoutOf('SubmitItemUpdateResult_t'), callbackIdByName.SubmitItemUpdateResult_t)`.
    * @param handle `UGCUpdateHandle_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SubmitItemUpdate
    */
@@ -800,7 +804,8 @@ export class ISteamUGC {
    * `SteamAPICall_t SetUserItemVote(PublishedFileId_t nPublishedFileID, bool bVoteUp)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SetUserItemVote`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<SetUserItemVoteResult_t>(handle, layoutOf('SetUserItemVoteResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.SetUserItemVote(...)`, which awaits and decodes `SetUserItemVoteResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<SetUserItemVoteResult_t>(handle, layoutOf('SetUserItemVoteResult_t'), callbackIdByName.SetUserItemVoteResult_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetUserItemVote
    */
@@ -812,7 +817,8 @@ export class ISteamUGC {
    * `SteamAPICall_t GetUserItemVote(PublishedFileId_t nPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetUserItemVote`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<GetUserItemVoteResult_t>(handle, layoutOf('GetUserItemVoteResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.GetUserItemVote(...)`, which awaits and decodes `GetUserItemVoteResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<GetUserItemVoteResult_t>(handle, layoutOf('GetUserItemVoteResult_t'), callbackIdByName.GetUserItemVoteResult_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetUserItemVote
    */
@@ -824,7 +830,8 @@ export class ISteamUGC {
    * `SteamAPICall_t AddItemToFavorites(AppId_t nAppId, PublishedFileId_t nPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddItemToFavorites`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<UserFavoriteItemsListChanged_t>(handle, layoutOf('UserFavoriteItemsListChanged_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.AddItemToFavorites(...)`, which awaits and decodes `UserFavoriteItemsListChanged_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<UserFavoriteItemsListChanged_t>(handle, layoutOf('UserFavoriteItemsListChanged_t'), callbackIdByName.UserFavoriteItemsListChanged_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddItemToFavorites
    */
@@ -836,7 +843,8 @@ export class ISteamUGC {
    * `SteamAPICall_t RemoveItemFromFavorites(AppId_t nAppId, PublishedFileId_t nPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RemoveItemFromFavorites`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<UserFavoriteItemsListChanged_t>(handle, layoutOf('UserFavoriteItemsListChanged_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.RemoveItemFromFavorites(...)`, which awaits and decodes `UserFavoriteItemsListChanged_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<UserFavoriteItemsListChanged_t>(handle, layoutOf('UserFavoriteItemsListChanged_t'), callbackIdByName.UserFavoriteItemsListChanged_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RemoveItemFromFavorites
    */
@@ -848,7 +856,8 @@ export class ISteamUGC {
    * `SteamAPICall_t SubscribeItem(PublishedFileId_t nPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_SubscribeItem`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageSubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageSubscribePublishedFileResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.SubscribeItem(...)`, which awaits and decodes `RemoteStorageSubscribePublishedFileResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageSubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageSubscribePublishedFileResult_t'), callbackIdByName.RemoteStorageSubscribePublishedFileResult_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#SubscribeItem
    */
@@ -860,7 +869,8 @@ export class ISteamUGC {
    * `SteamAPICall_t UnsubscribeItem(PublishedFileId_t nPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_UnsubscribeItem`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoteStorageUnsubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageUnsubscribePublishedFileResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.UnsubscribeItem(...)`, which awaits and decodes `RemoteStorageUnsubscribePublishedFileResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoteStorageUnsubscribePublishedFileResult_t>(handle, layoutOf('RemoteStorageUnsubscribePublishedFileResult_t'), callbackIdByName.RemoteStorageUnsubscribePublishedFileResult_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#UnsubscribeItem
    */
@@ -962,7 +972,8 @@ export class ISteamUGC {
    * `SteamAPICall_t StartPlaytimeTracking(PublishedFileId_t *pvecPublishedFileID, uint32 unNumPublishedFileIDs)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_StartPlaytimeTracking`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<StartPlaytimeTrackingResult_t>(handle, layoutOf('StartPlaytimeTrackingResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.StartPlaytimeTracking(...)`, which awaits and decodes `StartPlaytimeTrackingResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<StartPlaytimeTrackingResult_t>(handle, layoutOf('StartPlaytimeTrackingResult_t'), callbackIdByName.StartPlaytimeTrackingResult_t)`.
    * @param pvecPublishedFileID Buffer you allocate for `PublishedFileId_t *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#StartPlaytimeTracking
    */
@@ -974,7 +985,8 @@ export class ISteamUGC {
    * `SteamAPICall_t StopPlaytimeTracking(PublishedFileId_t *pvecPublishedFileID, uint32 unNumPublishedFileIDs)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_StopPlaytimeTracking`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<StopPlaytimeTrackingResult_t>(handle, layoutOf('StopPlaytimeTrackingResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.StopPlaytimeTracking(...)`, which awaits and decodes `StopPlaytimeTrackingResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<StopPlaytimeTrackingResult_t>(handle, layoutOf('StopPlaytimeTrackingResult_t'), callbackIdByName.StopPlaytimeTrackingResult_t)`.
    * @param pvecPublishedFileID Buffer you allocate for `PublishedFileId_t *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#StopPlaytimeTracking
    */
@@ -986,7 +998,8 @@ export class ISteamUGC {
    * `SteamAPICall_t StopPlaytimeTrackingForAllItems()`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_StopPlaytimeTrackingForAllItems`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<StopPlaytimeTrackingResult_t>(handle, layoutOf('StopPlaytimeTrackingResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.StopPlaytimeTrackingForAllItems(...)`, which awaits and decodes `StopPlaytimeTrackingResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<StopPlaytimeTrackingResult_t>(handle, layoutOf('StopPlaytimeTrackingResult_t'), callbackIdByName.StopPlaytimeTrackingResult_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#StopPlaytimeTrackingForAllItems
    */
   StopPlaytimeTrackingForAllItems(): bigint {
@@ -997,7 +1010,8 @@ export class ISteamUGC {
    * `SteamAPICall_t AddDependency(PublishedFileId_t nParentPublishedFileID, PublishedFileId_t nChildPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddDependency`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<AddUGCDependencyResult_t>(handle, layoutOf('AddUGCDependencyResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.AddDependency(...)`, which awaits and decodes `AddUGCDependencyResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<AddUGCDependencyResult_t>(handle, layoutOf('AddUGCDependencyResult_t'), callbackIdByName.AddUGCDependencyResult_t)`.
    * @param nParentPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param nChildPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddDependency
@@ -1010,7 +1024,8 @@ export class ISteamUGC {
    * `SteamAPICall_t RemoveDependency(PublishedFileId_t nParentPublishedFileID, PublishedFileId_t nChildPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RemoveDependency`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoveUGCDependencyResult_t>(handle, layoutOf('RemoveUGCDependencyResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.RemoveDependency(...)`, which awaits and decodes `RemoveUGCDependencyResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoveUGCDependencyResult_t>(handle, layoutOf('RemoveUGCDependencyResult_t'), callbackIdByName.RemoveUGCDependencyResult_t)`.
    * @param nParentPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @param nChildPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RemoveDependency
@@ -1023,7 +1038,8 @@ export class ISteamUGC {
    * `SteamAPICall_t AddAppDependency(PublishedFileId_t nPublishedFileID, AppId_t nAppID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_AddAppDependency`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<AddAppDependencyResult_t>(handle, layoutOf('AddAppDependencyResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.AddAppDependency(...)`, which awaits and decodes `AddAppDependencyResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<AddAppDependencyResult_t>(handle, layoutOf('AddAppDependencyResult_t'), callbackIdByName.AddAppDependencyResult_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#AddAppDependency
    */
@@ -1035,7 +1051,8 @@ export class ISteamUGC {
    * `SteamAPICall_t RemoveAppDependency(PublishedFileId_t nPublishedFileID, AppId_t nAppID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_RemoveAppDependency`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<RemoveAppDependencyResult_t>(handle, layoutOf('RemoveAppDependencyResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.RemoveAppDependency(...)`, which awaits and decodes `RemoveAppDependencyResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<RemoveAppDependencyResult_t>(handle, layoutOf('RemoveAppDependencyResult_t'), callbackIdByName.RemoveAppDependencyResult_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#RemoveAppDependency
    */
@@ -1047,7 +1064,8 @@ export class ISteamUGC {
    * `SteamAPICall_t GetAppDependencies(PublishedFileId_t nPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetAppDependencies`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<GetAppDependenciesResult_t>(handle, layoutOf('GetAppDependenciesResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.GetAppDependencies(...)`, which awaits and decodes `GetAppDependenciesResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<GetAppDependenciesResult_t>(handle, layoutOf('GetAppDependenciesResult_t'), callbackIdByName.GetAppDependenciesResult_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetAppDependencies
    */
@@ -1059,7 +1077,8 @@ export class ISteamUGC {
    * `SteamAPICall_t DeleteItem(PublishedFileId_t nPublishedFileID)`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_DeleteItem`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<DeleteItemResult_t>(handle, layoutOf('DeleteItemResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.DeleteItem(...)`, which awaits and decodes `DeleteItemResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<DeleteItemResult_t>(handle, layoutOf('DeleteItemResult_t'), callbackIdByName.DeleteItemResult_t)`.
    * @param nPublishedFileID `PublishedFileId_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#DeleteItem
    */
@@ -1081,7 +1100,8 @@ export class ISteamUGC {
    * `SteamAPICall_t GetWorkshopEULAStatus()`
    *
    * Flat symbol: `SteamAPI_ISteamUGC_GetWorkshopEULAStatus`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<WorkshopEULAStatus_t>(handle, layoutOf('WorkshopEULAStatus_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.ugc.GetWorkshopEULAStatus(...)`, which awaits and decodes `WorkshopEULAStatus_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<WorkshopEULAStatus_t>(handle, layoutOf('WorkshopEULAStatus_t'), callbackIdByName.WorkshopEULAStatus_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUGC#GetWorkshopEULAStatus
    */
   GetWorkshopEULAStatus(): bigint {

@@ -52,7 +52,8 @@ export class ISteamParties {
    * `SteamAPICall_t JoinParty(PartyBeaconID_t ulBeaconID)`
    *
    * Flat symbol: `SteamAPI_ISteamParties_JoinParty`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<JoinPartyCallback_t>(handle, layoutOf('JoinPartyCallback_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.parties.JoinParty(...)`, which awaits and decodes `JoinPartyCallback_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<JoinPartyCallback_t>(handle, layoutOf('JoinPartyCallback_t'), callbackIdByName.JoinPartyCallback_t)`.
    * @param ulBeaconID `PartyBeaconID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamParties#JoinParty
    */
@@ -86,7 +87,8 @@ export class ISteamParties {
    * `SteamAPICall_t CreateBeacon(uint32 unOpenSlots, SteamPartyBeaconLocation_t *pBeaconLocation, const char *pchConnectString, const char *pchMetadata)`
    *
    * Flat symbol: `SteamAPI_ISteamParties_CreateBeacon`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<CreateBeaconCallback_t>(handle, layoutOf('CreateBeaconCallback_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.parties.CreateBeacon(...)`, which awaits and decodes `CreateBeaconCallback_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<CreateBeaconCallback_t>(handle, layoutOf('CreateBeaconCallback_t'), callbackIdByName.CreateBeaconCallback_t)`.
    * @param pBeaconLocation Buffer you allocate for `SteamPartyBeaconLocation_t *`: `Buffer.alloc(layoutOf('SteamPartyBeaconLocation_t').size)`.
    * @see https://partner.steamgames.com/doc/api/ISteamParties#CreateBeacon
    */
@@ -122,7 +124,8 @@ export class ISteamParties {
    * `SteamAPICall_t ChangeNumOpenSlots(PartyBeaconID_t ulBeacon, uint32 unOpenSlots)`
    *
    * Flat symbol: `SteamAPI_ISteamParties_ChangeNumOpenSlots`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<ChangeNumOpenSlotsCallback_t>(handle, layoutOf('ChangeNumOpenSlotsCallback_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.parties.ChangeNumOpenSlots(...)`, which awaits and decodes `ChangeNumOpenSlotsCallback_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<ChangeNumOpenSlotsCallback_t>(handle, layoutOf('ChangeNumOpenSlotsCallback_t'), callbackIdByName.ChangeNumOpenSlotsCallback_t)`.
    * @param ulBeacon `PartyBeaconID_t`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamParties#ChangeNumOpenSlots
    */

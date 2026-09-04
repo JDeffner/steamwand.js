@@ -254,7 +254,8 @@ export class ISteamFriends {
    * `SteamAPICall_t DownloadClanActivityCounts(CSteamID *psteamIDClans, int cClansToRequest)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_DownloadClanActivityCounts`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<DownloadClanActivityCountsResult_t>(handle, layoutOf('DownloadClanActivityCountsResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.friends.DownloadClanActivityCounts(...)`, which awaits and decodes `DownloadClanActivityCountsResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<DownloadClanActivityCountsResult_t>(handle, layoutOf('DownloadClanActivityCountsResult_t'), callbackIdByName.DownloadClanActivityCountsResult_t)`.
    * @param psteamIDClans Buffer you allocate for `CSteamID *`: `Buffer.alloc(8)` per element.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#DownloadClanActivityCounts
    */
@@ -420,7 +421,8 @@ export class ISteamFriends {
    * `SteamAPICall_t RequestClanOfficerList(CSteamID steamIDClan)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_RequestClanOfficerList`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<ClanOfficerListResponse_t>(handle, layoutOf('ClanOfficerListResponse_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.friends.RequestClanOfficerList(...)`, which awaits and decodes `ClanOfficerListResponse_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<ClanOfficerListResponse_t>(handle, layoutOf('ClanOfficerListResponse_t'), callbackIdByName.ClanOfficerListResponse_t)`.
    * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#RequestClanOfficerList
    */
@@ -582,7 +584,8 @@ export class ISteamFriends {
    * `SteamAPICall_t JoinClanChatRoom(CSteamID steamIDClan)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_JoinClanChatRoom`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<JoinClanChatRoomCompletionResult_t>(handle, layoutOf('JoinClanChatRoomCompletionResult_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.friends.JoinClanChatRoom(...)`, which awaits and decodes `JoinClanChatRoomCompletionResult_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<JoinClanChatRoomCompletionResult_t>(handle, layoutOf('JoinClanChatRoomCompletionResult_t'), callbackIdByName.JoinClanChatRoomCompletionResult_t)`.
    * @param steamIDClan `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#JoinClanChatRoom
    */
@@ -731,7 +734,8 @@ export class ISteamFriends {
    * `SteamAPICall_t GetFollowerCount(CSteamID steamID)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_GetFollowerCount`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<FriendsGetFollowerCount_t>(handle, layoutOf('FriendsGetFollowerCount_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.friends.GetFollowerCount(...)`, which awaits and decodes `FriendsGetFollowerCount_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<FriendsGetFollowerCount_t>(handle, layoutOf('FriendsGetFollowerCount_t'), callbackIdByName.FriendsGetFollowerCount_t)`.
    * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#GetFollowerCount
    */
@@ -743,7 +747,8 @@ export class ISteamFriends {
    * `SteamAPICall_t IsFollowing(CSteamID steamID)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_IsFollowing`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<FriendsIsFollowing_t>(handle, layoutOf('FriendsIsFollowing_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.friends.IsFollowing(...)`, which awaits and decodes `FriendsIsFollowing_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<FriendsIsFollowing_t>(handle, layoutOf('FriendsIsFollowing_t'), callbackIdByName.FriendsIsFollowing_t)`.
    * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#IsFollowing
    */
@@ -755,7 +760,8 @@ export class ISteamFriends {
    * `SteamAPICall_t EnumerateFollowingList(uint32 unStartIndex)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_EnumerateFollowingList`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<FriendsEnumerateFollowingList_t>(handle, layoutOf('FriendsEnumerateFollowingList_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.friends.EnumerateFollowingList(...)`, which awaits and decodes `FriendsEnumerateFollowingList_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<FriendsEnumerateFollowingList_t>(handle, layoutOf('FriendsEnumerateFollowingList_t'), callbackIdByName.FriendsEnumerateFollowingList_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#EnumerateFollowingList
    */
   EnumerateFollowingList(unStartIndex: number): bigint {
@@ -829,7 +835,8 @@ export class ISteamFriends {
    * `SteamAPICall_t RequestEquippedProfileItems(CSteamID steamID)`
    *
    * Flat symbol: `SteamAPI_ISteamFriends_RequestEquippedProfileItems`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<EquippedProfileItems_t>(handle, layoutOf('EquippedProfileItems_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.friends.RequestEquippedProfileItems(...)`, which awaits and decodes `EquippedProfileItems_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<EquippedProfileItems_t>(handle, layoutOf('EquippedProfileItems_t'), callbackIdByName.EquippedProfileItems_t)`.
    * @param steamID `CSteamID`, 64-bit: pass a `bigint`, for example `123n`.
    * @see https://partner.steamgames.com/doc/api/ISteamFriends#RequestEquippedProfileItems
    */

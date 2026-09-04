@@ -5,20 +5,38 @@ import { stringArray } from '../runtime/types';
 import { out } from '../runtime/out';
 import type { ISteamUGC } from '../generated/interfaces/ISteamUGC';
 import { layoutOf } from '../generated/structs';
-import { callbackIdByName } from '../generated/callbacks';
+import { callbackIdByName, type SteamCallbackMap } from '../generated/callbacks';
 import type {
   AddAppDependencyResult_t,
   AddUGCDependencyResult_t,
   CreateItemResult_t,
   DeleteItemResult_t,
   GetAppDependenciesResult_t,
+  GetUserItemVoteResult_t,
+  RemoteStorageSubscribePublishedFileResult_t,
+  RemoteStorageUnsubscribePublishedFileResult_t,
   RemoveAppDependencyResult_t,
   RemoveUGCDependencyResult_t,
+  SetUserItemVoteResult_t,
+  StartPlaytimeTrackingResult_t,
   SteamUGCDetails_t,
   SteamUGCQueryCompleted_t,
+  StopPlaytimeTrackingResult_t,
   SubmitItemUpdateResult_t,
+  UserFavoriteItemsListChanged_t,
+  WorkshopEULAStatus_t,
 } from '../generated/structs';
-import { EItemPreviewType, EItemStatistic, EResult, EUGCMatchingUGCType, EUserUGCList, EUserUGCListSortOrder, EWorkshopFileType } from '../generated/enums';
+import {
+  EItemPreviewType,
+  EItemState,
+  EItemStatistic,
+  EResult,
+  EUGCMatchingUGCType,
+  EUGCQuery,
+  EUserUGCList,
+  EUserUGCListSortOrder,
+  EWorkshopFileType,
+} from '../generated/enums';
 import { k_cchDeveloperMetadataMax } from '../generated/consts';
 import { ok, must } from './guards';
 
@@ -164,6 +182,13 @@ function cstr(buf: Buffer): string {
   return buf.toString('utf8', 0, Math.max(buf.indexOf(0), 0));
 }
 
+/** Packs file ids into the `PublishedFileId_t *` array the flat calls take. */
+function fileIdArray(fileIds: bigint[]): Buffer {
+  const buf = Buffer.alloc(Math.max(fileIds.length, 1) * 8);
+  fileIds.forEach((id, i) => buf.writeBigUInt64LE(id, i * 8));
+  return buf;
+}
+
 const STATISTICS: Record<string, number> = {
   numSubscriptions: EItemStatistic.k_EItemStatistic_NumSubscriptions,
   numFavorites: EItemStatistic.k_EItemStatistic_NumFavorites,
@@ -215,12 +240,114 @@ export interface UserItemsPage {
 }
 
 /**
- * Task level wrapper over ISteamUGC: create, update, delete, and query
- * workshop items.
+ * Filters and ranking for one whole-workshop query.
  *
- * Every method awaits the underlying async call through the dispatch, and
- * turns a non-OK `EResult` into a `SteamResultError`. Reach it as
- * `steam.workshop`, which builds it with the app id from `init`.
+ * @see Workshop.browse
+ */
+export interface BrowseOptions extends QueryOptions {
+  /** App whose workshop to search. Defaults to the app id passed to `init`. */
+  appId?: number;
+  /** EUGCQuery ranking, for example `k_EUGCQuery_RankedByTrend`. Defaults to `k_EUGCQuery_RankedByVote`. */
+  queryType?: number;
+  /** EUGCMatchingUGCType, which item kinds to return. Defaults to `k_EUGCMatchingUGCType_Items`. */
+  matchingType?: number;
+  /** Text the title or description must contain. */
+  searchText?: string;
+  /** Tags every item must carry, or any of them with `matchAnyTag`. */
+  requiredTags?: string[];
+  /** Tags no item may carry. */
+  excludedTags?: string[];
+  /** Match items carrying any of `requiredTags` instead of all of them. */
+  matchAnyTag?: boolean;
+  /** Days the trend window covers for the `RankedByTrend` query types, 1 to 180. */
+  trendDays?: number;
+  /** Page cursor from a previous result. Omit, or pass `'*'`, for the first page. */
+  cursor?: string;
+}
+
+/**
+ * One page of a whole-workshop query.
+ *
+ * @see Workshop.browse
+ */
+export interface BrowsePage extends UserItemsPage {
+  /** Cursor for the next page, or null after the last one. */
+  nextCursor: string | null;
+}
+
+/**
+ * Local state of one item, decoded from the `EItemState` bit field.
+ *
+ * @see Workshop.getState
+ */
+export interface ItemState {
+  /** The current user is subscribed. */
+  subscribed: boolean;
+  /** Uploaded through the pre-2014 RemoteStorage workshop API. */
+  legacy: boolean;
+  /** Content is on disk. `getInstallInfo` has the path. */
+  installed: boolean;
+  /** Steam has a newer version than the installed one. */
+  needsUpdate: boolean;
+  /** A download is running. `getDownloadInfo` has the progress. */
+  downloading: boolean;
+  /** A download is queued but not started. */
+  downloadPending: boolean;
+  /** The user disabled the item in the Steam client. */
+  disabledLocally: boolean;
+}
+
+/**
+ * Where an installed item lives on disk.
+ *
+ * @see Workshop.getInstallInfo
+ */
+export interface InstallInfo {
+  /** Absolute path of the content folder, or of the file for legacy items. */
+  path: string;
+  /** Bytes on disk. 64-bit, so a `bigint`. */
+  sizeOnDisk: bigint;
+  /** When the installed content was last updated, Unix seconds. */
+  timestamp: number;
+}
+
+/**
+ * Progress of a running item download.
+ *
+ * @see Workshop.getDownloadInfo
+ * @see Workshop.download
+ */
+export interface DownloadProgress {
+  /** Bytes downloaded so far. 64-bit, so a `bigint`. */
+  bytesDownloaded: bigint;
+  /** Total bytes, or `0n` before Steam knows the size. */
+  bytesTotal: bigint;
+}
+
+/**
+ * The current user's standing with the Steam Workshop legal agreement.
+ *
+ * @see Workshop.getEulaStatus
+ */
+export interface WorkshopEulaStatus {
+  /** Version of the agreement this answer is about. */
+  version: number;
+  /** True if the user accepted this version. */
+  accepted: boolean;
+  /** True if Steam wants the user to look at it, usually because it changed. */
+  needsAction: boolean;
+  /** When the user last acted on it, Unix seconds, or 0. */
+  actionTime: number;
+}
+
+/**
+ * Task level wrapper over ISteamUGC, both sides of the Steam Workshop.
+ *
+ * For a creator: create, update, delete, and query items. For a player:
+ * browse, subscribe, download, find the installed content on disk, vote, and
+ * favorite. Every async method awaits the underlying call through the
+ * dispatch and turns a non-OK `EResult` into a `SteamResultError`. Reach it
+ * as `steam.workshop`, which builds it with the app id from `init`.
  *
  * @see Steam.workshop
  * @see SteamResultError
@@ -230,11 +357,21 @@ export class Workshop {
    * @param ugc - The ISteamUGC interface.
    * @param dispatch - Running pump that resolves the call results.
    * @param appId - App id used when a method takes no explicit one.
+   * @param subscribe - Callback subscriber, normally `steam.on` bound to the session.
+   * @param once - Awaitable callback subscriber, normally `steam.once` bound to the session.
    */
   constructor(
     private readonly ugc: ISteamUGC,
     private readonly dispatch: SteamDispatch,
     private readonly appId: number,
+    private readonly subscribeCallback: <K extends keyof SteamCallbackMap & string>(
+      name: K,
+      listener: (data: SteamCallbackMap[K]) => void,
+    ) => () => void,
+    private readonly once: <K extends keyof SteamCallbackMap & string>(
+      name: K,
+      match?: (data: SteamCallbackMap[K]) => boolean,
+    ) => Promise<SteamCallbackMap[K]>,
   ) {}
 
   /**
@@ -588,6 +725,418 @@ export class Workshop {
   }
 
   /**
+   * Searches the whole workshop of an app, one page at a time.
+   *
+   * This is the query behind the in-game mod browser: rank by votes, trend,
+   * or date, filter by tags, and match search text. Pages are cursor based,
+   * so a walk over a large workshop does not stop at Steam's page limit.
+   *
+   * @param opts - Ranking, filters, cursor, and the usual query options.
+   * @returns The page items, the total match count, and the cursor for the next page.
+   * @throws SteamResultError if the query failed.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @example
+   * ```ts
+   * import { init, flat } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * let cursor: string | null = '*';
+   * while (cursor) {
+   *   const page = await steam.workshop.browse({
+   *     queryType: flat.EUGCQuery.k_EUGCQuery_RankedByTrend,
+   *     trendDays: 7,
+   *     requiredTags: ['gameplay'],
+   *     cursor,
+   *   });
+   *   console.log(page.items.map((i) => i.title));
+   *   cursor = page.nextCursor;
+   * }
+   * steam.close();
+   * ```
+   * @see getUserItems
+   */
+  async browse(opts: BrowseOptions = {}): Promise<BrowsePage> {
+    const appId = opts.appId ?? this.appId;
+    const handle = this.ugc.CreateQueryAllUGCRequestCursor(
+      opts.queryType ?? EUGCQuery.k_EUGCQuery_RankedByVote,
+      opts.matchingType ?? EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items,
+      appId,
+      appId,
+      opts.cursor ?? '*',
+    );
+    if (opts.searchText !== undefined) must('SetSearchText', this.ugc.SetSearchText(handle, opts.searchText));
+    for (const tag of opts.requiredTags ?? []) must('AddRequiredTag', this.ugc.AddRequiredTag(handle, tag));
+    for (const tag of opts.excludedTags ?? []) must('AddExcludedTag', this.ugc.AddExcludedTag(handle, tag));
+    if (opts.matchAnyTag !== undefined) must('SetMatchAnyTag', this.ugc.SetMatchAnyTag(handle, opts.matchAnyTag));
+    if (opts.trendDays !== undefined) must('SetRankedByTrendDays', this.ugc.SetRankedByTrendDays(handle, opts.trendDays));
+    const page = await this.runQuery(handle, opts);
+    // Steam repeats the cursor it was given once the results run out.
+    if (page.nextCursor === (opts.cursor ?? '*')) page.nextCursor = null;
+    return page;
+  }
+
+  /**
+   * Subscribes the current user to an item, so Steam downloads it and keeps
+   * it updated.
+   *
+   * Steam starts the download on its own. Await `download` to know when the
+   * content is on disk, or listen with `onInstalled`.
+   *
+   * @param fileId - Item to subscribe to. 64-bit, so a `bigint`.
+   * @throws SteamResultError if Steam refused, for example with `k_EResultFileNotFound`.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see unsubscribe
+   * @see download
+   */
+  async subscribe(fileId: bigint): Promise<void> {
+    const call = this.ugc.SubscribeItem(fileId);
+    const r = await this.dispatch.callResultStruct<RemoteStorageSubscribePublishedFileResult_t>(
+      call,
+      layoutOf('RemoteStorageSubscribePublishedFileResult_t'),
+      callbackIdByName.RemoteStorageSubscribePublishedFileResult_t,
+    );
+    ok('SubscribeItem', r.m_eResult);
+  }
+
+  /**
+   * Unsubscribes the current user from an item. Steam removes the content
+   * from disk once the app exits.
+   *
+   * The local list behind `listSubscribed` catches up on the client's next
+   * sync, so it can still carry the item right after this resolves.
+   *
+   * @param fileId - Item to unsubscribe from. 64-bit, so a `bigint`.
+   * @throws SteamResultError if Steam refused.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see subscribe
+   */
+  async unsubscribe(fileId: bigint): Promise<void> {
+    const call = this.ugc.UnsubscribeItem(fileId);
+    const r = await this.dispatch.callResultStruct<RemoteStorageUnsubscribePublishedFileResult_t>(
+      call,
+      layoutOf('RemoteStorageUnsubscribePublishedFileResult_t'),
+      callbackIdByName.RemoteStorageUnsubscribePublishedFileResult_t,
+    );
+    ok('UnsubscribeItem', r.m_eResult);
+  }
+
+  /**
+   * Lists the items the current user is subscribed to for this app.
+   *
+   * A local read against the Steam client, so it needs no round trip. This
+   * is the list a game walks at startup to find its mods: pair it with
+   * `getState` and `getInstallInfo`.
+   *
+   * @param includeLocallyDisabled - Also list items the user disabled in the Steam client.
+   * @returns The subscribed file ids, in Steam's order. 64-bit, so `bigint`s.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * for (const fileId of steam.workshop.listSubscribed()) {
+   *   const info = steam.workshop.getInstallInfo(fileId);
+   *   console.log(fileId, info?.path ?? '(not installed yet)');
+   * }
+   * steam.close();
+   * ```
+   * @see getState
+   * @see getInstallInfo
+   */
+  listSubscribed(includeLocallyDisabled = false): bigint[] {
+    const count = this.ugc.GetNumSubscribedItems(includeLocallyDisabled);
+    if (count === 0) return [];
+    const buf = Buffer.alloc(count * 8);
+    const written = this.ugc.GetSubscribedItems(buf, count, includeLocallyDisabled);
+    const ids: bigint[] = [];
+    for (let i = 0; i < written; i++) ids.push(buf.readBigUInt64LE(i * 8));
+    return ids;
+  }
+
+  /**
+   * Reads the local state of an item as named flags.
+   *
+   * @param fileId - Item to read. 64-bit, so a `bigint`.
+   * @returns One boolean per `EItemState` bit. All false for an item the client knows nothing about.
+   * @see getInstallInfo
+   * @see getDownloadInfo
+   */
+  getState(fileId: bigint): ItemState {
+    const bits = this.ugc.GetItemState(fileId);
+    return {
+      subscribed: (bits & EItemState.k_EItemStateSubscribed) !== 0,
+      legacy: (bits & EItemState.k_EItemStateLegacyItem) !== 0,
+      installed: (bits & EItemState.k_EItemStateInstalled) !== 0,
+      needsUpdate: (bits & EItemState.k_EItemStateNeedsUpdate) !== 0,
+      downloading: (bits & EItemState.k_EItemStateDownloading) !== 0,
+      downloadPending: (bits & EItemState.k_EItemStateDownloadPending) !== 0,
+      disabledLocally: (bits & EItemState.k_EItemStateDisabledLocally) !== 0,
+    };
+  }
+
+  /**
+   * Finds an installed item on disk.
+   *
+   * @param fileId - Item to look up. 64-bit, so a `bigint`.
+   * @returns The content path, size, and timestamp, or null while the item is not installed.
+   * @see listSubscribed
+   * @see getState
+   */
+  getInstallInfo(fileId: bigint): InstallInfo | null {
+    const size = out.uint64();
+    const folder = Buffer.alloc(1024);
+    const timestamp = out.uint32();
+    if (!this.ugc.GetItemInstallInfo(fileId, size.buffer, folder, folder.length, timestamp.buffer)) return null;
+    return { path: cstr(folder), sizeOnDisk: size.value, timestamp: timestamp.value };
+  }
+
+  /**
+   * Reads the progress of a running download.
+   *
+   * @param fileId - Item to look up. 64-bit, so a `bigint`.
+   * @returns The byte counts, or null when no download is running for that item.
+   * @see download
+   */
+  getDownloadInfo(fileId: bigint): DownloadProgress | null {
+    const downloaded = out.uint64();
+    const total = out.uint64();
+    if (!this.ugc.GetItemDownloadInfo(fileId, downloaded.buffer, total.buffer)) return null;
+    return { bytesDownloaded: downloaded.value, bytesTotal: total.value };
+  }
+
+  /**
+   * Downloads an item, or updates it, and resolves once the content is on
+   * disk.
+   *
+   * Steam downloads subscribed items on its own; call this to force one
+   * now, for example after `subscribe` when the game needs the mod before it
+   * can continue, or for an item the user is not subscribed to. The item is
+   * installed when this resolves, so `getInstallInfo` answers right after.
+   *
+   * @param fileId - Item to download. 64-bit, so a `bigint`.
+   * @param opts.highPriority - Put it in front of every other Steam download.
+   * @defaultValue true
+   * @param opts.onProgress - Called on a timer while the download runs, and never after the promise settles.
+   * @param opts.progressIntervalMs - Milliseconds between `onProgress` calls.
+   * @defaultValue 500
+   * @throws Error if Steam refused to queue the download, which means an unknown item or a workshop the user may not read.
+   * @throws SteamResultError if the download finished with a non-OK `EResult`.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * await steam.workshop.subscribe(123456789n);
+   * await steam.workshop.download(123456789n, {
+   *   onProgress: (p) => console.log(p.bytesDownloaded, '/', p.bytesTotal),
+   * });
+   * console.log(steam.workshop.getInstallInfo(123456789n)?.path);
+   * steam.close();
+   * ```
+   * @see onInstalled
+   */
+  async download(
+    fileId: bigint,
+    opts: { highPriority?: boolean; onProgress?: (p: DownloadProgress) => void; progressIntervalMs?: number } = {},
+  ): Promise<void> {
+    if (!this.ugc.DownloadItem(fileId, opts.highPriority ?? true)) {
+      throw new Error(`steamwand: DownloadItem refused ${fileId} (unknown item, or no access to its workshop)`);
+    }
+    // Callbacks only arrive inside a pump frame, so nothing can slip in
+    // between the call above and this subscription. Steam answers a download
+    // of an item that is already current with the same callback.
+    const done = this.once('DownloadItemResult_t', (e) => e.m_nPublishedFileId === fileId);
+    let progressTimer: NodeJS.Timeout | undefined;
+    if (opts.onProgress) {
+      const onProgress = opts.onProgress;
+      progressTimer = setInterval(() => {
+        const p = this.getDownloadInfo(fileId);
+        if (p) onProgress(p);
+      }, opts.progressIntervalMs ?? 500);
+      progressTimer.unref();
+    }
+    try {
+      const r = await done;
+      ok('DownloadItem', r.m_eResult);
+    } finally {
+      if (progressTimer) clearInterval(progressTimer);
+    }
+  }
+
+  /**
+   * Subscribes to every item install and update for this app, whoever
+   * started it.
+   *
+   * Steam fires this for downloads the client runs on its own, so it is
+   * how a running game learns that a subscribed mod just updated.
+   *
+   * @param listener - Runs with the file id of the item that landed on disk.
+   * @returns Unsubscribe function. Calling it more than once is harmless.
+   * @see download
+   */
+  onInstalled(listener: (event: { fileId: bigint; appId: number }) => void): () => void {
+    return this.subscribeCallback('ItemInstalled_t', (e) => {
+      listener({ fileId: e.m_nPublishedFileId, appId: e.m_unAppID });
+    });
+  }
+
+  /**
+   * Casts, or changes, the current user's vote on an item.
+   *
+   * @param fileId - Item to vote on. 64-bit, so a `bigint`.
+   * @param up - True for a thumbs up, false for a thumbs down.
+   * @throws SteamResultError if Steam refused, for example with `k_EResultAccessDenied` on the user's own item.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see getVote
+   */
+  async vote(fileId: bigint, up: boolean): Promise<void> {
+    const call = this.ugc.SetUserItemVote(fileId, up);
+    const r = await this.dispatch.callResultStruct<SetUserItemVoteResult_t>(
+      call,
+      layoutOf('SetUserItemVoteResult_t'),
+      callbackIdByName.SetUserItemVoteResult_t,
+    );
+    ok('SetUserItemVote', r.m_eResult);
+  }
+
+  /**
+   * Reads the current user's vote on an item.
+   *
+   * @param fileId - Item to read. 64-bit, so a `bigint`.
+   * @returns `'up'`, `'down'`, `'skipped'` if the user chose not to vote, or null if the user has not voted.
+   * @throws SteamResultError if Steam refused.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see vote
+   */
+  async getVote(fileId: bigint): Promise<'up' | 'down' | 'skipped' | null> {
+    const call = this.ugc.GetUserItemVote(fileId);
+    const r = await this.dispatch.callResultStruct<GetUserItemVoteResult_t>(
+      call,
+      layoutOf('GetUserItemVoteResult_t'),
+      callbackIdByName.GetUserItemVoteResult_t,
+    );
+    ok('GetUserItemVote', r.m_eResult);
+    if (r.m_bVotedUp) return 'up';
+    if (r.m_bVotedDown) return 'down';
+    if (r.m_bVoteSkipped) return 'skipped';
+    return null;
+  }
+
+  /**
+   * Adds an item to the current user's favorites.
+   *
+   * @param fileId - Item to favorite. 64-bit, so a `bigint`.
+   * @param appId - App the favorite is filed under.
+   * @defaultValue the app id passed to `init`
+   * @throws SteamResultError if Steam refused.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see removeFromFavorites
+   */
+  async addToFavorites(fileId: bigint, appId: number = this.appId): Promise<void> {
+    const call = this.ugc.AddItemToFavorites(appId, fileId);
+    const r = await this.dispatch.callResultStruct<UserFavoriteItemsListChanged_t>(
+      call,
+      layoutOf('UserFavoriteItemsListChanged_t'),
+      callbackIdByName.UserFavoriteItemsListChanged_t,
+    );
+    ok('AddItemToFavorites', r.m_eResult);
+  }
+
+  /**
+   * Removes an item from the current user's favorites.
+   *
+   * @param fileId - Item to remove. 64-bit, so a `bigint`.
+   * @param appId - App the favorite is filed under.
+   * @defaultValue the app id passed to `init`
+   * @throws SteamResultError if Steam refused.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see addToFavorites
+   */
+  async removeFromFavorites(fileId: bigint, appId: number = this.appId): Promise<void> {
+    const call = this.ugc.RemoveItemFromFavorites(appId, fileId);
+    const r = await this.dispatch.callResultStruct<UserFavoriteItemsListChanged_t>(
+      call,
+      layoutOf('UserFavoriteItemsListChanged_t'),
+      callbackIdByName.UserFavoriteItemsListChanged_t,
+    );
+    ok('RemoveItemFromFavorites', r.m_eResult);
+  }
+
+  /**
+   * Tells Steam which items are in use, so their playtime statistics grow.
+   *
+   * Call it when a session with those mods starts, and the matching stop
+   * method when it ends. Steam caps one call at 100 items.
+   *
+   * @param fileIds - Items in use. 64-bit, so `bigint`s.
+   * @throws SteamResultError if Steam refused, for example with `k_EResultInvalidParam` above 100 items.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see stopPlaytimeTracking
+   */
+  async startPlaytimeTracking(fileIds: bigint[]): Promise<void> {
+    const call = this.ugc.StartPlaytimeTracking(fileIdArray(fileIds), fileIds.length);
+    const r = await this.dispatch.callResultStruct<StartPlaytimeTrackingResult_t>(
+      call,
+      layoutOf('StartPlaytimeTrackingResult_t'),
+      callbackIdByName.StartPlaytimeTrackingResult_t,
+    );
+    ok('StartPlaytimeTracking', r.m_eResult);
+  }
+
+  /**
+   * Stops playtime tracking for some items.
+   *
+   * @param fileIds - Items no longer in use. 64-bit, so `bigint`s. Omit to stop tracking every item.
+   * @throws SteamResultError if Steam refused.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see startPlaytimeTracking
+   */
+  async stopPlaytimeTracking(fileIds?: bigint[]): Promise<void> {
+    const call = fileIds
+      ? this.ugc.StopPlaytimeTracking(fileIdArray(fileIds), fileIds.length)
+      : this.ugc.StopPlaytimeTrackingForAllItems();
+    const r = await this.dispatch.callResultStruct<StopPlaytimeTrackingResult_t>(
+      call,
+      layoutOf('StopPlaytimeTrackingResult_t'),
+      callbackIdByName.StopPlaytimeTrackingResult_t,
+    );
+    ok('StopPlaytimeTracking', r.m_eResult);
+  }
+
+  /**
+   * Opens the Steam Workshop legal agreement in the overlay.
+   *
+   * A user who has not accepted it cannot publish, and `createItem` reports
+   * that through `legalAgreementRequired`.
+   *
+   * @returns True if the overlay opened. False when the overlay is disabled.
+   * @see getEulaStatus
+   */
+  showEula(): boolean {
+    return this.ugc.ShowWorkshopEULA();
+  }
+
+  /**
+   * Reads whether the current user accepted the Steam Workshop legal
+   * agreement.
+   *
+   * @returns The agreement version and the user's standing with it.
+   * @throws SteamResultError if Steam refused, with `k_EResultInvalidParam` for an app that has no workshop agreement configured (Spacewar is one).
+   * @throws SteamApiCallError if the call could not be completed.
+   * @see showEula
+   */
+  async getEulaStatus(): Promise<WorkshopEulaStatus> {
+    const call = this.ugc.GetWorkshopEULAStatus();
+    const r = await this.dispatch.callResultStruct<WorkshopEULAStatus_t>(
+      call,
+      layoutOf('WorkshopEULAStatus_t'),
+      callbackIdByName.WorkshopEULAStatus_t,
+    );
+    ok('GetWorkshopEULAStatus', r.m_eResult);
+    return { version: r.m_unVersion, accepted: r.m_bAccepted, needsAction: r.m_bNeedsAction, actionTime: r.m_rtAction };
+  }
+
+  /**
    * Applies the query options, sends the query, and decodes every result row.
    *
    * The handle is released in a `finally`, so a failed query leaks nothing.
@@ -596,10 +1145,10 @@ export class Workshop {
    *
    * @param handle - UGCQueryHandle_t from a `CreateQuery...Request` call.
    * @param opts - Language and description options to apply before sending.
-   * @returns The decoded items and the total match count.
+   * @returns The decoded items, the total match count, and the next cursor (null for page queries and after the last page).
    * @throws SteamResultError if the query completed with a non-OK EResult.
    */
-  private async runQuery(handle: bigint, opts: QueryOptions): Promise<UserItemsPage> {
+  private async runQuery(handle: bigint, opts: QueryOptions): Promise<BrowsePage> {
     if (opts.language !== undefined) must('SetLanguage', this.ugc.SetLanguage(handle, opts.language));
     if (opts.longDescription) must('SetReturnLongDescription', this.ugc.SetReturnLongDescription(handle, true));
     if (opts.children) must('SetReturnChildren', this.ugc.SetReturnChildren(handle, true));
@@ -623,7 +1172,9 @@ export class Workshop {
         if (d.m_eResult === EResult.k_EResultFileNotFound) continue;
         items.push(this.toItem(q.m_handle, i, d, opts));
       }
-      return { items, totalResults: q.m_unTotalMatchingResults };
+      // Steam hands back the cursor it was given once the results run out.
+      const nextCursor = q.m_unNumResultsReturned > 0 && q.m_rgchNextCursor ? q.m_rgchNextCursor : null;
+      return { items, totalResults: q.m_unTotalMatchingResults, nextCursor };
     } finally {
       this.ugc.ReleaseQueryUGCRequest(handle);
     }

@@ -2,11 +2,24 @@ import { out } from '../runtime/out';
 import type { ISteamUtils } from '../generated/interfaces/ISteamUtils';
 import type { ISteamApps } from '../generated/interfaces/ISteamApps';
 import type { SteamCallbackMap } from '../generated/callbacks';
-import { EGamepadTextInputLineMode, EGamepadTextInputMode, ESteamHardwareType } from '../generated/enums';
+import {
+  EBetaBranchFlags,
+  EGamepadTextInputLineMode,
+  EGamepadTextInputMode,
+  ESteamHardwareType,
+} from '../generated/enums';
 import { must } from './guards';
 
 /** Steam reports this instead of a percentage when the machine runs on mains power. */
 const ON_AC_POWER = 255;
+/** Install paths can be long, and Valve's own samples read them into a buffer this size. */
+const INSTALL_DIR_BYTES = 1024;
+/** Beta branch names are capped well under this by Steam. */
+const BETA_NAME_BYTES = 64;
+/** Beta branch descriptions are one line of text. */
+const BETA_DESCRIPTION_BYTES = 256;
+/** The launch command line Steam passes through is capped at 1 KB. */
+const LAUNCH_COMMAND_LINE_BYTES = 1024;
 
 /**
  * A decoded Steam image, as returned by the image handle reads.
@@ -41,18 +54,48 @@ export interface GamepadTextInputOptions {
 }
 
 /**
+ * One branch of the running app, as Steam reports it to the client.
+ *
+ * @see System.listBetas
+ */
+export interface BetaBranch {
+  /** Branch name, the one `setActiveBeta` takes. */
+  name: string;
+  /** Description the developer wrote for the branch, empty if there is none. */
+  description: string;
+  /** Build id currently on that branch. */
+  buildId: number;
+  /** When the branch was last updated, as a Unix time in seconds. */
+  lastUpdated: number;
+  /** True for the app's default branch, the one a user without a beta opt-in runs. */
+  isDefault: boolean;
+  /** True while the branch is available to this user. */
+  available: boolean;
+  /** True if the branch needs a password to opt into. */
+  isPrivate: boolean;
+  /** True for the branch the user selected in the Steam client. */
+  selected: boolean;
+  /** True for the branch that is installed right now. */
+  installed: boolean;
+}
+
+/**
  * Task level wrapper over ISteamUtils: the facts about the machine and the
- * Steam client this app runs under, plus the two gamepad keyboards.
+ * Steam client this app runs under, the install, build, beta and launch facts
+ * of the running app, plus the two gamepad keyboards.
  *
  * Everything here is a local read against the running Steam client except
  * `showGamepadTextInput`, which opens the Big Picture keyboard and resolves
  * when the user is done with it. Reach it as `steam.system`. Named `system`
  * because the generated ISteamUtils accessor already owns `steam.utils`.
  *
- * Avatars have their own decode in `steam.social.avatar`; `image` here is the
- * generic form for any Steam image handle.
+ * The running app reads come from ISteamApps, because they answer questions
+ * about this process rather than about its DLC, which is what `steam.dlc`
+ * covers. Avatars have their own decode in `steam.social.avatar`; `image` here
+ * is the generic form for any Steam image handle.
  *
  * @see Steam.system
+ * @see Apps
  */
 export class System {
   /**
@@ -150,6 +193,256 @@ export class System {
    */
   gameLanguage(): string {
     return this.apps.GetCurrentGameLanguage();
+  }
+
+  // The running app: where it is installed, which build and branch it is, how
+  // it was launched, and who owns the license. All ISteamApps reads.
+
+  /**
+   * Reads where an app is installed.
+   *
+   * The default is the running app. Steam answers for an app the user owns but
+   * has not installed too, with the path it would install to, so pair this with
+   * `isAppInstalled` before touching the files.
+   *
+   * @param appId - App id to look up.
+   * @defaultValue The app id this process runs under.
+   * @returns The absolute install directory, or null if Steam knows no path for that app id.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * console.log(steam.system.installDir());
+   * steam.close();
+   * ```
+   * @see isAppInstalled
+   */
+  installDir(appId: number = this.utils.GetAppID()): string | null {
+    const folder = out.string(INSTALL_DIR_BYTES);
+    const length = this.apps.GetAppInstallDir(appId, folder.buffer, folder.buffer.length);
+    return length === 0 ? null : folder.value;
+  }
+
+  /**
+   * Checks whether an app is installed on this machine.
+   *
+   * Meant for the other app in a launcher or a bundle, not for DLC: DLC state
+   * is `steam.dlc.isInstalled`.
+   *
+   * @param appId - App id to check.
+   * @returns True if the app's files are on disk.
+   * @see installDir
+   */
+  isAppInstalled(appId: number): boolean {
+    return this.apps.BIsAppInstalled(appId);
+  }
+
+  /**
+   * Reads the build id of the running app.
+   *
+   * Steamworks assigns a new build id on every upload, so this is the version
+   * number to put in a bug report or a crash log.
+   *
+   * @returns The build id, or 0 if the app is not running under Steam.
+   * @see currentBeta
+   */
+  buildId(): number {
+    return this.apps.GetAppBuildId();
+  }
+
+  /**
+   * Reads which beta branch the app is running from.
+   *
+   * @returns The branch name, or null on the default branch, which is where a user without a beta opt-in is.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * console.log(steam.system.currentBeta() ?? 'default branch');
+   * steam.close();
+   * ```
+   * @see listBetas
+   */
+  currentBeta(): string | null {
+    const name = out.string(BETA_NAME_BYTES);
+    if (!this.apps.GetCurrentBetaName(name.buffer, name.buffer.length)) return null;
+    return name.value;
+  }
+
+  /**
+   * Lists the beta branches of the running app that this user may see.
+   *
+   * The flags Steam reports per branch are spread into booleans: `isDefault`
+   * for the public branch, `available` while the user may switch to it,
+   * `isPrivate` when it needs a password, `selected` for what the user picked
+   * in the client, and `installed` for what is on disk right now.
+   *
+   * @returns One entry per branch, in Steam's order. Empty if the app has no branches.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * for (const beta of steam.system.listBetas()) {
+   *   console.log(beta.name, beta.buildId, beta.installed);
+   * }
+   * steam.close();
+   * ```
+   * @see setActiveBeta
+   */
+  listBetas(): BetaBranch[] {
+    const list: BetaBranch[] = [];
+    const count = this.apps.GetNumBetas(null, null);
+    for (let i = 0; i < count; i++) {
+      const flags = out.uint32();
+      const buildId = out.uint32();
+      const lastUpdated = out.uint32();
+      const name = out.string(BETA_NAME_BYTES);
+      const description = out.string(BETA_DESCRIPTION_BYTES);
+      const read = this.apps.GetBetaInfo(
+        i,
+        flags.buffer,
+        buildId.buffer,
+        name.buffer,
+        name.buffer.length,
+        description.buffer,
+        description.buffer.length,
+        lastUpdated.buffer,
+      );
+      if (!read) continue;
+      list.push({
+        name: name.value,
+        description: description.value,
+        buildId: buildId.value,
+        lastUpdated: lastUpdated.value,
+        isDefault: (flags.value & EBetaBranchFlags.k_EBetaBranch_Default) !== 0,
+        available: (flags.value & EBetaBranchFlags.k_EBetaBranch_Available) !== 0,
+        isPrivate: (flags.value & EBetaBranchFlags.k_EBetaBranch_Private) !== 0,
+        selected: (flags.value & EBetaBranchFlags.k_EBetaBranch_Selected) !== 0,
+        installed: (flags.value & EBetaBranchFlags.k_EBetaBranch_Installed) !== 0,
+      });
+    }
+    return list;
+  }
+
+  /**
+   * Switches the app to a beta branch.
+   *
+   * Steam only records the choice: the branch is downloaded and the app runs
+   * from it after the next restart through Steam. A private branch has to be
+   * unlocked with its password in the Steam client first.
+   *
+   * @param name - Branch name from `listBetas`. The empty string switches back to the default branch.
+   * @throws Error if Steam refused the switch, which is what an unknown or locked branch gives.
+   * @see listBetas
+   */
+  setActiveBeta(name: string): void {
+    must('SetActiveBeta', this.apps.SetActiveBeta(name));
+  }
+
+  /**
+   * Reads the command line Steam launched this app with.
+   *
+   * This is where a `steam://run/<appid>//<params>` link ends up, and where a
+   * `+connect` string lands when a friend's invite started the app rather than
+   * finding it running. Subscribe with `onLaunchParameters` to catch the same
+   * arguments arriving while the app is already up.
+   *
+   * @returns The arguments Steam passed, or an empty string if there were none.
+   * @see launchQueryParam
+   * @see onLaunchParameters
+   */
+  launchCommandLine(): string {
+    const line = out.string(LAUNCH_COMMAND_LINE_BYTES);
+    this.apps.GetLaunchCommandLine(line.buffer, line.buffer.length);
+    return line.value;
+  }
+
+  /**
+   * Reads one query parameter from the launch URL.
+   *
+   * The parameters of a `steam://run/<appid>//?key=value` link, already parsed.
+   *
+   * @param key - Parameter name, with no leading `?` or `&`.
+   * @returns The value, or an empty string if the app was not launched with that parameter.
+   * @see launchCommandLine
+   */
+  launchQueryParam(key: string): string {
+    return this.apps.GetLaunchQueryParam(key);
+  }
+
+  /**
+   * Subscribes to new launch arguments arriving for the running app.
+   *
+   * Fires when Steam passes a `steam://run/<appid>//<params>` link to an app
+   * that is already running, which is how a second click on a store or web
+   * link reaches it. The callback carries no payload: read the new arguments
+   * with `launchCommandLine` or `launchQueryParam`.
+   *
+   * @param listener - Runs on every `NewUrlLaunchParameters_t`, inside a pump frame.
+   * @returns Unsubscribe function. Calling it more than once is harmless.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * steam.system.onLaunchParameters(() => {
+   *   console.log(steam.system.launchCommandLine());
+   * });
+   * ```
+   * @see launchCommandLine
+   */
+  onLaunchParameters(listener: () => void): () => void {
+    return this.subscribe('NewUrlLaunchParameters_t', () => listener());
+  }
+
+  /**
+   * Reads which account owns the license this app runs under.
+   *
+   * The same as the local Steam id, except under Family Sharing, where the app
+   * is borrowed from somebody else's library.
+   *
+   * @returns Steam id of the license owner. 64-bit, so a `bigint`.
+   * @see isFamilyShared
+   */
+  appOwner(): bigint {
+    return this.apps.GetAppOwner();
+  }
+
+  /**
+   * Checks whether the app is borrowed through Family Sharing.
+   *
+   * A borrowed session ends the moment the owner starts playing, so a game that
+   * cares about long sessions should warn the player.
+   *
+   * @returns True if this session runs on somebody else's license.
+   * @see appOwner
+   */
+  isFamilyShared(): boolean {
+    return this.apps.BIsSubscribedFromFamilySharing();
+  }
+
+  /**
+   * Reads the timed trial budget, for an app the user is only trying out.
+   *
+   * @returns The seconds the trial allows and the seconds already played, or null if this is not a timed trial.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const trial = steam.system.timedTrial();
+   * if (trial) console.log(trial.secondsAllowed - trial.secondsPlayed, 'seconds left');
+   * steam.close();
+   * ```
+   */
+  timedTrial(): { secondsAllowed: number; secondsPlayed: number } | null {
+    const allowed = out.uint32();
+    const played = out.uint32();
+    if (!this.apps.BIsTimedTrial(allowed.buffer, played.buffer)) return null;
+    return { secondsAllowed: allowed.value, secondsPlayed: played.value };
   }
 
   /**

@@ -249,7 +249,8 @@ export class ISteamUser {
    * `SteamAPICall_t RequestEncryptedAppTicket(void *pDataToInclude, int cbDataToInclude)`
    *
    * Flat symbol: `SteamAPI_ISteamUser_RequestEncryptedAppTicket`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<EncryptedAppTicketResponse_t>(handle, layoutOf('EncryptedAppTicketResponse_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.user.RequestEncryptedAppTicket(...)`, which awaits and decodes `EncryptedAppTicketResponse_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<EncryptedAppTicketResponse_t>(handle, layoutOf('EncryptedAppTicketResponse_t'), callbackIdByName.EncryptedAppTicketResponse_t)`.
    * @param pDataToInclude Buffer you allocate for `void *`.
    * @see https://partner.steamgames.com/doc/api/ISteamUser#RequestEncryptedAppTicket
    */
@@ -293,7 +294,8 @@ export class ISteamUser {
    * `SteamAPICall_t RequestStoreAuthURL(const char *pchRedirectURL)`
    *
    * Flat symbol: `SteamAPI_ISteamUser_RequestStoreAuthURL`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<StoreAuthURLResponse_t>(handle, layoutOf('StoreAuthURLResponse_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.user.RequestStoreAuthURL(...)`, which awaits and decodes `StoreAuthURLResponse_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<StoreAuthURLResponse_t>(handle, layoutOf('StoreAuthURLResponse_t'), callbackIdByName.StoreAuthURLResponse_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUser#RequestStoreAuthURL
    */
   RequestStoreAuthURL(pchRedirectURL: string): bigint {
@@ -344,7 +346,8 @@ export class ISteamUser {
    * `SteamAPICall_t GetMarketEligibility()`
    *
    * Flat symbol: `SteamAPI_ISteamUser_GetMarketEligibility`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<MarketEligibilityResponse_t>(handle, layoutOf('MarketEligibilityResponse_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.user.GetMarketEligibility(...)`, which awaits and decodes `MarketEligibilityResponse_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<MarketEligibilityResponse_t>(handle, layoutOf('MarketEligibilityResponse_t'), callbackIdByName.MarketEligibilityResponse_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUser#GetMarketEligibility
    */
   GetMarketEligibility(): bigint {
@@ -355,7 +358,8 @@ export class ISteamUser {
    * `SteamAPICall_t GetDurationControl()`
    *
    * Flat symbol: `SteamAPI_ISteamUser_GetDurationControl`
-   * @remarks Returns an API call handle. Await it with `steam.dispatch.callResultStruct<DurationControl_t>(handle, layoutOf('DurationControl_t'))`.
+   * @remarks Returns an API call handle. The easy path is `steam.async.user.GetDurationControl(...)`, which awaits and decodes `DurationControl_t`.
+   * To await the handle yourself: `steam.dispatch.callResultStruct<DurationControl_t>(handle, layoutOf('DurationControl_t'), callbackIdByName.DurationControl_t)`.
    * @see https://partner.steamgames.com/doc/api/ISteamUser#GetDurationControl
    */
   GetDurationControl(): bigint {

@@ -5,9 +5,9 @@ step. A generator reads `steam_api.json` (Valve's machine-readable description
 of the flat C API) and emits a full TS binding layer; calls go through
 [koffi](https://koffi.dev) FFI at runtime. On top of that sits a small
 handwritten runtime (library loader, callback dispatch pump, struct decoder)
-and twelve curated ergonomic layers: `workshop`, `stats`, `cloud`,
+and fifteen curated ergonomic layers: `workshop`, `stats`, `cloud`,
 `leaderboards`, `lobbies`, `social`, `overlay`, `auth`, `system`, `capture`,
-`controllers`, and `dlc`.
+`controllers`, `dlc`, `items`, `p2p`, and `recording`.
 
 Treat these instructions as good defaults, not hard rules. When the developer
 asks for something that contradicts them, the developer wins.
@@ -36,8 +36,9 @@ repo. The answer is always more generator, more koffi, or a documented skip.
    or crashes, and nothing warns you. Windows packs callback structs at 8
    bytes, Linux and macOS at 4, `CSteamID` at 1. Structs with C unions are
    excluded on purpose because `steam_api.json` cannot express them; do not
-   "helpfully" add a layout for one. `test/offsets.test.ts` pins the workshop
-   set and is the first thing to run after any generator or SDK change.
+   "helpfully" add a layout for one. `test/offsets.test.ts` and
+   `test/offsets.curated.test.ts` pin every struct the curated layers decode
+   and are the first thing to run after any generator or SDK change.
 4. **Forgetting that FFI failures are fatal.** A bad signature or pointer
    crashes the Node process. It does not throw. When a live script dies with
    no stack trace, suspect the binding layer, not the test.
@@ -45,8 +46,9 @@ repo. The answer is always more generator, more koffi, or a documented skip.
    on appid 480: creates a private workshop item, uploads content, sets a
    German translation, queries it back, deletes it, then round-trips the
    curated stats, cloud, leaderboards, lobbies, social, auth, system,
-   capture, and controllers layers (one temp cloud file, one private
-   throwaway lobby, one cancelled auth ticket). It cleans up after itself, but it
+   capture, controllers, items, and recording layers (one temp cloud file,
+   one private throwaway lobby, one cancelled auth ticket, one timeline
+   event). It cleans up after itself, but it
    needs a running, logged-in Steam client and it touches real Valve
    infrastructure. Run it when the change touches the runtime or a curated
    layer, not as a reflex.
@@ -76,12 +78,14 @@ Everything is pnpm.
 - `src/api/` is the curated layer: `workshop.ts`, `stats.ts`, `cloud.ts`,
   `leaderboards.ts`, `lobbies.ts`, `social.ts`, `overlay.ts`, `auth.ts`,
   `system.ts`, `capture.ts`, `controllers.ts`, `apps.ts` (exposed as `dlc`),
-  the shared `ok`/`must` guards in `guards.ts`, and the typed errors in
-  `errors.ts`. This is the only place where ergonomics beat fidelity.
-  `workshop.ts` is the style template the others were written against. A
-  curated layer whose natural name is taken by a generated accessor
-  (`friends`, `user`, `utils`, `screenshots`, `input`, `apps`) gets a
-  different one; do not shadow the generated accessors.
+  `inventory.ts` (exposed as `items`), `p2p.ts`, `timeline.ts` (exposed as
+  `recording`), the shared `ok`/`must` guards in `guards.ts`, and the typed
+  errors in `errors.ts`. This is the only place where ergonomics beat
+  fidelity. `workshop.ts` is the style template the others were written
+  against. A curated layer whose natural name is taken by a generated
+  accessor (`friends`, `user`, `utils`, `screenshots`, `input`, `apps`,
+  `inventory`, `timeline`) gets a different one; do not shadow the generated
+  accessors.
 - `src/generated/` is generator output only: enums, consts, callback structs,
   offset tables, and one class per interface under `interfaces/`.
 - `scripts/generate.ts` is the generator itself. It hashes `steam_api.json`
@@ -129,5 +133,8 @@ already cover the surface.
 - The local `sdk/` directory often contains an unpacked SDK. It is gitignored
   along with the SDK zip; never stage either, and never quote SDK header
   contents into committed files.
+- pnpm 11 holds back packages published in the last day. Right after a
+  dependency bump, install once with `--config.minimumReleaseAge=0`; do not
+  put that override in the repo config.
 - Prefer editing `scripts/generate.ts` and regenerating over any change
   inside `src/generated/`, even for a one-character fix.
