@@ -1,9 +1,20 @@
 import { out } from '../runtime/out';
+import { decodeStruct } from '../runtime/struct';
 import type { ISteamFriends } from '../generated/interfaces/ISteamFriends';
 import type { ISteamUtils } from '../generated/interfaces/ISteamUtils';
 import type { SteamCallbackMap } from '../generated/callbacks';
+import { layoutOf } from '../generated/structs';
+import type { FriendGameInfo_t } from '../generated/structs';
 import { EFriendFlags } from '../generated/enums';
 import { must } from './guards';
+
+/** A CGameID keeps the app id in its low 24 bits; the rest is the id type and the mod id. */
+const GAME_ID_APP_MASK = 0xffffffn;
+
+/** Formats a host-order IPv4 address as a dotted quad. */
+function dottedQuad(ip: number): string {
+  return `${(ip >>> 24) & 0xff}.${(ip >>> 16) & 0xff}.${(ip >>> 8) & 0xff}.${ip & 0xff}`;
+}
 
 /**
  * One entry of the local user's friend list.
@@ -19,6 +30,30 @@ export interface Friend {
   state: number;
   /** EFriendRelationship (0 none, 1 blocked, 3 friend, ...). */
   relationship: number;
+}
+
+/**
+ * What a user is playing right now, and where.
+ *
+ * The server fields are only filled for a friend on a dedicated or listen
+ * server; a friend in a single player session reports an empty `ip` and zero
+ * ports.
+ *
+ * @see Social.friendGame
+ */
+export interface FriendGame {
+  /** App id of the game, taken from the low 24 bits of the CGameID. */
+  appId: number;
+  /** The full CGameID, which also encodes the id type and the mod id. 64-bit, so a `bigint`. */
+  gameId: bigint;
+  /** Lobby the user is in, ready for `steam.lobbies.join`, or null when they are in none. */
+  lobbyId: bigint | null;
+  /** Game server address as a dotted quad, or an empty string when there is no server. */
+  ip: string;
+  /** Game server port, 0 when there is no server. */
+  port: number;
+  /** Game server query port, 0 when there is no server. */
+  queryPort: number;
 }
 
 /** Which of the three avatar sizes Steam keeps for a user. */
@@ -196,6 +231,115 @@ export class Social {
    */
   friendState(steamId: bigint): number {
     return this.friends.GetFriendPersonaState(steamId);
+  }
+
+  /**
+   * Reads what a user is playing right now.
+   *
+   * The game id is a CGameID, which packs the app id into its low 24 bits;
+   * `appId` is that app id, already unpacked. A friend on a game server also
+   * reports the server address, and a friend in a lobby reports a lobby id you
+   * can pass straight to `steam.lobbies.join`.
+   *
+   * @param steamId - User to read. 64-bit, so a `bigint`.
+   * @returns What the user is playing, or null if they are not in a game or the client has no data for them.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * for (const friend of steam.social.listFriends()) {
+   *   const game = steam.social.friendGame(friend.steamId);
+   *   if (game) console.log(friend.name, 'is in', game.appId);
+   * }
+   * steam.close();
+   * ```
+   * @see listFriendsInGame
+   */
+  friendGame(steamId: bigint): FriendGame | null {
+    const layout = layoutOf('FriendGameInfo_t');
+    const buffer = Buffer.alloc(layout.size);
+    if (!this.friends.GetFriendGamePlayed(steamId, buffer)) return null;
+
+    const info = decodeStruct<FriendGameInfo_t>(buffer, layout);
+    return {
+      appId: Number(info.m_gameID & GAME_ID_APP_MASK),
+      gameId: info.m_gameID,
+      lobbyId: info.m_steamIDLobby === 0n ? null : info.m_steamIDLobby,
+      ip: info.m_unGameIP === 0 ? '' : dottedQuad(info.m_unGameIP),
+      port: info.m_usGamePort,
+      queryPort: info.m_usQueryPort,
+    };
+  }
+
+  /**
+   * Lists the immediate friends who are playing one app right now.
+   *
+   * The default is the running app, which is the "who of my friends is in this
+   * game" list an invite UI needs. Each entry carries the friend fields plus
+   * their `game`, so a lobby invite needs no second call.
+   *
+   * @param appId - App id to match against.
+   * @defaultValue The app id this process runs under.
+   * @returns One entry per matching friend, in Steam's friend list order. Empty if nobody matches.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * for (const friend of steam.social.listFriendsInGame()) {
+   *   console.log(friend.name, friend.game.lobbyId);
+   * }
+   * steam.close();
+   * ```
+   * @see friendGame
+   */
+  listFriendsInGame(appId: number = this.utils.GetAppID()): (Friend & { game: FriendGame })[] {
+    const list: (Friend & { game: FriendGame })[] = [];
+    for (const friend of this.listFriends(EFriendFlags.k_EFriendFlagImmediate)) {
+      const game = this.friendGame(friend.steamId);
+      if (game && game.appId === appId) list.push({ ...friend, game });
+    }
+    return list;
+  }
+
+  /**
+   * Reads a user's Steam level.
+   *
+   * @param steamId - User to read. 64-bit, so a `bigint`.
+   * @returns The level, or 0 if the client has no data for that user yet.
+   * @see requestUserInformation
+   */
+  friendLevel(steamId: bigint): number {
+    return this.friends.GetFriendSteamLevel(steamId);
+  }
+
+  /**
+   * Reads the private nickname the local user gave another user.
+   *
+   * Nicknames are local to this account: nobody else sees them, and the user
+   * sets them from the Steam client. Show one instead of the persona name when
+   * it exists.
+   *
+   * @param steamId - User to read. 64-bit, so a `bigint`.
+   * @returns The nickname, or null if the local user gave that user none.
+   * @see friendName
+   */
+  nickname(steamId: bigint): string | null {
+    return this.friends.GetPlayerNickname(steamId) || null;
+  }
+
+  /**
+   * Checks whether a user is on the local user's friend list.
+   *
+   * @param steamId - User to check. 64-bit, so a `bigint`.
+   * @param flags - EFriendFlags bit field to check against.
+   * @defaultValue `EFriendFlags.k_EFriendFlagImmediate`, the plain friend list.
+   * @returns True if the relationship matches any of the flags.
+   * @see listFriends
+   */
+  hasFriend(steamId: bigint, flags: number = EFriendFlags.k_EFriendFlagImmediate): boolean {
+    return this.friends.HasFriend(steamId, flags);
   }
 
   /**
@@ -404,5 +548,45 @@ export class Social {
     return this.subscribe('GameLobbyJoinRequested_t', (e) => {
       listener({ lobbyId: e.m_steamIDLobby, steamId: e.m_steamIDFriend });
     });
+  }
+
+  /**
+   * Invites a friend into this user's game.
+   *
+   * Steam shows the invite in the friend's chat. If they already run the app it
+   * arrives as `onGameRichPresenceJoinRequested` with this connect string; if
+   * not, Steam launches the app and passes the string on the command line
+   * instead.
+   *
+   * @param steamId - Friend to invite. 64-bit, so a `bigint`.
+   * @param connectString - What the other side needs to join, max 256 UTF-8 bytes. For example `+connect_lobby 109775242724`.
+   * @throws Error if the connect string is too long or the user cannot be invited.
+   * @example
+   * ```ts
+   * import { init, flat } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const lobbyId = await steam.lobbies.create(flat.ELobbyType.k_ELobbyTypeFriendsOnly, 4);
+   * steam.social.inviteToGame(76561197960287930n, `+connect_lobby ${lobbyId}`);
+   * steam.close();
+   * ```
+   * @see onGameRichPresenceJoinRequested
+   */
+  inviteToGame(steamId: bigint, connectString: string): void {
+    must('InviteUserToGame', this.friends.InviteUserToGame(steamId, connectString));
+  }
+
+  /**
+   * Records that the local user just played with somebody.
+   *
+   * Steam puts them in the "Recently played with" list, which is where a player
+   * goes to add a stranger from the last match as a friend. Call it once per
+   * other player at the end of a session.
+   *
+   * @param steamId - The other player. 64-bit, so a `bigint`.
+   * @see listFriendsInGame
+   */
+  setPlayedWith(steamId: bigint): void {
+    this.friends.SetPlayedWith(steamId);
   }
 }

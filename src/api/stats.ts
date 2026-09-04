@@ -1,9 +1,11 @@
 import type { SteamDispatch } from '../runtime/dispatch';
 import { out } from '../runtime/out';
 import type { ISteamUserStats } from '../generated/interfaces/ISteamUserStats';
+import type { SteamCallbackMap } from '../generated/callbacks';
 import { layoutOf } from '../generated/structs';
 import type {
   GlobalAchievementPercentagesReady_t,
+  GlobalStatsReceived_t,
   NumberOfCurrentPlayers_t,
   UserStatsReceived_t,
 } from '../generated/structs';
@@ -47,8 +49,7 @@ export interface AchievementDisplay {
  * `store` are the only methods that send anything to Steam. Reach it as
  * `steam.stats`.
  *
- * Leaderboards live in `steam.leaderboards`; global stats stay on the
- * generated `steam.userStats` methods.
+ * Leaderboards live in `steam.leaderboards`.
  *
  * @see Steam.stats
  * @see SteamResultError
@@ -57,10 +58,15 @@ export class Stats {
   /**
    * @param userStats - The ISteamUserStats interface.
    * @param dispatch - Running pump that resolves the call results.
+   * @param once - Awaitable callback subscriber, normally `steam.once` bound to the session.
    */
   constructor(
     private readonly userStats: ISteamUserStats,
     private readonly dispatch: SteamDispatch,
+    private readonly once: <K extends keyof SteamCallbackMap & string>(
+      name: K,
+      match?: (data: SteamCallbackMap[K]) => boolean,
+    ) => Promise<SteamCallbackMap[K]>,
   ) {}
 
   /**
@@ -116,6 +122,45 @@ export class Stats {
       description: this.userStats.GetAchievementDisplayAttribute(name, 'desc') ?? '',
       hidden: this.userStats.GetAchievementDisplayAttribute(name, 'hidden') === '1',
     };
+  }
+
+  /**
+   * Fetches the icon of an achievement and returns its Steam image handle.
+   *
+   * Steam either has the icon cached, in which case this resolves at once, or
+   * it starts a download and answers with `UserAchievementIconFetched_t`. Both
+   * paths end here. Decode the pixels with `steam.system.image(handle)`.
+   *
+   * The icon Steam gives back is the locked or the unlocked one, whichever
+   * matches the current state, so read it again after `unlock`.
+   *
+   * @param name - Achievement API name.
+   * @returns The image handle, or null when the achievement has no icon configured.
+   * @throws Error if the promise is still waiting when the session closes. An
+   * API name this app does not define never gets an answer, so check it against
+   * `listAchievements` first.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const handle = await steam.stats.achievementIcon('ACH_WIN_ONE_GAME');
+   * const icon = handle === null ? null : steam.system.image(handle);
+   * console.log(icon?.width, icon?.height);
+   * steam.close();
+   * ```
+   * @see listAchievements
+   */
+  async achievementIcon(name: string): Promise<number | null> {
+    // Steam sends no callback for an unknown API name, which would leave the
+    // promise pending forever; GetAchievement is false for exactly that case.
+    must('GetAchievement', this.userStats.GetAchievement(name, out.bool().buffer));
+    const handle = this.userStats.GetAchievementIcon(name);
+    if (handle !== 0) return handle;
+    // 0 means Steam started a download rather than "no icon"; the callback
+    // carries the real answer, and its own 0 is the one that means no icon.
+    const r = await this.once('UserAchievementIconFetched_t', (e) => e.m_rgchAchievementName === name);
+    return r.m_nIconHandle === 0 ? null : r.m_nIconHandle;
   }
 
   /**
@@ -202,6 +247,32 @@ export class Stats {
    */
   indicateProgress(name: string, current: number, max: number): void {
     must('IndicateAchievementProgress', this.userStats.IndicateAchievementProgress(name, current, max));
+  }
+
+  /**
+   * Reads the progress range the partner site configured for an achievement.
+   *
+   * Saves hard-coding the "of 100" in `indicateProgress`: read the maximum here
+   * and the toast stays right when the configuration changes.
+   *
+   * @param name - Achievement API name.
+   * @returns The min and max progress, or null for an achievement with no progress configured.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const limits = steam.stats.getProgressLimits('ACH_100_KILLS');
+   * if (limits) steam.stats.indicateProgress('ACH_100_KILLS', steam.stats.getInt('kills'), limits.max);
+   * steam.close();
+   * ```
+   * @see indicateProgress
+   */
+  getProgressLimits(name: string): { min: number; max: number } | null {
+    const min = out.int32();
+    const max = out.int32();
+    if (!this.userStats.GetAchievementProgressLimitsInt32(name, min.buffer, max.buffer)) return null;
+    return { min: min.value, max: max.value };
   }
 
   /**
@@ -378,25 +449,24 @@ export class Stats {
    * Downloads another user's stats and achievements into Steam's local cache.
    *
    * Only needed for other users; the current user's stats are already there.
-   * Once this resolves, read the cached values with the generated user-scoped
-   * calls: `steam.userStats.GetUserStatInt32`, `GetUserStatFloat`,
-   * `GetUserAchievement`, and `GetUserAchievementAndUnlockTime`.
+   * Once this resolves, read the cached values with `getUserAchievement`,
+   * `getUserInt`, and `getUserFloat`.
    *
    * @param steamId - Steam id of the user. 64-bit, so a `bigint`.
    * @throws SteamResultError if Steam refused, for example with `k_EResultFail` when the user's profile is private.
    * @throws SteamApiCallError if the call could not be completed.
    * @example
    * ```ts
-   * import { init, out } from 'steamwand.js';
+   * import { init } from 'steamwand.js';
    *
    * const steam = init({ appId: 480 });
    * const friend = 76561197960287930n;
    * await steam.stats.requestUserStats(friend);
-   * const kills = out.int32();
-   * steam.userStats.GetUserStatInt32(friend, 'kills', kills.buffer);
-   * console.log(kills.value);
+   * console.log(steam.stats.getUserInt(friend, 'kills'));
    * steam.close();
    * ```
+   * @see getUserAchievement
+   * @see getUserInt
    */
   async requestUserStats(steamId: bigint): Promise<void> {
     const call = this.userStats.RequestUserStats(steamId);
@@ -406,5 +476,173 @@ export class Stats {
       callbackIdByName.UserStatsReceived_t,
     );
     ok('RequestUserStats', r.m_eResult);
+  }
+
+  /**
+   * Reads another user's achievement with its unlock time.
+   *
+   * `requestUserStats(steamId)` must have resolved for that user first; this is
+   * a local read against the cache it filled.
+   *
+   * @param steamId - Steam id of the user. 64-bit, so a `bigint`.
+   * @param name - Achievement API name.
+   * @returns `achieved`, and `unlockTime` in Unix seconds or null while locked.
+   * @throws Error if the stats for that user are not in the cache, or the app has no achievement with that API name.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const friend = 76561197960287930n;
+   * await steam.stats.requestUserStats(friend);
+   * console.log(steam.stats.getUserAchievement(friend, 'ACH_WIN_ONE_GAME').achieved);
+   * steam.close();
+   * ```
+   * @see requestUserStats
+   * @see getAchievement
+   */
+  getUserAchievement(steamId: bigint, name: string): AchievementState {
+    const achieved = out.bool();
+    const unlockTime = out.uint32();
+    must(
+      'GetUserAchievementAndUnlockTime',
+      this.userStats.GetUserAchievementAndUnlockTime(steamId, name, achieved.buffer, unlockTime.buffer),
+    );
+    return { achieved: achieved.value, unlockTime: achieved.value ? unlockTime.value : null };
+  }
+
+  /**
+   * Reads another user's integer stat.
+   *
+   * `requestUserStats(steamId)` must have resolved for that user first.
+   *
+   * @param steamId - Steam id of the user. 64-bit, so a `bigint`.
+   * @param name - Stat API name.
+   * @returns The value, or 0 if that user never set it.
+   * @throws Error if the stats for that user are not in the cache, or the app has no INT stat with that API name.
+   * @see requestUserStats
+   */
+  getUserInt(steamId: bigint, name: string): number {
+    const value = out.int32();
+    must('GetUserStatInt32', this.userStats.GetUserStatInt32(steamId, name, value.buffer));
+    return value.value;
+  }
+
+  /**
+   * Reads another user's float stat.
+   *
+   * `requestUserStats(steamId)` must have resolved for that user first. Works
+   * for AVGRATE stats too, which read back as that user's current average.
+   *
+   * @param steamId - Steam id of the user. 64-bit, so a `bigint`.
+   * @param name - Stat API name.
+   * @returns The value, or 0 if that user never set it.
+   * @throws Error if the stats for that user are not in the cache, or the app has no FLOAT or AVGRATE stat with that API name.
+   * @see requestUserStats
+   */
+  getUserFloat(steamId: bigint, name: string): number {
+    const value = out.float();
+    must('GetUserStatFloat', this.userStats.GetUserStatFloat(steamId, name, value.buffer));
+    return value.value;
+  }
+
+  /**
+   * Downloads this app's aggregated global stats into Steam's local cache.
+   *
+   * Global stats are the sums over every player, and only stats the partner
+   * site marks as aggregated have them. Nothing reads back before this
+   * resolves, so it is the first call of the group.
+   *
+   * @param historyDays - How many days of daily history to fetch too, at most 60. 0 for the totals only.
+   * @defaultValue 0
+   * @throws SteamResultError if Steam refused, for example with `k_EResultInvalidState` when the app aggregates no stat at all.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * await steam.stats.requestGlobalStats(7);
+   * console.log(steam.stats.getGlobalInt('kills_total'));
+   * console.log(steam.stats.getGlobalIntHistory('kills_total', 7));
+   * steam.close();
+   * ```
+   * @see getGlobalInt
+   * @see getGlobalIntHistory
+   */
+  async requestGlobalStats(historyDays = 0): Promise<void> {
+    const call = this.userStats.RequestGlobalStats(historyDays);
+    const r = await this.dispatch.callResultStruct<GlobalStatsReceived_t>(
+      call,
+      layoutOf('GlobalStatsReceived_t'),
+      callbackIdByName.GlobalStatsReceived_t,
+    );
+    ok('RequestGlobalStats', r.m_eResult);
+  }
+
+  /**
+   * Reads the global total of an integer stat.
+   *
+   * `requestGlobalStats` must have resolved first. The total is 64-bit because
+   * it sums over every player, so it is a `bigint`.
+   *
+   * @param name - Stat API name. It must be aggregated on the partner site.
+   * @returns The total across every player.
+   * @throws Error if the global stats are not in the cache, or the app aggregates no INT stat with that API name.
+   * @see requestGlobalStats
+   */
+  getGlobalInt(name: string): bigint {
+    const value = out.int64();
+    must('GetGlobalStatInt64', this.userStats.GetGlobalStatInt64(name, value.buffer));
+    return value.value;
+  }
+
+  /**
+   * Reads the global total of a float stat.
+   *
+   * `requestGlobalStats` must have resolved first.
+   *
+   * @param name - Stat API name. It must be aggregated on the partner site.
+   * @returns The total across every player.
+   * @throws Error if the global stats are not in the cache, or the app aggregates no FLOAT stat with that API name.
+   * @see requestGlobalStats
+   */
+  getGlobalDouble(name: string): number {
+    const value = out.double();
+    must('GetGlobalStatDouble', this.userStats.GetGlobalStatDouble(name, value.buffer));
+    return value.value;
+  }
+
+  /**
+   * Reads the daily history of an integer global stat.
+   *
+   * `requestGlobalStats` must have resolved with at least this many
+   * `historyDays` first, or the history is not in the cache.
+   *
+   * @param name - Stat API name. It must be aggregated on the partner site.
+   * @param days - How many days to read, most recent first. At most 60.
+   * @returns One total per day, today first. Shorter than `days` when Steam has
+   * less history, and empty when it has none.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * await steam.stats.requestGlobalStats(7);
+   * const [today, yesterday] = steam.stats.getGlobalIntHistory('kills_total', 7);
+   * console.log(today, yesterday);
+   * steam.close();
+   * ```
+   * @see requestGlobalStats
+   */
+  getGlobalIntHistory(name: string, days: number): bigint[] {
+    if (days <= 0) return [];
+    const buffer = Buffer.alloc(days * 8);
+    // Steam returns how many days it actually wrote, which is at most `days`
+    // and can be 0 for a stat it has no history for.
+    const written = Math.min(this.userStats.GetGlobalStatHistoryInt64(name, buffer, buffer.length), days);
+    const history: bigint[] = [];
+    for (let i = 0; i < written; i++) history.push(buffer.readBigInt64LE(i * 8));
+    return history;
   }
 }

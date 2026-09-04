@@ -1,7 +1,8 @@
 /**
  * Live acceptance test against the running Steam client, using Spacewar
  * (appid 480). Creates a PRIVATE throwaway item, round-trips a German
- * translation through it, and deletes it again.
+ * translation through it, subscribes to it and downloads it like a player
+ * would, and deletes it again.
  *
  * Run: pnpm test:live   (requires a running, logged-in Steam client)
  */
@@ -9,7 +10,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { afterAll, describe, expect, test } from 'vitest';
-import { init, type Steam } from '../../src';
+import { init, SteamResultError, type Steam } from '../../src';
 import { flat } from '../../src';
 
 const live = !!process.env.STEAM_LIVE;
@@ -124,6 +125,35 @@ describe.skipIf(!live)('workshop round trip (Spacewar, live)', () => {
   test('user items list contains the throwaway', async () => {
     const page = await steam.workshop.getUserItems(1, steam.accountId());
     expect(page.items.map((i) => i.fileId)).toContain(fileId!);
+  }, 60_000);
+
+  test('player side: subscribe, download, find on disk, unsubscribe', async () => {
+    await steam.workshop.subscribe(fileId!);
+    expect(steam.workshop.listSubscribed()).toContain(fileId!);
+    const progress: bigint[] = [];
+    await steam.workshop.download(fileId!, { onProgress: (p) => progress.push(p.bytesDownloaded) });
+    expect(steam.workshop.getState(fileId!).installed).toBe(true);
+    const info = steam.workshop.getInstallInfo(fileId!);
+    expect(info).not.toBeNull();
+    expect(fs.existsSync(path.join(info!.path, 'readme.txt'))).toBe(true);
+    expect(await steam.workshop.getVote(fileId!)).toBeNull();
+    // The local subscription list catches up on the client's next sync, so
+    // it may still carry the id right after this resolves.
+    await steam.workshop.unsubscribe(fileId!);
+  }, 180_000);
+
+  test('browse the Spacewar workshop and read the legal agreement status', async () => {
+    const page = await steam.workshop.browse({ queryType: flat.EUGCQuery.k_EUGCQuery_RankedByPublicationDate });
+    expect(page.items.length).toBeGreaterThan(0);
+    expect(page.totalResults).toBeGreaterThanOrEqual(page.items.length);
+    // Spacewar has no workshop legal agreement configured, so Steam answers
+    // k_EResultInvalidParam. Either outcome proves the call result round trip.
+    try {
+      const eula = await steam.workshop.getEulaStatus();
+      expect(typeof eula.accepted).toBe('boolean');
+    } catch (err) {
+      expect(err).toBeInstanceOf(SteamResultError);
+    }
   }, 60_000);
 
   test('delete item', async () => {

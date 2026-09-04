@@ -1,11 +1,14 @@
 import type { SteamDispatch } from '../runtime/dispatch';
 import { out } from '../runtime/out';
 import type { ISteamRemoteStorage } from '../generated/interfaces/ISteamRemoteStorage';
+import type { SteamCallbackMap } from '../generated/callbacks';
 import { layoutOf } from '../generated/structs';
 import type {
   RemoteStorageFileReadAsyncComplete_t,
+  RemoteStorageFileShareResult_t,
   RemoteStorageFileWriteAsyncComplete_t,
 } from '../generated/structs';
+import { ERemoteStorageFilePathType, ERemoteStorageLocalFileChange } from '../generated/enums';
 import { callbackIdByName } from '../generated/callbacks';
 import { ok, must } from './guards';
 
@@ -69,10 +72,15 @@ export class Cloud {
   /**
    * @param remoteStorage - The ISteamRemoteStorage interface.
    * @param dispatch - Running pump that resolves the call results.
+   * @param subscribe - Callback subscriber, normally `steam.on` bound to the session.
    */
   constructor(
     private readonly remoteStorage: ISteamRemoteStorage,
     private readonly dispatch: SteamDispatch,
+    private readonly subscribe: <K extends keyof SteamCallbackMap & string>(
+      name: K,
+      listener: (data: SteamCallbackMap[K]) => void,
+    ) => () => void,
   ) {}
 
   /**
@@ -105,6 +113,43 @@ export class Cloud {
       callbackIdByName.RemoteStorageFileWriteAsyncComplete_t,
     );
     ok('FileWriteAsync', r.m_eResult);
+  }
+
+  /**
+   * Groups several writes into one save, so Steam syncs them together.
+   *
+   * A save game that is more than one file is only consistent as a set. Inside
+   * the callback Steam holds the sync back, and it starts one sync for
+   * everything written once the callback finished. Anything the callback does
+   * that is not a cloud write is fine; it just delays the sync.
+   *
+   * The batch is always closed, even when the callback throws, and the
+   * callback's own error is the one that reaches the caller.
+   *
+   * @param fn - Runs the writes. Awaited, so it may be async.
+   * @returns Whatever `fn` returned.
+   * @throws Error if Steam refused to open the batch, or whatever `fn` threw.
+   * @typeParam T - What `fn` returns.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * await steam.cloud.writeBatch(async () => {
+   *   await steam.cloud.writeFile('save01/meta.json', JSON.stringify({ level: 3 }));
+   *   await steam.cloud.writeFile('save01/world.bin', worldBytes);
+   * });
+   * steam.close();
+   * ```
+   * @see writeFile
+   */
+  async writeBatch<T>(fn: () => Promise<T> | T): Promise<T> {
+    must('BeginFileWriteBatch', this.remoteStorage.BeginFileWriteBatch());
+    try {
+      return await fn();
+    } finally {
+      this.remoteStorage.EndFileWriteBatch();
+    }
   }
 
   /**
@@ -246,6 +291,80 @@ export class Cloud {
   }
 
   /**
+   * Publishes a cloud file and returns the UGC handle that points at it.
+   *
+   * The handle is public: anybody who has it can download the file, so only
+   * share what the user meant to share. It is the handle a leaderboard entry
+   * carries through `steam.leaderboards.attachUgc`, for example a replay saved
+   * alongside a score.
+   *
+   * @param name - File name to publish. It must already be in cloud storage.
+   * @returns The UGC handle. 64-bit, so a `bigint`.
+   * @throws SteamResultError if Steam refused, for example with `k_EResultFileNotFound`.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * await steam.cloud.writeFile('replay01.bin', replayBytes);
+   * const ugc = await steam.cloud.share('replay01.bin');
+   * const board = await steam.leaderboards.find('Feet Traveled');
+   * if (board) await steam.leaderboards.attachUgc(board.handle, ugc);
+   * steam.close();
+   * ```
+   * @see writeFile
+   */
+  async share(name: string): Promise<bigint> {
+    const call = this.remoteStorage.FileShare(name);
+    const r = await this.dispatch.callResultStruct<RemoteStorageFileShareResult_t>(
+      call,
+      layoutOf('RemoteStorageFileShareResult_t'),
+      callbackIdByName.RemoteStorageFileShareResult_t,
+    );
+    ok('FileShare', r.m_eResult);
+    return r.m_hFile;
+  }
+
+  /**
+   * Reads which platforms one file syncs to.
+   *
+   * @param name - File name to look at.
+   * @returns An `ERemoteStoragePlatform` bit mask: 1 Windows, 2 macOS, 8 Linux, 16 Switch, 32 Android, 64 iOS, -1 all.
+   * @see setSyncPlatforms
+   */
+  syncPlatforms(name: string): number {
+    return this.remoteStorage.GetSyncPlatforms(name);
+  }
+
+  /**
+   * Limits a file to certain platforms.
+   *
+   * Use it for a file that only makes sense on one platform, for example a
+   * settings file holding key bindings that a controller-only build cannot
+   * read. Steam still keeps the file, it just stops downloading it elsewhere.
+   *
+   * @param name - File name to change. It must already be in cloud storage.
+   * @param platforms - `ERemoteStoragePlatform` bit mask. Or the bits together for several platforms, -1 for all.
+   * @throws Error if Steam returned false, which usually means the file does not exist.
+   * @example
+   * ```ts
+   * import { init, flat } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const desktop =
+   *   flat.ERemoteStoragePlatform.k_ERemoteStoragePlatformWindows |
+   *   flat.ERemoteStoragePlatform.k_ERemoteStoragePlatformLinux;
+   * steam.cloud.setSyncPlatforms('bindings.cfg', desktop);
+   * steam.close();
+   * ```
+   * @see syncPlatforms
+   */
+  setSyncPlatforms(name: string, platforms: number): void {
+    must('SetSyncPlatforms', this.remoteStorage.SetSyncPlatforms(name, platforms));
+  }
+
+  /**
    * Reads this app's cloud storage quota for the current user.
    *
    * A write larger than `availableBytes` fails with `k_EResultLimitExceeded`,
@@ -308,5 +427,64 @@ export class Cloud {
    */
   setEnabledForApp(enabled: boolean): void {
     this.remoteStorage.SetCloudEnabledForApp(enabled);
+  }
+
+  /**
+   * Lists the files a Steam sync changed underneath the running app.
+   *
+   * Steam only fills this list while the app is running, and it clears it on
+   * the next sync, so read it from an `onLocalFileChange` listener rather than
+   * polling. A game that keeps a save open in memory uses this to notice that
+   * the copy on disk moved on, and to offer the player a reload.
+   *
+   * @returns One entry per changed file, in Steam's own order. Empty when nothing changed.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const off = steam.cloud.onLocalFileChange(() => {
+   *   for (const c of steam.cloud.listLocalChanges()) console.log(c.name, c.change);
+   * });
+   * // later: off();
+   * ```
+   * @see onLocalFileChange
+   */
+  listLocalChanges(): { name: string; change: 'updated' | 'deleted'; pathType: 'absolute' | 'apiFilename' }[] {
+    const count = this.remoteStorage.GetLocalFileChangeCount();
+    const change = out.int32();
+    const pathType = out.int32();
+    const changes: { name: string; change: 'updated' | 'deleted'; pathType: 'absolute' | 'apiFilename' }[] = [];
+    for (let i = 0; i < count; i++) {
+      const name = this.remoteStorage.GetLocalFileChange(i, change.buffer, pathType.buffer);
+      changes.push({
+        name,
+        change:
+          change.value === ERemoteStorageLocalFileChange.k_ERemoteStorageLocalFileChange_FileDeleted
+            ? 'deleted'
+            : 'updated',
+        pathType:
+          pathType.value === ERemoteStorageFilePathType.k_ERemoteStorageFilePathType_Absolute
+            ? 'absolute'
+            : 'apiFilename',
+      });
+    }
+    return changes;
+  }
+
+  /**
+   * Subscribes to the "Steam just changed files on disk" notice.
+   *
+   * Steam fires it once after a sync changed files while the app was running,
+   * for example because the user played on another machine. The callback
+   * carries nothing; `listLocalChanges` says which files, and only while the
+   * listener runs.
+   *
+   * @param listener - Runs after every such sync.
+   * @returns Unsubscribe function. Calling it more than once is harmless.
+   * @see listLocalChanges
+   */
+  onLocalFileChange(listener: () => void): () => void {
+    return this.subscribe('RemoteStorageLocalFileChange_t', () => listener());
   }
 }

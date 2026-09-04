@@ -1,8 +1,9 @@
 /**
  * Live acceptance test for the curated social and overlay layers against the
- * running Steam client, using Spacewar (appid 480). It never opens an overlay
- * dialog and leaves no state behind: the one rich presence key it sets is
- * cleared again.
+ * running Steam client, using Spacewar (appid 480), plus the read-only DLC and
+ * running-app facts those layers pair with. It never opens an overlay dialog
+ * and leaves no state behind: the one rich presence key it sets is cleared
+ * again.
  *
  * Run: npx cross-env STEAM_LIVE=1 vitest run test/live/social.live.test.ts
  * (requires a running, logged-in Steam client)
@@ -63,6 +64,29 @@ describe.skipIf(!live)('social and overlay layers (Spacewar, live)', () => {
     } else {
       expect(avatar).toBeNull();
     }
+  });
+
+  test('social: own game and level read back', () => {
+    const game = steam.social.friendGame(steam.steamId());
+    // The local user counts as playing Spacewar while this session is open,
+    // but Steam reports null when it has not cached the local game yet.
+    if (game) {
+      expect(game.appId).toBe(480);
+      expect(typeof game.gameId).toBe('bigint');
+    } else {
+      expect(game).toBeNull();
+    }
+    expect(typeof steam.social.friendLevel(steam.steamId())).toBe('number');
+  });
+
+  test('dlc: Spacewar is owned', () => {
+    expect(steam.dlc.isOwned(480)).toBe(true);
+  });
+
+  test('system: build, betas and launch command line read back', () => {
+    expect(typeof steam.system.buildId()).toBe('number');
+    expect(Array.isArray(steam.system.listBetas())).toBe(true);
+    expect(typeof steam.system.launchCommandLine()).toBe('string');
   });
 
   test('overlay: enabled flag reads without opening anything', () => {

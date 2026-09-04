@@ -4,7 +4,7 @@ import type { ISteamMatchmaking } from '../generated/interfaces/ISteamMatchmakin
 import type { SteamCallbackMap } from '../generated/callbacks';
 import { layoutOf } from '../generated/structs';
 import type { LobbyCreated_t, LobbyEnter_t, LobbyMatchList_t } from '../generated/structs';
-import { EChatRoomEnterResponse, ELobbyComparison } from '../generated/enums';
+import { EChatMemberStateChange, EChatRoomEnterResponse, ELobbyComparison } from '../generated/enums';
 import { callbackIdByName } from '../generated/callbacks';
 import { ok, must } from './guards';
 
@@ -18,6 +18,33 @@ const CHAT_BYTES = 4096;
 const ENTER_RESPONSE_NAMES = new Map<number, string>(
   Object.entries(EChatRoomEnterResponse).map(([k, v]) => [v as number, k]),
 );
+
+/**
+ * The `EChatMemberStateChange` bits, in the order a listener sees them.
+ *
+ * Steam packs several bits into one callback, so one callback can mean both
+ * "left" and "disconnected".
+ */
+const MEMBER_CHANGE_BITS = [
+  [EChatMemberStateChange.k_EChatMemberStateChangeEntered, 'entered'],
+  [EChatMemberStateChange.k_EChatMemberStateChangeLeft, 'left'],
+  [EChatMemberStateChange.k_EChatMemberStateChangeDisconnected, 'disconnected'],
+  [EChatMemberStateChange.k_EChatMemberStateChangeKicked, 'kicked'],
+  [EChatMemberStateChange.k_EChatMemberStateChangeBanned, 'banned'],
+] as const;
+
+/** Turns `1.2.3.4` into the host-order uint32 Steam wants. A malformed part counts as 0. */
+function ipToUint32(ip: string): number {
+  const parts = ip.split('.');
+  let value = 0;
+  for (let i = 0; i < 4; i++) value = (value << 8) | ((Number(parts[i]) || 0) & 0xff);
+  return value >>> 0;
+}
+
+/** Turns the host-order uint32 Steam reports back into `1.2.3.4`. */
+function uint32ToIp(value: number): string {
+  return [24, 16, 8, 0].map((shift) => (value >>> shift) & 0xff).join('.');
+}
 
 /**
  * Filters for one lobby search.
@@ -53,6 +80,20 @@ export interface LobbyChatMessage {
 }
 
 /**
+ * One membership change in a lobby, as delivered to an `onMemberChange` listener.
+ *
+ * @see Lobbies.onMemberChange
+ */
+export interface LobbyMemberChange {
+  /** Steam id of the member this happened to. 64-bit, so a `bigint`. */
+  steamId: bigint;
+  /** Steam id of whoever caused it. The same as `steamId` unless somebody was kicked or banned. 64-bit, so a `bigint`. */
+  bySteamId: bigint;
+  /** What happened, from the `EChatMemberStateChange` bit that was set. */
+  change: 'entered' | 'left' | 'disconnected' | 'kicked' | 'banned';
+}
+
+/**
  * Task level wrapper over ISteamMatchmaking: create, join, and search lobbies,
  * read and write lobby data, and send lobby chat.
  *
@@ -70,6 +111,7 @@ export class Lobbies {
    * @param matchmaking - The ISteamMatchmaking interface.
    * @param dispatch - Running pump that resolves the call results.
    * @param subscribe - Callback subscriber, normally `steam.on` bound to the session.
+   * @param once - Awaitable callback subscriber, normally `steam.once` bound to the session.
    */
   constructor(
     private readonly matchmaking: ISteamMatchmaking,
@@ -78,6 +120,10 @@ export class Lobbies {
       name: K,
       listener: (data: SteamCallbackMap[K]) => void,
     ) => () => void,
+    private readonly once: <K extends keyof SteamCallbackMap & string>(
+      name: K,
+      match?: (data: SteamCallbackMap[K]) => boolean,
+    ) => Promise<SteamCallbackMap[K]>,
   ) {}
 
   /**
@@ -249,6 +295,102 @@ export class Lobbies {
   }
 
   /**
+   * Changes who may find and join a lobby.
+   *
+   * Only the owner may do this. `create` fixes the type once; this is how a
+   * lobby goes from private to public after the party filled up, or the other
+   * way round.
+   *
+   * @param lobbyId - Lobby to change. 64-bit, so a `bigint`.
+   * @param type - ELobbyType (0 private, 1 friends-only, 2 public, 3 invisible, 4 private unique).
+   * @throws Error if the user is not the owner of that lobby.
+   * @example
+   * ```ts
+   * import { init, flat } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const lobbyId = await steam.lobbies.create(flat.ELobbyType.k_ELobbyTypePrivate, 4);
+   * steam.lobbies.setType(lobbyId, flat.ELobbyType.k_ELobbyTypePublic);
+   * steam.close();
+   * ```
+   * @see create
+   * @see setJoinable
+   */
+  setType(lobbyId: bigint, type: number): void {
+    must('SetLobbyType', this.matchmaking.SetLobbyType(lobbyId, type));
+  }
+
+  /**
+   * Opens or closes a lobby to new members.
+   *
+   * Only the owner may do this. A lobby that is not joinable still shows up in
+   * `list`, so close it when the match starts and open it again in the next
+   * lobby screen.
+   *
+   * @param lobbyId - Lobby to change. 64-bit, so a `bigint`.
+   * @param joinable - True to let people in, false to keep them out.
+   * @throws Error if the user is not the owner of that lobby.
+   * @see setType
+   */
+  setJoinable(lobbyId: bigint, joinable: boolean): void {
+    must('SetLobbyJoinable', this.matchmaking.SetLobbyJoinable(lobbyId, joinable));
+  }
+
+  /**
+   * Points a lobby at the game server its members should connect to.
+   *
+   * This is the handoff at the end of the lobby screen: the owner starts or
+   * picks a server and records it here, and every member gets a
+   * `LobbyGameCreated_t` callback carrying the same values. Steam has no result
+   * for this, so it cannot fail from here.
+   *
+   * Give either a `steamId` (for a Steam game server) or an `ip` and `port`
+   * (for a plain address), or all three. Anything left out is sent as 0, which
+   * is what Steam reads as "not set".
+   *
+   * @param lobbyId - Lobby to change. 64-bit, so a `bigint`.
+   * @param server - The server to record.
+   * @param server.steamId - Steam id of the game server. 64-bit, so a `bigint`.
+   * @param server.ip - IPv4 address in dotted-quad form, for example `192.168.0.10`.
+   * @param server.port - Port the server listens on.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const lobbyId = await steam.lobbies.create(2, 4);
+   * steam.lobbies.setGameServer(lobbyId, { ip: '192.168.0.10', port: 27015 });
+   * steam.close();
+   * ```
+   * @see getGameServer
+   */
+  setGameServer(lobbyId: bigint, server: { steamId?: bigint; ip?: string; port?: number }): void {
+    this.matchmaking.SetLobbyGameServer(
+      lobbyId,
+      server.ip ? ipToUint32(server.ip) : 0,
+      server.port ?? 0,
+      server.steamId ?? 0n,
+    );
+  }
+
+  /**
+   * Reads the game server a lobby points at.
+   *
+   * @param lobbyId - Lobby to read. 64-bit, so a `bigint`.
+   * @returns The recorded server, or null if the lobby has none yet. A field
+   * the owner did not set reads back as `0n`, `0.0.0.0`, or 0.
+   * @see setGameServer
+   */
+  getGameServer(lobbyId: bigint): { steamId: bigint; ip: string; port: number } | null {
+    const ip = out.uint32();
+    // Steam writes a uint16 here, and `out` has no uint16 factory.
+    const port = Buffer.alloc(2);
+    const steamId = out.uint64();
+    if (!this.matchmaking.GetLobbyGameServer(lobbyId, ip.buffer, port, steamId.buffer)) return null;
+    return { steamId: steamId.value, ip: uint32ToIp(ip.value), port: port.readUInt16LE(0) };
+  }
+
+  /**
    * Reads one lobby data value.
    *
    * @param lobbyId - Lobby to read. 64-bit, so a `bigint`.
@@ -323,6 +465,39 @@ export class Lobbies {
       data[key.value] = value.value;
     }
     return data;
+  }
+
+  /**
+   * Pulls one lobby's data into the local cache without joining it.
+   *
+   * Needed for a lobby this user is not in and did not just find through
+   * `list`, for example one that arrived in a `GameLobbyJoinRequested_t`
+   * invite. Once this resolves, `getData` and `listData` answer for that lobby.
+   *
+   * @param lobbyId - Lobby to fetch. 64-bit, so a `bigint`.
+   * @throws Error if Steam refused the request, or if the lobby no longer exists.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * steam.on('GameLobbyJoinRequested_t', async (e) => {
+   *   await steam.lobbies.requestData(e.m_steamIDLobby);
+   *   console.log(steam.lobbies.getData(e.m_steamIDLobby, 'map'));
+   * });
+   * ```
+   * @see getData
+   * @see onDataChange
+   */
+  async requestData(lobbyId: bigint): Promise<void> {
+    must('RequestLobbyData', this.matchmaking.RequestLobbyData(lobbyId));
+    // Steam answers with a LobbyDataUpdate_t whose member id equals the lobby
+    // id, which is how it marks "the lobby's own data" rather than a member's.
+    const r = await this.once(
+      'LobbyDataUpdate_t',
+      (e) => e.m_ulSteamIDLobby === lobbyId && e.m_ulSteamIDMember === lobbyId,
+    );
+    if (r.m_bSuccess === 0) throw new Error(`steamwand: RequestLobbyData failed: lobby ${lobbyId} no longer exists`);
   }
 
   /**
@@ -410,6 +585,79 @@ export class Lobbies {
       // Senders terminate the body; drop that NUL so the text round trips.
       const end = body[size - 1] === 0 ? size - 1 : size;
       listener({ senderSteamId: sender.value, message: body.toString('utf8', 0, end) });
+    });
+  }
+
+  /**
+   * Subscribes to the data changes of one lobby.
+   *
+   * The callback says only that something changed, not what, so read the new
+   * values with `getData` or `listData` inside the listener. Updates for other
+   * lobbies are ignored, so one listener per lobby is enough.
+   *
+   * @param lobbyId - Lobby to listen to. 64-bit, so a `bigint`.
+   * @param listener - Runs on every change, with `memberSteamId` naming the member whose own data changed, or null when the lobby's data changed.
+   * @returns Unsubscribe function. Calling it more than once is harmless.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const lobbyId = await steam.lobbies.create(2, 4);
+   * const off = steam.lobbies.onDataChange(lobbyId, ({ memberSteamId }) => {
+   *   if (memberSteamId === null) console.log(steam.lobbies.listData(lobbyId));
+   *   else console.log(steam.lobbies.getMemberData(lobbyId, memberSteamId, 'ready'));
+   * });
+   * // later: off();
+   * ```
+   * @see setData
+   * @see setMemberData
+   */
+  onDataChange(lobbyId: bigint, listener: (change: { memberSteamId: bigint | null }) => void): () => void {
+    return this.subscribe('LobbyDataUpdate_t', (e) => {
+      if (e.m_ulSteamIDLobby !== lobbyId) return;
+      // Steam repeats the lobby id in the member field to mean "the lobby's
+      // own data", so that case becomes null rather than a bogus Steam id.
+      listener({ memberSteamId: e.m_ulSteamIDMember === lobbyId ? null : e.m_ulSteamIDMember });
+    });
+  }
+
+  /**
+   * Subscribes to the membership changes of one lobby.
+   *
+   * This is how a lobby screen learns that somebody joined, left, dropped, or
+   * was thrown out. Changes for other lobbies are ignored, so one listener per
+   * lobby is enough.
+   *
+   * Steam packs several `EChatMemberStateChange` bits into one callback, so a
+   * member who timed out arrives as both `left` and `disconnected`. The
+   * listener runs once per set bit, in the order entered, left, disconnected,
+   * kicked, banned.
+   *
+   * @param lobbyId - Lobby to listen to. 64-bit, so a `bigint`.
+   * @param listener - Runs once per membership change.
+   * @returns Unsubscribe function. Calling it more than once is harmless.
+   * @example
+   * ```ts
+   * import { init } from 'steamwand.js';
+   *
+   * const steam = init({ appId: 480 });
+   * const lobbyId = await steam.lobbies.create(2, 4);
+   * const off = steam.lobbies.onMemberChange(lobbyId, (c) => {
+   *   console.log(c.steamId, c.change, steam.lobbies.getMembers(lobbyId).length);
+   * });
+   * // later: off();
+   * ```
+   * @see getMembers
+   */
+  onMemberChange(lobbyId: bigint, listener: (change: LobbyMemberChange) => void): () => void {
+    return this.subscribe('LobbyChatUpdate_t', (e) => {
+      if (e.m_ulSteamIDLobby !== lobbyId) return;
+      for (const [bit, change] of MEMBER_CHANGE_BITS) {
+        if (e.m_rgfChatMemberStateChange & bit) {
+          listener({ steamId: e.m_ulSteamIDUserChanged, bySteamId: e.m_ulSteamIDMakingChange, change });
+        }
+      }
     });
   }
 

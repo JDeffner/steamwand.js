@@ -5,8 +5,11 @@
  * Expected values were verified 2026-09-03 against steamworks-sys 0.13.0's
  * bindgen layout asserts (independent of our generator), reading its Windows
  * table for `win64` and its Linux and macOS tables for `posix`: 450
- * comparisons, 0 diffs. If an SDK bump moves any of these, this test fails
- * and the new values must be re-verified before being accepted.
+ * comparisons, 0 diffs. The 31 structs added on 2026-09-04 for the consumer
+ * side of the workshop and the items, p2p, and recording layers were checked
+ * the same way against the bindgen tables of the same crate: every size and
+ * offset matched on both platforms. If an SDK bump moves any of these, this
+ * test fails and the new values must be re-verified before being accepted.
  */
 import { describe, expect, test } from 'vitest';
 import { callbackId } from '../src/generated/callbacks';
@@ -54,6 +57,33 @@ describe('curated callback ids', () => {
     expect(callbackId.SteamInputDeviceConnected_t).toBe(2801);
     expect(callbackId.SteamInputDeviceDisconnected_t).toBe(2802);
     expect(callbackId.SteamInputConfigurationLoaded_t).toBe(2803);
+    expect(callbackId.RemoteStorageSubscribePublishedFileResult_t).toBe(1313);
+    expect(callbackId.RemoteStorageUnsubscribePublishedFileResult_t).toBe(1315);
+    expect(callbackId.DownloadItemResult_t).toBe(3406);
+    expect(callbackId.ItemInstalled_t).toBe(3405);
+    expect(callbackId.SetUserItemVoteResult_t).toBe(3408);
+    expect(callbackId.GetUserItemVoteResult_t).toBe(3409);
+    expect(callbackId.UserFavoriteItemsListChanged_t).toBe(3407);
+    expect(callbackId.StartPlaytimeTrackingResult_t).toBe(3410);
+    expect(callbackId.StopPlaytimeTrackingResult_t).toBe(3411);
+    expect(callbackId.WorkshopEULAStatus_t).toBe(3420);
+    expect(callbackId.LobbyChatUpdate_t).toBe(506);
+    expect(callbackId.LobbyDataUpdate_t).toBe(505);
+    expect(callbackId.RemoteStorageFileShareResult_t).toBe(1307);
+    expect(callbackId.RemoteStorageLocalFileChange_t).toBe(1333);
+    expect(callbackId.GlobalStatsReceived_t).toBe(1112);
+    expect(callbackId.UserAchievementIconFetched_t).toBe(1109);
+    expect(callbackId.DlcInstalled_t).toBe(1005);
+    expect(callbackId.NewUrlLaunchParameters_t).toBe(1014);
+    expect(callbackId.SteamInventoryResultReady_t).toBe(4700);
+    expect(callbackId.SteamInventoryFullUpdate_t).toBe(4701);
+    expect(callbackId.SteamInventoryDefinitionUpdate_t).toBe(4702);
+    expect(callbackId.SteamInventoryStartPurchaseResult_t).toBe(4704);
+    expect(callbackId.SteamInventoryRequestPricesResult_t).toBe(4705);
+    expect(callbackId.P2PSessionRequest_t).toBe(1202);
+    expect(callbackId.P2PSessionConnectFail_t).toBe(1203);
+    expect(callbackId.SteamTimelineGamePhaseRecordingExists_t).toBe(6001);
+    expect(callbackId.SteamTimelineEventRecordingExists_t).toBe(6002);
   });
 });
 
@@ -616,6 +646,409 @@ describe('controllers layer by-value action data (pack(1), same on every platfor
         rotVelY: 32,
         rotVelZ: 36,
       });
+    }
+  });
+});
+
+describe('workshop consumer side', () => {
+  test('RemoteStorageSubscribePublishedFileResult_t', () => {
+    const l = structLayouts.RemoteStorageSubscribePublishedFileResult_t;
+    expect(l.win64.size).toBe(16);
+    expect(offsets(l.win64)).toEqual({
+      m_eResult: 0,
+      m_nPublishedFileId: 8,
+    });
+    expect(l.posix.size).toBe(12);
+    expect(offsets(l.posix)).toEqual({
+      m_eResult: 0,
+      m_nPublishedFileId: 4,
+    });
+  });
+
+  test('RemoteStorageUnsubscribePublishedFileResult_t', () => {
+    const l = structLayouts.RemoteStorageUnsubscribePublishedFileResult_t;
+    expect(l.win64.size).toBe(16);
+    expect(offsets(l.win64)).toEqual({
+      m_eResult: 0,
+      m_nPublishedFileId: 8,
+    });
+    expect(l.posix.size).toBe(12);
+    expect(offsets(l.posix)).toEqual({
+      m_eResult: 0,
+      m_nPublishedFileId: 4,
+    });
+  });
+
+  test('DownloadItemResult_t', () => {
+    const l = structLayouts.DownloadItemResult_t;
+    expect(l.win64.size).toBe(24);
+    expect(offsets(l.win64)).toEqual({
+      m_unAppID: 0,
+      m_nPublishedFileId: 8,
+      m_eResult: 16,
+    });
+    expect(l.posix.size).toBe(16);
+    expect(offsets(l.posix)).toEqual({
+      m_unAppID: 0,
+      m_nPublishedFileId: 4,
+      m_eResult: 12,
+    });
+  });
+
+  test('ItemInstalled_t', () => {
+    const l = structLayouts.ItemInstalled_t;
+    expect(l.win64.size).toBe(32);
+    expect(offsets(l.win64)).toEqual({
+      m_unAppID: 0,
+      m_nPublishedFileId: 8,
+      m_hLegacyContent: 16,
+      m_unManifestID: 24,
+    });
+    expect(l.posix.size).toBe(28);
+    expect(offsets(l.posix)).toEqual({
+      m_unAppID: 0,
+      m_nPublishedFileId: 4,
+      m_hLegacyContent: 12,
+      m_unManifestID: 20,
+    });
+  });
+
+  test('SetUserItemVoteResult_t', () => {
+    const l = structLayouts.SetUserItemVoteResult_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(16);
+      expect(offsets(p)).toEqual({
+          m_nPublishedFileId: 0,
+          m_eResult: 8,
+          m_bVoteUp: 12,
+        });
+    }
+  });
+
+  test('GetUserItemVoteResult_t', () => {
+    const l = structLayouts.GetUserItemVoteResult_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(16);
+      expect(offsets(p)).toEqual({
+          m_nPublishedFileId: 0,
+          m_eResult: 8,
+          m_bVotedUp: 12,
+          m_bVotedDown: 13,
+          m_bVoteSkipped: 14,
+        });
+    }
+  });
+
+  test('UserFavoriteItemsListChanged_t', () => {
+    const l = structLayouts.UserFavoriteItemsListChanged_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(16);
+      expect(offsets(p)).toEqual({
+          m_nPublishedFileId: 0,
+          m_eResult: 8,
+          m_bWasAddRequest: 12,
+        });
+    }
+  });
+
+  test('StartPlaytimeTrackingResult_t', () => {
+    const l = structLayouts.StartPlaytimeTrackingResult_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(4);
+      expect(offsets(p)).toEqual({
+          m_eResult: 0,
+        });
+    }
+  });
+
+  test('StopPlaytimeTrackingResult_t', () => {
+    const l = structLayouts.StopPlaytimeTrackingResult_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(4);
+      expect(offsets(p)).toEqual({
+          m_eResult: 0,
+        });
+    }
+  });
+
+  test('WorkshopEULAStatus_t', () => {
+    const l = structLayouts.WorkshopEULAStatus_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(20);
+      expect(offsets(p)).toEqual({
+          m_eResult: 0,
+          m_nAppID: 4,
+          m_unVersion: 8,
+          m_rtAction: 12,
+          m_bAccepted: 16,
+          m_bNeedsAction: 17,
+        });
+    }
+  });
+});
+
+describe('lobby membership and data events', () => {
+  test('LobbyChatUpdate_t', () => {
+    const l = structLayouts.LobbyChatUpdate_t;
+    expect(l.win64.size).toBe(32);
+    expect(offsets(l.win64)).toEqual({
+      m_ulSteamIDLobby: 0,
+      m_ulSteamIDUserChanged: 8,
+      m_ulSteamIDMakingChange: 16,
+      m_rgfChatMemberStateChange: 24,
+    });
+    expect(l.posix.size).toBe(28);
+    expect(offsets(l.posix)).toEqual({
+      m_ulSteamIDLobby: 0,
+      m_ulSteamIDUserChanged: 8,
+      m_ulSteamIDMakingChange: 16,
+      m_rgfChatMemberStateChange: 24,
+    });
+  });
+
+  test('LobbyDataUpdate_t', () => {
+    const l = structLayouts.LobbyDataUpdate_t;
+    expect(l.win64.size).toBe(24);
+    expect(offsets(l.win64)).toEqual({
+      m_ulSteamIDLobby: 0,
+      m_ulSteamIDMember: 8,
+      m_bSuccess: 16,
+    });
+    expect(l.posix.size).toBe(20);
+    expect(offsets(l.posix)).toEqual({
+      m_ulSteamIDLobby: 0,
+      m_ulSteamIDMember: 8,
+      m_bSuccess: 16,
+    });
+  });
+});
+
+describe('cloud sharing and local changes', () => {
+  test('RemoteStorageFileShareResult_t', () => {
+    const l = structLayouts.RemoteStorageFileShareResult_t;
+    expect(l.win64.size).toBe(280);
+    expect(offsets(l.win64)).toEqual({
+      m_eResult: 0,
+      m_hFile: 8,
+      m_rgchFilename: 16,
+    });
+    expect(l.posix.size).toBe(272);
+    expect(offsets(l.posix)).toEqual({
+      m_eResult: 0,
+      m_hFile: 4,
+      m_rgchFilename: 12,
+    });
+  });
+
+  test('RemoteStorageLocalFileChange_t', () => {
+    const l = structLayouts.RemoteStorageLocalFileChange_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(1);
+      expect(offsets(p)).toEqual({});
+    }
+  });
+});
+
+describe('global stats and achievement icons', () => {
+  test('GlobalStatsReceived_t', () => {
+    const l = structLayouts.GlobalStatsReceived_t;
+    expect(l.win64.size).toBe(16);
+    expect(offsets(l.win64)).toEqual({
+      m_nGameID: 0,
+      m_eResult: 8,
+    });
+    expect(l.posix.size).toBe(12);
+    expect(offsets(l.posix)).toEqual({
+      m_nGameID: 0,
+      m_eResult: 8,
+    });
+  });
+
+  test('UserAchievementIconFetched_t', () => {
+    const l = structLayouts.UserAchievementIconFetched_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(144);
+      expect(offsets(p)).toEqual({
+          m_nGameID: 0,
+          m_rgchAchievementName: 8,
+          m_bAchieved: 136,
+          m_nIconHandle: 140,
+        });
+    }
+  });
+});
+
+describe('friend game info, dlc, launch parameters', () => {
+  test('FriendGameInfo_t', () => {
+    const l = structLayouts.FriendGameInfo_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(24);
+      expect(offsets(p)).toEqual({
+          m_gameID: 0,
+          m_unGameIP: 8,
+          m_usGamePort: 12,
+          m_usQueryPort: 14,
+          m_steamIDLobby: 16,
+        });
+    }
+  });
+
+  test('DlcInstalled_t', () => {
+    const l = structLayouts.DlcInstalled_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(4);
+      expect(offsets(p)).toEqual({
+          m_nAppID: 0,
+        });
+    }
+  });
+
+  test('NewUrlLaunchParameters_t', () => {
+    const l = structLayouts.NewUrlLaunchParameters_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(1);
+      expect(offsets(p)).toEqual({});
+    }
+  });
+});
+
+describe('inventory (items layer)', () => {
+  test('SteamItemDetails_t', () => {
+    const l = structLayouts.SteamItemDetails_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(16);
+      expect(offsets(p)).toEqual({
+          m_itemId: 0,
+          m_iDefinition: 8,
+          m_unQuantity: 12,
+          m_unFlags: 14,
+        });
+    }
+  });
+
+  test('SteamInventoryResultReady_t', () => {
+    const l = structLayouts.SteamInventoryResultReady_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(8);
+      expect(offsets(p)).toEqual({
+          m_handle: 0,
+          m_result: 4,
+        });
+    }
+  });
+
+  test('SteamInventoryFullUpdate_t', () => {
+    const l = structLayouts.SteamInventoryFullUpdate_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(4);
+      expect(offsets(p)).toEqual({
+          m_handle: 0,
+        });
+    }
+  });
+
+  test('SteamInventoryDefinitionUpdate_t', () => {
+    const l = structLayouts.SteamInventoryDefinitionUpdate_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(1);
+      expect(offsets(p)).toEqual({});
+    }
+  });
+
+  test('SteamInventoryRequestPricesResult_t', () => {
+    const l = structLayouts.SteamInventoryRequestPricesResult_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(8);
+      expect(offsets(p)).toEqual({
+          m_result: 0,
+          m_rgchCurrency: 4,
+        });
+    }
+  });
+
+  test('SteamInventoryStartPurchaseResult_t', () => {
+    const l = structLayouts.SteamInventoryStartPurchaseResult_t;
+    expect(l.win64.size).toBe(24);
+    expect(offsets(l.win64)).toEqual({
+      m_result: 0,
+      m_ulOrderID: 8,
+      m_ulTransID: 16,
+    });
+    expect(l.posix.size).toBe(20);
+    expect(offsets(l.posix)).toEqual({
+      m_result: 0,
+      m_ulOrderID: 4,
+      m_ulTransID: 12,
+    });
+  });
+});
+
+describe('p2p networking', () => {
+  test('P2PSessionState_t', () => {
+    const l = structLayouts.P2PSessionState_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(20);
+      expect(offsets(p)).toEqual({
+          m_bConnectionActive: 0,
+          m_bConnecting: 1,
+          m_eP2PSessionError: 2,
+          m_bUsingRelay: 3,
+          m_nBytesQueuedForSend: 4,
+          m_nPacketsQueuedForSend: 8,
+          m_nRemoteIP: 12,
+          m_nRemotePort: 16,
+        });
+    }
+  });
+
+  test('P2PSessionRequest_t', () => {
+    const l = structLayouts.P2PSessionRequest_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(8);
+      expect(offsets(p)).toEqual({
+          m_steamIDRemote: 0,
+        });
+    }
+  });
+
+  test('P2PSessionConnectFail_t', () => {
+    const l = structLayouts.P2PSessionConnectFail_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(9);
+      expect(offsets(p)).toEqual({
+          m_steamIDRemote: 0,
+          m_eP2PSessionError: 8,
+        });
+    }
+  });
+});
+
+describe('timeline (recording layer)', () => {
+  test('SteamTimelineEventRecordingExists_t', () => {
+    const l = structLayouts.SteamTimelineEventRecordingExists_t;
+    expect(l.win64.size).toBe(16);
+    expect(offsets(l.win64)).toEqual({
+      m_ulEventID: 0,
+      m_bRecordingExists: 8,
+    });
+    expect(l.posix.size).toBe(12);
+    expect(offsets(l.posix)).toEqual({
+      m_ulEventID: 0,
+      m_bRecordingExists: 8,
+    });
+  });
+
+  test('SteamTimelineGamePhaseRecordingExists_t', () => {
+    const l = structLayouts.SteamTimelineGamePhaseRecordingExists_t;
+    for (const p of [l.win64, l.posix]) {
+      expect(p.size).toBe(88);
+      expect(offsets(p)).toEqual({
+          m_rgchPhaseID: 0,
+          m_ulRecordingMS: 64,
+          m_ulLongestClipMS: 72,
+          m_unClipCount: 80,
+          m_unScreenshotCount: 84,
+        });
     }
   });
 });

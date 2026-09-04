@@ -8,8 +8,30 @@ follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The player side of the workshop layer: `browse` (cursor paged, ranked,
+  tag and text filtered), `subscribe`, `unsubscribe`, `listSubscribed`,
+  `getState`, `getInstallInfo`, `getDownloadInfo`, `download` with progress,
+  `onInstalled`, `vote`, `getVote`, favorites, playtime tracking, and the
+  workshop legal agreement status.
+- Three curated layers: `items` over `ISteamInventory` (result handles and
+  item arrays hidden behind promises), `p2p` over the `ISteamNetworking`
+  packet calls, and `recording` over `ISteamTimeline`. The names avoid the
+  generated `inventory`, `networking`, and `timeline` accessors.
+- Lobbies: member and data change listeners, `requestData`, `setType`,
+  `setJoinable`, and the lobby game server fields.
+- Cloud: `share`, sync platforms, local file change listing and listener,
+  and `writeBatch`.
+- Stats: other users' achievements and stats, progress limits, global stats,
+  and achievement icons.
+- Social: what a friend is playing, friends in this game, levels,
+  nicknames, game invites, and `setPlayedWith`.
+- DLC: ownership and install checks, `install` as a promise, `uninstall`,
+  download progress, and an install listener.
+- System: install directory, build id, beta branches, launch command line
+  and query parameters, app owner, family sharing, and timed trial facts.
 - Offline offset regression tests for the 39 structs the curated layers
-  decode, cross-checked against steamworks-sys bindgen layouts.
+  decode, cross-checked against steamworks-sys bindgen layouts, plus the 31
+  structs the additions above decode.
 - CI packs the tarball and imports it from CommonJS and ESM on Windows, Linux,
   and macOS across Node 20, 22, and 24.
 - Generated doc remarks on call-result methods point at `steam.async` and pass
@@ -17,6 +39,9 @@ follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- `Workshop`, `Lobbies`, `Cloud`, `Stats`, and `Apps` take the session's
+  callback subscribers in their constructors. Only code that constructs a
+  curated layer by hand instead of through `steam.<layer>` sees this.
 - Node 20 or newer is required. pnpm is pinned through `packageManager`, and
   build scripts for koffi and esbuild are declared off so installs stay quiet.
 

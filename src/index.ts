@@ -18,6 +18,9 @@ import { Auth } from './api/auth';
 import { System } from './api/system';
 import { Capture } from './api/capture';
 import { Controllers } from './api/controllers';
+import { Inventory } from './api/inventory';
+import { P2P } from './api/p2p';
+import { Timeline } from './api/timeline';
 
 /**
  * Options for {@link init}.
@@ -47,7 +50,7 @@ export interface InitOptions {
 /**
  * A live Steam API session: the interfaces, the curated helpers (workshop,
  * stats, cloud, leaderboards, lobbies, social, overlay, auth, system, capture,
- * controllers, dlc), and the running dispatch pump.
+ * controllers, dlc, items, p2p, recording), and the running dispatch pump.
  *
  * Build one with {@link init}, and call {@link Steam.close} when you are done.
  * Interfaces are created on first use and cached.
@@ -69,6 +72,9 @@ export class Steam extends SteamInterfaces {
   private systemHelper: System | undefined;
   private captureHelper: Capture | undefined;
   private controllersHelper: Controllers | undefined;
+  private inventoryHelper: Inventory | undefined;
+  private p2pHelper: P2P | undefined;
+  private timelineHelper: Timeline | undefined;
   private asyncCalls: SteamAsync | undefined;
   private closed = false;
 
@@ -96,7 +102,9 @@ export class Steam extends SteamInterfaces {
    * @see Workshop
    */
   get workshop(): Workshop {
-    if (!this.workshopHelper) this.workshopHelper = new Workshop(this.ugc, this.dispatch, this.appId);
+    if (!this.workshopHelper) {
+      this.workshopHelper = new Workshop(this.ugc, this.dispatch, this.appId, (n, l) => this.on(n, l), (n, m) => this.once(n, m));
+    }
     return this.workshopHelper;
   }
 
@@ -106,7 +114,7 @@ export class Steam extends SteamInterfaces {
    * @see Stats
    */
   get stats(): Stats {
-    if (!this.statsHelper) this.statsHelper = new Stats(this.userStats, this.dispatch);
+    if (!this.statsHelper) this.statsHelper = new Stats(this.userStats, this.dispatch, (n, m) => this.once(n, m));
     return this.statsHelper;
   }
 
@@ -116,7 +124,7 @@ export class Steam extends SteamInterfaces {
    * @see Cloud
    */
   get cloud(): Cloud {
-    if (!this.cloudHelper) this.cloudHelper = new Cloud(this.remoteStorage, this.dispatch);
+    if (!this.cloudHelper) this.cloudHelper = new Cloud(this.remoteStorage, this.dispatch, (n, l) => this.on(n, l));
     return this.cloudHelper;
   }
 
@@ -136,7 +144,9 @@ export class Steam extends SteamInterfaces {
    * @see Lobbies
    */
   get lobbies(): Lobbies {
-    if (!this.lobbiesHelper) this.lobbiesHelper = new Lobbies(this.matchmaking, this.dispatch, (n, l) => this.on(n, l));
+    if (!this.lobbiesHelper) {
+      this.lobbiesHelper = new Lobbies(this.matchmaking, this.dispatch, (n, l) => this.on(n, l), (n, m) => this.once(n, m));
+    }
     return this.lobbiesHelper;
   }
 
@@ -174,7 +184,7 @@ export class Steam extends SteamInterfaces {
    * @see Apps
    */
   get dlc(): Apps {
-    if (!this.appsHelper) this.appsHelper = new Apps(this.apps);
+    if (!this.appsHelper) this.appsHelper = new Apps(this.apps, (n, l) => this.on(n, l), (n, m) => this.once(n, m));
     return this.appsHelper;
   }
 
@@ -223,6 +233,42 @@ export class Steam extends SteamInterfaces {
   get controllers(): Controllers {
     if (!this.controllersHelper) this.controllersHelper = new Controllers(this.input, (n, l) => this.on(n, l));
     return this.controllersHelper;
+  }
+
+  /**
+   * Task level Steam Inventory Service helper over {@link Steam.inventory}.
+   * Named `items` because the generated ISteamInventory accessor already owns
+   * `inventory`.
+   *
+   * @see Inventory
+   */
+  get items(): Inventory {
+    if (!this.inventoryHelper) {
+      this.inventoryHelper = new Inventory(this.inventory, this.dispatch, (n, l) => this.on(n, l), (n, m) => this.once(n, m));
+    }
+    return this.inventoryHelper;
+  }
+
+  /**
+   * Task level peer-to-peer packet helper over {@link Steam.networking}.
+   *
+   * @see P2P
+   */
+  get p2p(): P2P {
+    if (!this.p2pHelper) this.p2pHelper = new P2P(this.networking, (n, l) => this.on(n, l));
+    return this.p2pHelper;
+  }
+
+  /**
+   * Task level Game Recording timeline helper over {@link Steam.timeline}.
+   * Named `recording` because the generated ISteamTimeline accessor already
+   * owns `timeline`.
+   *
+   * @see Timeline
+   */
+  get recording(): Timeline {
+    if (!this.timelineHelper) this.timelineHelper = new Timeline(this.timeline, this.dispatch);
+    return this.timelineHelper;
   }
 
   /**
@@ -495,9 +541,15 @@ export { SteamInitError, SteamResultError, eResultName } from './api/errors';
 export { Workshop } from './api/workshop';
 export type {
   AdditionalPreview,
+  BrowseOptions,
+  BrowsePage,
+  DownloadProgress,
+  InstallInfo,
+  ItemState,
   QueryOptions,
   UpdateProgress,
   UserItemsPage,
+  WorkshopEulaStatus,
   WorkshopItem,
   WorkshopItemUpdate,
   WorkshopStatistic,
@@ -513,13 +565,14 @@ export { Leaderboards } from './api/leaderboards';
 export type { DownloadOptions, LeaderboardEntry, LeaderboardInfo, ScoreUploadResult } from './api/leaderboards';
 /** Task level lobbies helper. Usually reached as `steam.lobbies`. */
 export { Lobbies } from './api/lobbies';
-export type { LobbyChatMessage, LobbySearchOptions } from './api/lobbies';
+export type { LobbyChatMessage, LobbyMemberChange, LobbySearchOptions } from './api/lobbies';
 /** Task level friends, presence, and avatar helper. Usually reached as `steam.social`. */
 export { Social } from './api/social';
 export type {
   Avatar,
   AvatarSize,
   Friend,
+  FriendGame,
   LobbyJoinRequest,
   PersonaStateChange,
   RichPresenceJoinRequest,
@@ -535,12 +588,21 @@ export { Auth } from './api/auth';
 export type { AuthTicket, ValidateTicketResult } from './api/auth';
 /** Task level machine and client facts helper. Usually reached as `steam.system`. */
 export { System } from './api/system';
-export type { GamepadTextInputOptions, SteamImage } from './api/system';
+export type { BetaBranch, GamepadTextInputOptions, SteamImage } from './api/system';
 /** Task level screenshot helper. Usually reached as `steam.capture`. */
 export { Capture } from './api/capture';
 export type { ScreenshotReady } from './api/capture';
 /** Task level Steam Input helper. Usually reached as `steam.controllers`. */
 export { Controllers } from './api/controllers';
 export type { AnalogAction, DigitalAction } from './api/controllers';
+/** Task level Steam Inventory Service helper. Usually reached as `steam.items`. */
+export { Inventory } from './api/inventory';
+export type { InventoryItem, ItemPrice } from './api/inventory';
+/** Task level peer-to-peer packet helper. Usually reached as `steam.p2p`. */
+export { P2P } from './api/p2p';
+export type { P2PPacket, P2PSessionState } from './api/p2p';
+/** Task level Game Recording timeline helper. Usually reached as `steam.recording`. */
+export { Timeline } from './api/timeline';
+export type { PhaseRecording, TimelineEvent } from './api/timeline';
 /** The raw generated flat API: every interface class, enum, const, and layout. */
 export * as flat from './generated';

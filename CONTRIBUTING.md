@@ -2,7 +2,7 @@
 
 steamwand.js is TypeScript bindings for the Steamworks SDK with no native build
 step. A generator reads Valve's `steam_api.json` and emits the whole binding
-layer; calls go through [koffi](https://koffi.dev) FFI at runtime, and twelve
+layer; calls go through [koffi](https://koffi.dev) FFI at runtime, and fifteen
 curated layers under `src/api/` cover the flows most games need.
 
 ## The rule that shapes everything
