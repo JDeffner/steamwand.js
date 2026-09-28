@@ -76,7 +76,7 @@ await steam.workshop.submitUpdate(fileId, {
   description: 'Full description',
   contentPath: 'C:/mods/my-mod',
   tags: ['gameplay'],
-  changeNote: 'first upload',
+  changeNote: 'English:\nFirst upload.\n\nDeutsch:\nErster Upload.',
 }, { onProgress: (p) => console.log(p.status, p.bytesProcessed) });
 
 // Per-language text, the thing that started this project
@@ -134,6 +134,28 @@ ids, handles) are `bigint` everywhere. The dispatch pump checks every async
 result against the callback id the caller expected, so a mixed-up completion
 rejects instead of decoding garbage.
 
+### Workshop result handling
+
+Workshop queries skip rows that Steam marks as file-not-found. Other row errors reject with a `SteamResultError` that retains the result code and row context. Failed row getters also reject. With `additionalPreviews: true`, every preview must be read successfully or the query rejects. Each returned preview has its native `index` for use in `removePreviewIndexes`. Without that option, `additionalPreviews` stays empty and does not describe the gallery.
+
+Use `getAppDependenciesResult` when you need a complete set of required apps. Steam returns at most 32 IDs and provides no pagination for this call. The older `getAppDependencies` still returns an array for compatibility, but is deprecated because it discards the total count.
+
+```ts
+const requirements = await steam.workshop.getAppDependenciesResult(fileId);
+if (!requirements.complete) {
+  throw new Error(`Only ${requirements.appIds.length} of ${requirements.totalCount} required apps returned`);
+}
+// A complete snapshot is now available in requirements.appIds.
+```
+
+Upload paths must be absolute. Content must be a readable directory; main and additional previews must be readable regular files. Symlinks are followed and broken links fail. Validation errors identify the field and path, with the original filesystem error in `cause` where applicable. These checks do not validate image formats or sizes, inspect every content file, or prevent files from changing before Steam reads them.
+
+### Workshop change notes
+
+`language` selects translated titles and descriptions. It does not select a change-note translation. The documented [native update API](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemUpdateLanguage), [PublishedFile Web API](https://partner.steamgames.com/doc/webapi/IPublishedFileService), and [RemoteStorage Web API](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage) provide no supported method to attach translated notes to the same history entry. Steamwand therefore does not expose that capability.
+
+Send one `changeNote` with language-labeled sections together with the content upload, as in the example above. Do not submit once per language to translate that entry. [Issue #15](https://github.com/JDeffner/steamwand.js/issues/15) reports that note-only and later translation submissions returned success without a visible note in its tested flow. A successful submission is not proof of visible change history. If the outcome is uncertain, inspect the item's Change Notes in Steam before retrying.
+
 ## What is generated, what is not
 
 `scripts/generate.ts` reads `steam_api.json` and emits `src/generated/`:
@@ -184,14 +206,13 @@ normal practice and allowed.
 
 ## Tests
 
-`pnpm test` runs offline (layout regression, dispatch pump, platform, and
-close-guard tests). `pnpm test:live` runs against the running Steam client on
-appid 480 (Spacewar): the full workshop round trip (create a private item,
-upload content and a preview image, set a German translation, metadata and
-key/value tags, an app dependency, query everything back, delete the item)
-plus checks for the stats, cloud, leaderboards, lobbies, social, auth, system,
-capture, and controllers layers (one temporary cloud file, one private
-throwaway lobby, one cancelled auth ticket). It cleans up after itself.
+Run `pnpm typecheck`, `pnpm test`, and `pnpm build` for the offline checks. The test command excludes live suites even when live-test environment variables are set. Typecheck also enforces the compile-time API contracts.
+
+`pnpm test:live` runs live reads against a logged-in Steam client on app ID 480. `pnpm test:live:write` adds curated write tests, including a unique cloud file, private lobby, presence key, auth tickets, and local controller and screenshot-hook changes. It excludes Workshop uploads. Write tests require `STEAM_TEST_STEAM_ID` to match the logged-in account's SteamID64.
+
+`pnpm test:workshop` separately tests a private item's creation, uploads, translations, metadata, previews, downloaded bytes, and deletion. It also requires an explicit `STEAM_TEST_APP_ID`. Set 480 explicitly for the Spacewar development example, or use an authorized app you control. Agreement acceptance remains a manual step. Live tests use real Valve services and attempt cleanup; they are not part of ordinary CI.
+
+An unfinished Workshop run leaves a gitignored recovery record in `.steamwand-live/workshop/` and blocks the next run. A timeout does not cancel a Steam upload. See [the testing workflow](AGENTS.md#verifying-a-change) for account and app setup, coverage limits, Valve's source documentation, and recovery steps.
 
 ## License
 

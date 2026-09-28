@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import { isAbsolute } from 'node:path';
 import type { SteamDispatch } from '../runtime/dispatch';
 import { decodeStruct } from '../runtime/struct';
 import { stringArray } from '../runtime/types';
@@ -19,11 +20,27 @@ import type {
   SubmitItemUpdateResult_t,
 } from '../generated/structs';
 import { EItemPreviewType, EItemStatistic, EResult, EUGCMatchingUGCType, EUserUGCList, EUserUGCListSortOrder, EWorkshopFileType } from '../generated/enums';
-import { k_cchDeveloperMetadataMax } from '../generated/consts';
+import { k_cchDeveloperMetadataMax, k_UGCQueryHandleInvalid } from '../generated/consts';
 import { ok, must } from './guards';
 
 /** Steam caps a key/value tag key and value at 255 bytes each, so this buffer always holds one. */
 const KEY_VALUE_TAG_BYTES = 256;
+
+/** Validate upload paths before allocating an update handle. statSync follows symlinks. */
+function checkUploadPath(field: string, input: string, kind: 'directory' | 'file'): void {
+  if (!isAbsolute(input)) throw new Error(`steamwand: ${field} must be an absolute path: ${input}`);
+  try {
+    const stat = fs.statSync(input);
+    if (kind === 'directory' ? !stat.isDirectory() : !stat.isFile()) {
+      throw new Error(`expected a ${kind === 'file' ? 'regular file' : 'directory'}`);
+    }
+    // Open for reading, since accessSync does not check Windows ACLs.
+    if (kind === 'directory') fs.opendirSync(input).closeSync();
+    else fs.closeSync(fs.openSync(input, 'r'));
+  } catch (cause) {
+    throw new Error(`steamwand: invalid ${field} ${JSON.stringify(input)}: ${(cause as Error).message}`, { cause });
+  }
+}
 
 /**
  * One workshop item update. Every field is optional; only the fields you set
@@ -38,11 +55,11 @@ export interface WorkshopItemUpdate {
   description?: string;
   /** Steam API language code (`german`, `schinese`, ...): sets which language title/description apply to. */
   language?: string;
-  /** Change note for this revision. Omit for no change note. */
+  /** Change note for the content upload. Not localized by `language`; use one note with language-labeled sections. Omit for no note. */
   changeNote?: string;
-  /** Absolute path to the content folder. The whole folder is uploaded. */
+  /** Absolute path to a readable directory. Symlinks are followed. The whole folder is uploaded. */
   contentPath?: string;
-  /** Absolute path to the preview image. Max 1 MB, PNG or JPG. */
+  /** Absolute path to a readable regular file. Symlinks are followed. Max 1 MB, PNG or JPG. */
   previewPath?: string;
   /** Replaces the full tag list, so include the tags you want to keep. */
   tags?: string[];
@@ -52,11 +69,11 @@ export interface WorkshopItemUpdate {
   metadata?: string;
   /** Key/value tags to set. Every key is cleared first, so one call replaces that key's values. */
   keyValueTags?: Record<string, string>;
-  /** Absolute paths of extra preview images to add. Max 1 MB each, PNG or JPG. */
+  /** Absolute paths of readable regular files to add as previews. Symlinks are followed. Max 1 MB each, PNG or JPG. */
   previewImages?: string[];
   /** YouTube video ids to add as extra previews. */
   previewVideos?: string[];
-  /** Indexes of existing additional previews to remove. Applied before the adds. */
+  /** Native indexes from `AdditionalPreview.index` to remove. Applied before the adds. */
   removePreviewIndexes?: number[];
 }
 
@@ -134,7 +151,7 @@ export interface WorkshopItem {
   statistics: Partial<Record<WorkshopStatistic, bigint>>;
   /** Child items of a collection. Empty unless the query set `children`. 64-bit, so `bigint`s. */
   children: bigint[];
-  /** Extra previews beyond the main image. Empty unless the query set `additionalPreviews`. */
+  /** Complete extra gallery when `additionalPreviews` was requested; a failed read rejects the query. Empty when not requested. */
   additionalPreviews: AdditionalPreview[];
   /**
    * Free-form developer metadata. Absent unless the query set `metadata`, and
@@ -151,6 +168,8 @@ export interface WorkshopItem {
  * @see WorkshopItem.additionalPreviews
  */
 export interface AdditionalPreview {
+  /** Original Steam preview index, suitable for `removePreviewIndexes`. */
+  index: number;
   /** EItemPreviewType (0 image, 1 YouTube video, 2 Sketchfab, ...). */
   type: number;
   /** Image URL, or the YouTube video id for a video preview. */
@@ -194,7 +213,7 @@ export interface QueryOptions {
   longDescription?: boolean;
   /** Return the child items of a collection, in `WorkshopItem.children`. */
   children?: boolean;
-  /** Return the extra previews, in `WorkshopItem.additionalPreviews`. */
+  /** Return the complete extra gallery in `WorkshopItem.additionalPreviews`. Rejects if any preview cannot be read. */
   additionalPreviews?: boolean;
   /** Return the developer metadata, in `WorkshopItem.metadata`. Only the item owner gets a value. */
   metadata?: boolean;
@@ -208,10 +227,20 @@ export interface QueryOptions {
  * @see Workshop.getUserItems
  */
 export interface UserItemsPage {
-  /** Items on this page, at most 50. Items Steam could not return are skipped. */
+  /** Items on this page, at most 50. File-not-found rows are skipped; any other row failure rejects the whole page. */
   items: WorkshopItem[];
   /** Total matches across all pages, for computing the page count. */
   totalResults: number;
+}
+
+/** App requirements returned by Steam, which supplies at most 32 IDs and has no pagination for this call. */
+export interface AppDependenciesResult {
+  /** Returned app IDs in Steam's order. May be shorter than `totalCount`. */
+  appIds: number[];
+  /** Total number of app requirements reported by Steam. */
+  totalCount: number;
+  /** Whether all requirements were returned. Check before replacing or reconciling requirements. */
+  complete: boolean;
 }
 
 /**
@@ -284,9 +313,9 @@ export class Workshop {
    * wait for the result. With `language` set, title/description apply to that
    * language only (SetItemUpdateLanguage).
    *
-   * Paths in `update` are checked before the native call, because the native
-   * layer aborts the whole process on a missing path instead of returning an
-   * error.
+   * Paths must be absolute: content must be a readable directory and previews must be readable regular files. Symlinks are followed; broken links fail. Files can still change after these checks, and image formats and sizes are not validated here.
+   *
+   * `language` does not translate change notes. No supported method for translating the same history entry is documented in the native or Workshop Web APIs. Send one `changeNote` with language-labeled sections on the content upload; do not submit once per language to translate it. A successful note-only or listing-only update does not guarantee a visible history entry.
    *
    * @param fileId - Item to update. 64-bit, so a `bigint`.
    * @param update - The fields to change. Unset fields keep their value.
@@ -296,7 +325,7 @@ export class Workshop {
    * @param opts.progressIntervalMs - Milliseconds between `onProgress` calls.
    * @defaultValue 500
    * @returns `legalAgreementRequired`, true while the user has not accepted the workshop legal agreement.
-   * @throws Error if `contentPath` or `previewPath` does not exist.
+   * @throws Error if an upload path is relative, missing, inaccessible, or has the wrong type. Filesystem errors are retained as `cause`.
    * @throws Error if a setter returns false, which means an invalid handle or argument.
    * @throws SteamResultError if Steam refused the submit, for example with `k_EResultFileNotFound`.
    * @throws SteamApiCallError if the call could not be completed.
@@ -313,6 +342,8 @@ export class Workshop {
    * steam.close();
    * ```
    * @see createItem
+   * @see https://partner.steamgames.com/doc/api/ISteamUGC#SetItemUpdateLanguage
+   * @see https://partner.steamgames.com/doc/api/ISteamUGC#SubmitItemUpdate
    */
   async submitUpdate(
     fileId: bigint,
@@ -320,13 +351,10 @@ export class Workshop {
     opts: { appId?: number; onProgress?: (p: UpdateProgress) => void; progressIntervalMs?: number } = {},
   ): Promise<{ legalAgreementRequired: boolean }> {
     const appId = opts.appId ?? this.appId;
-    // The native layer aborts the process on a missing path; keep it a readable error.
-    if (update.contentPath !== undefined && !fs.existsSync(update.contentPath))
-      throw new Error(`steamwand: content folder does not exist: ${update.contentPath}`);
-    if (update.previewPath !== undefined && !fs.existsSync(update.previewPath))
-      throw new Error(`steamwand: preview image does not exist: ${update.previewPath}`);
-    for (const p of update.previewImages ?? [])
-      if (!fs.existsSync(p)) throw new Error(`steamwand: preview image does not exist: ${p}`);
+    if (update.contentPath !== undefined) checkUploadPath('contentPath', update.contentPath, 'directory');
+    if (update.previewPath !== undefined) checkUploadPath('previewPath', update.previewPath, 'file');
+    for (const [index, input] of (update.previewImages ?? []).entries())
+      checkUploadPath(`previewImages[${index}]`, input, 'file');
 
     const h = this.ugc.StartItemUpdate(appId, fileId);
     if (update.language !== undefined) must('SetItemUpdateLanguage', this.ugc.SetItemUpdateLanguage(h, update.language));
@@ -411,7 +439,7 @@ export class Workshop {
    * @throws SteamResultError if Steam refused the call, for example with `k_EResultAccessDenied`.
    * @throws SteamApiCallError if the call could not be completed.
    * @see removeAppDependency
-   * @see getAppDependencies
+   * @see getAppDependenciesResult
    */
   async addAppDependency(fileId: bigint, appId: number): Promise<void> {
     const call = this.ugc.AddAppDependency(fileId, appId);
@@ -445,9 +473,9 @@ export class Workshop {
   /**
    * Lists the apps an item requires.
    *
-   * Steam returns at most 32 app ids per call, so a longer list comes back
-   * truncated.
+   * Steam returns at most 32 app ids per call, so a longer list comes back truncated. This legacy method does not report completeness.
    *
+   * @deprecated Use `getAppDependenciesResult` and check `complete` before synchronizing requirements.
    * @param fileId - Item to read. 64-bit, so a `bigint`.
    * @returns The required app ids, in Steam's order.
    * @throws SteamResultError if Steam refused the call.
@@ -455,6 +483,26 @@ export class Workshop {
    * @see addAppDependency
    */
   async getAppDependencies(fileId: bigint): Promise<number[]> {
+    return (await this.getAppDependenciesResult(fileId)).appIds;
+  }
+
+  /**
+   * Lists app requirements with their total count and completeness.
+   *
+   * Steam returns at most 32 IDs. This call has no pagination, so an incomplete result cannot be used as a full replacement snapshot.
+   *
+   * @param fileId - Item to read. 64-bit, so a `bigint`.
+   * @throws Error if Steam returns inconsistent counts or a buffer too small for the returned IDs.
+   * @throws SteamResultError if Steam refused the call.
+   * @throws SteamApiCallError if the call could not be completed.
+   * @example
+   * ```ts
+   * const requirements = await steam.workshop.getAppDependenciesResult(fileId);
+   * if (!requirements.complete) throw new Error(`Only ${requirements.appIds.length} of ${requirements.totalCount} requirements returned`);
+   * console.log(requirements.appIds);
+   * ```
+   */
+  async getAppDependenciesResult(fileId: bigint): Promise<AppDependenciesResult> {
     const call = this.ugc.GetAppDependencies(fileId);
     const r = await this.dispatch.callResultStruct<GetAppDependenciesResult_t>(
       call,
@@ -462,9 +510,15 @@ export class Workshop {
       callbackIdByName.GetAppDependenciesResult_t,
     );
     ok('GetAppDependencies', r.m_eResult);
+    const count = r.m_nNumAppDependencies;
+    const totalCount = r.m_nTotalNumAppDependencies;
+    if (!Number.isInteger(count) || count < 0 || count > 32 || count * 4 > r.m_rgAppIDs.length
+      || !Number.isInteger(totalCount) || totalCount < count || totalCount > 0xffff_ffff) {
+      throw new Error(`steamwand: GetAppDependencies returned invalid counts for item ${fileId} (returned ${count}, total ${totalCount}, buffer ${r.m_rgAppIDs.length} bytes)`);
+    }
     const appIds: number[] = [];
-    for (let i = 0; i < r.m_nNumAppDependencies; i++) appIds.push(r.m_rgAppIDs.readUInt32LE(i * 4));
-    return appIds;
+    for (let i = 0; i < count; i++) appIds.push(r.m_rgAppIDs.readUInt32LE(i * 4));
+    return { appIds, totalCount, complete: count === totalCount };
   }
 
   /**
@@ -512,8 +566,9 @@ export class Workshop {
    *
    * @param fileId - Item to fetch. 64-bit, so a `bigint`.
    * @param opts - Language and description options for the query.
-   * @returns The item, or null if it does not exist or is not visible to this user.
-   * @throws SteamResultError if the query itself failed.
+   * @returns The item, or null if Steam returns no rows or reports `k_EResultFileNotFound`.
+   * @throws SteamResultError if the query or item row failed, including access denied.
+   * @throws Error if query setup, a row read, or a requested additional preview read fails.
    * @throws SteamApiCallError if the call could not be completed.
    * @example
    * ```ts
@@ -540,6 +595,8 @@ export class Workshop {
    * A page holds at most 50 items. Use `totalResults` from the first page to
    * work out how many pages there are.
    *
+   * File-not-found rows are skipped. Any other row failure or requested preview read failure rejects the entire page.
+   *
    * @param page - 1-based page number. Steam rejects 0.
    * @param accountId - 32-bit account id of the user, from `steam.accountId()`.
    * @param opts.appId - App to list items for.
@@ -551,7 +608,8 @@ export class Workshop {
    * @param opts.sortOrder - EUserUGCListSortOrder.
    * @defaultValue `k_EUserUGCListSortOrder_LastUpdatedDesc`
    * @returns The page items and the total match count.
-   * @throws SteamResultError if the query failed.
+   * @throws SteamResultError if the query or an item row failed.
+   * @throws Error if query setup, a row read, or a requested additional preview read fails.
    * @throws SteamApiCallError if the call could not be completed.
    * @example
    * ```ts
@@ -590,9 +648,8 @@ export class Workshop {
   /**
    * Applies the query options, sends the query, and decodes every result row.
    *
-   * The handle is released in a `finally`, so a failed query leaks nothing.
-   * Rows Steam returns as `k_EResultFileNotFound`, or cannot return at all,
-   * are skipped, so `items.length` can be below the returned row count.
+   * Release is attempted once in `finally`, including when setup fails. A cleanup error does not replace the original failure.
+   * Rows Steam returns as `k_EResultFileNotFound` are skipped. All other failures reject the query.
    *
    * @param handle - UGCQueryHandle_t from a `CreateQuery...Request` call.
    * @param opts - Language and description options to apply before sending.
@@ -600,14 +657,16 @@ export class Workshop {
    * @throws SteamResultError if the query completed with a non-OK EResult.
    */
   private async runQuery(handle: bigint, opts: QueryOptions): Promise<UserItemsPage> {
-    if (opts.language !== undefined) must('SetLanguage', this.ugc.SetLanguage(handle, opts.language));
-    if (opts.longDescription) must('SetReturnLongDescription', this.ugc.SetReturnLongDescription(handle, true));
-    if (opts.children) must('SetReturnChildren', this.ugc.SetReturnChildren(handle, true));
-    if (opts.additionalPreviews)
-      must('SetReturnAdditionalPreviews', this.ugc.SetReturnAdditionalPreviews(handle, true));
-    if (opts.metadata) must('SetReturnMetadata', this.ugc.SetReturnMetadata(handle, true));
-    if (opts.keyValueTags) must('SetReturnKeyValueTags', this.ugc.SetReturnKeyValueTags(handle, true));
+    if (handle === k_UGCQueryHandleInvalid) throw new Error('steamwand: failed to create Workshop query (invalid handle)');
+    let failed = false;
     try {
+      if (opts.language !== undefined) must('SetLanguage', this.ugc.SetLanguage(handle, opts.language));
+      if (opts.longDescription) must('SetReturnLongDescription', this.ugc.SetReturnLongDescription(handle, true));
+      if (opts.children) must('SetReturnChildren', this.ugc.SetReturnChildren(handle, true));
+      if (opts.additionalPreviews)
+        must('SetReturnAdditionalPreviews', this.ugc.SetReturnAdditionalPreviews(handle, true));
+      if (opts.metadata) must('SetReturnMetadata', this.ugc.SetReturnMetadata(handle, true));
+      if (opts.keyValueTags) must('SetReturnKeyValueTags', this.ugc.SetReturnKeyValueTags(handle, true));
       const call = this.ugc.SendQueryUGCRequest(handle);
       const q = await this.dispatch.callResultStruct<SteamUGCQueryCompleted_t>(
         call,
@@ -618,14 +677,23 @@ export class Workshop {
       const items: WorkshopItem[] = [];
       const detailsBuf = Buffer.alloc(layoutOf('SteamUGCDetails_t').size);
       for (let i = 0; i < q.m_unNumResultsReturned; i++) {
-        if (!this.ugc.GetQueryUGCResult(q.m_handle, i, detailsBuf)) continue;
+        must(`GetQueryUGCResult (row ${i})`, this.ugc.GetQueryUGCResult(handle, i, detailsBuf));
         const d = decodeStruct<SteamUGCDetails_t>(detailsBuf, layoutOf('SteamUGCDetails_t'));
         if (d.m_eResult === EResult.k_EResultFileNotFound) continue;
-        items.push(this.toItem(q.m_handle, i, d, opts));
+        ok(`GetQueryUGCResult (row ${i}, item ${d.m_nPublishedFileId})`, d.m_eResult);
+        items.push(this.toItem(handle, i, d, opts));
       }
       return { items, totalResults: q.m_unTotalMatchingResults };
+    } catch (error) {
+      failed = true;
+      throw error;
     } finally {
-      this.ugc.ReleaseQueryUGCRequest(handle);
+      try {
+        must('ReleaseQueryUGCRequest', this.ugc.ReleaseQueryUGCRequest(handle));
+      } catch (error) {
+        // Keep the original setup/query/read error when cleanup also fails.
+        if (!failed) throw error;
+      }
     }
   }
 
@@ -654,8 +722,6 @@ export class Workshop {
         statistics[key as WorkshopStatistic] = statBuf.readBigUInt64LE(0);
       }
     }
-    // Both calls come back empty unless the query asked for them, which is
-    // exactly the documented "option off" behaviour.
     const children: bigint[] = [];
     if (d.m_unNumChildren > 0) {
       const childBuf = Buffer.alloc(d.m_unNumChildren * 8);
@@ -664,13 +730,17 @@ export class Workshop {
       }
     }
     const additionalPreviews: AdditionalPreview[] = [];
-    const numPreviews = this.ugc.GetQueryUGCNumAdditionalPreviews(handle, index);
+    const numPreviews = opts.additionalPreviews ? this.ugc.GetQueryUGCNumAdditionalPreviews(handle, index) : 0;
     for (let i = 0; i < numPreviews; i++) {
       const urlBuf2 = Buffer.alloc(256);
       const nameBuf = Buffer.alloc(260);
       const typeBuf = out.int32();
-      if (!this.ugc.GetQueryUGCAdditionalPreview(handle, index, i, urlBuf2, 256, nameBuf, 260, typeBuf.buffer)) continue;
+      must(
+        `GetQueryUGCAdditionalPreview (item ${d.m_nPublishedFileId}, row ${index}, preview ${i})`,
+        this.ugc.GetQueryUGCAdditionalPreview(handle, index, i, urlBuf2, 256, nameBuf, 260, typeBuf.buffer),
+      );
       additionalPreviews.push({
+        index: i,
         type: typeBuf.value,
         urlOrVideoId: cstr(urlBuf2),
         originalFileName: cstr(nameBuf),

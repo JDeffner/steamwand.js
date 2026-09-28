@@ -41,15 +41,7 @@ repo. The answer is always more generator, more koffi, or a documented skip.
 4. **Forgetting that FFI failures are fatal.** A bad signature or pointer
    crashes the Node process. It does not throw. When a live script dies with
    no stack trace, suspect the binding layer, not the test.
-5. **Running `pnpm test:live` casually.** It talks to the real Steam client
-   on appid 480: creates a private workshop item, uploads content, sets a
-   German translation, queries it back, deletes it, then round-trips the
-   curated stats, cloud, leaderboards, lobbies, social, auth, system,
-   capture, and controllers layers (one temp cloud file, one private
-   throwaway lobby, one cancelled auth ticket). It cleans up after itself, but it
-   needs a running, logged-in Steam client and it touches real Valve
-   infrastructure. Run it when the change touches the runtime or a curated
-   layer, not as a reflex.
+5. **Treating live tests as disposable local tests.** They use the real Steam client and Valve services. `pnpm test:live` runs reads on app ID 480. `pnpm test:live:write` also writes one unique cloud file and presence key, creates a private lobby, issues two auth tickets, and changes local controller and screenshot-hook state. `pnpm test:workshop` runs a separate private upload lifecycle. Cleanup is attempted, not guaranteed. Select the test that proves the change; do not run live writes as a default check.
 
 ## Commands
 
@@ -58,12 +50,14 @@ Everything is pnpm.
 | command | what it does | needs |
 | --- | --- | --- |
 | `pnpm typecheck` | `tsc --noEmit` | nothing |
-| `pnpm test` | offline layout regression tests | nothing |
+| `pnpm test` | offline layouts, dispatch, native close guards, platform, out-buffer, API contract, and test-workflow checks; excludes live files even if live flags are inherited | installed dependencies, no Steam client |
 | `pnpm build` | emit `dist/` via `tsconfig.build.json` | nothing |
 | `pnpm generate` | rebuild `src/generated/` from the SDK | SDK unpacked at `sdk/` (see `sdk/STEAMWAND.md`) |
-| `pnpm smoke` | ~30 read-only checks over 10 interfaces | running Steam client |
+| `pnpm smoke` | read-only generated-surface checks with account-specific fixtures | logged-in Steam client, CK3 owned and installed, the script's referenced Workshop item available |
 | `pnpm workbench` | web UI over the whole binding, for manual poking | running Steam client |
-| `pnpm test:live` | workshop round trip plus checks for every other curated layer on appid 480 | running, logged-in Steam client |
+| `pnpm test:live` | live reads on app ID 480; explicitly disables write tests | running, logged-in Steam client |
+| `pnpm test:live:write` | curated live reads and writes on app ID 480; excludes Workshop uploads | authorized account, `STEAM_TEST_STEAM_ID` |
+| `pnpm test:workshop` | private create, upload, translations, metadata, preview, download verification, delete | authorized account, `STEAM_TEST_STEAM_ID`, `STEAM_TEST_APP_ID`; see below |
 
 ## Where code lives
 
@@ -93,13 +87,43 @@ Everything is pnpm.
 
 ## Verifying a change
 
-Smallest proof that it works. For most changes that is `pnpm typecheck` and
-`pnpm test`. After generator changes, also regenerate and read the diff in
-`src/generated/`; the diff is the review. Reach for `pnpm smoke` when the
-runtime changed, `pnpm test:live` when a curated layer or the dispatch pump
-changed, and the workbench when you need to poke one call by hand. Do not
-add new smoke checks or live tests to prove a refactor; the existing ones
-already cover the surface.
+Run `pnpm typecheck`, `pnpm test`, and `pnpm build` for code changes. CI runs these on Windows, Linux, and macOS. `test/types.test.ts` contains compile-time assertions enforced by typecheck, not by Vitest alone. After generator or SDK changes, regenerate, run `pnpm exec vitest run test/offsets.test.ts` first, then run the full checks and inspect the generated diff.
+
+For runtime changes, use live reads or smoke when its account-specific prerequisites are met. For changed write behavior, select the affected live suite after authorization. Use the workbench for a call that needs manual inspection. Existing tests cover selected flows, not every generated function or curated behavior. Controller checks without hardware, the overlay enabled flag, and screenshot-hook checks do not verify real controller input, rendering, or screenshot capture. Add focused outcome tests when a changed contract lacks coverage; do not duplicate coverage just for a refactor.
+
+### Live test authorization and setup
+
+Only the exact value `1` enables `STEAM_LIVE` or `STEAM_LIVE_WRITE`; writes require both. The package scripts set these flags for their selected mode and serialize live test files. Do not run another live test process or the workbench at the same time. Ordinary CI stays offline. Do not add scheduled uploads, load tests, automated agreement acceptance, or account creation. Valve documents developer test uploads, but that is not blanket permission for unattended automation. Get Steamworks clarification for that use case.
+
+For write tests, the maintainer sets `STEAM_TEST_STEAM_ID` to the authorized account's SteamID64. This is a public identifier, not a credential. The test checks the logged-in account and app before any test writes. The user logs into Steam themselves; never collect or store Steam passwords in scripts or test output. `pnpm test:workshop` also requires `STEAM_TEST_APP_ID`, with no default. Set `480` explicitly for the Spacewar development example, or use an authorized app you control. The other curated live suites remain on 480 because their stats and leaderboard fixtures depend on it.
+
+For an app you control, enable ISteamUGC and preview-storage quotas and restrict Workshop access to developers or a selected tester group where appropriate. A game beta branch does not by itself configure Workshop visibility. Use an account with the required app license and permissions; Family Sharing and Free Weekend licenses cannot upload. Handle both the app Workshop EULA and `legalAgreementRequired` from creation and updates. If acceptance is needed, stop and let the user accept in Steam. Never bypass account restrictions or retry permission and quota failures in a loop.
+
+PowerShell setup for an authorized Workshop run:
+
+```powershell
+$env:STEAM_TEST_STEAM_ID = '<authorized SteamID64>'
+$env:STEAM_TEST_APP_ID = '<authorized app ID, or 480 explicitly>'
+pnpm test:workshop
+```
+
+For a single curated file, use its exact path rather than appending a filter to a package command that already selects `test/live`:
+
+```powershell
+pnpm exec cross-env STEAM_LIVE=1 STEAM_LIVE_WRITE=1 vitest run test/live/auth.live.test.ts --no-file-parallelism
+```
+
+The Workshop test uses one small fixture and forces private visibility on every update. It checks the item owner, consumer app, visibility, translated text, metadata, and preview; then it downloads the content and compares the bytes before deletion. It checks app dependencies with 481 when testing 480. For another app, set `STEAM_TEST_DEPENDENCY_APP_ID` to include that check; otherwise the test reports that it omitted it. Test only content you have rights to upload. Never upload an entire repository, personal files, or a real mod directory as a test fixture. Use mocks for error combinations and stress tests. The live workflow does not automatically retry writes.
+
+### Workshop failure recovery
+
+`.steamwand-live/workshop/recovery.json` records the app, account, start time, current operation, and item ID as soon as creation returns. IDs are decimal strings in JSON to preserve all 64 bits. The directory is gitignored and blocks another Workshop run, including a run in another process using this checkout. Keep it while a run is active or its remote outcome is unresolved.
+
+Each Workshop call has a deadline. An upload cannot be cancelled after submission. On timeout or an uncertain API-call result, the test stops, preserves the record and upload files, and sends no deletion or retry. Other failures attempt deletion of the one recorded item. Failed deletion fails the test and keeps the record. Successful cleanup removes the local fixture directory. The test does not remove Steam's download cache.
+
+To recover, first ensure the test process has stopped and inspect the recorded operation. Use the recorded account and app to inspect the exact item in Steam; confirm ownership and that it is the test fixture before deleting it. Wait for any upload to settle before deleting. Check `Steam/workshopbuilds/depot_build_<appid>.log` for uploads and `Steam/logs/Workshop_log.txt` for downloads. If creation failed before an ID was returned, inspect that account's recent items and logs; do not bulk-delete by a title prefix. After confirming that the remote fixture is gone (or no item was created), remove only this checkout's `.steamwand-live/workshop` directory. Never erase the recovery record merely to make the next run start.
+
+Policy sources checked on 2026-09-28: [Workshop implementation, test uploads, agreements, logs, and upload cancellation](https://partner.steamgames.com/doc/features/workshop/implementation), [Workshop testing and license requirements](https://partner.steamgames.com/doc/features/workshop), [ISteamUGC callbacks and downloads](https://partner.steamgames.com/doc/api/ISteamUGC), [Steam Subscriber Agreement](https://store.steampowered.com/subscriber_agreement/english), and [Steam Online Conduct](https://store.steampowered.com/online_conduct/). Private visibility and app ID 480 do not exempt tests from these terms. This workflow is a development safeguard, not a guarantee of compliance for every use.
 
 ## Taste
 
@@ -123,9 +147,7 @@ already cover the surface.
 - Commit messages follow the existing log: lower case, imperative, plain.
 
 ## Development
-- Development happens on Windows; the Steam client is usually running, so
-  `pnpm smoke` is a cheap live sanity check. Still ask before `pnpm test:live`
-  unless the task is explicitly about the workshop layer.
+- Development happens on Windows. Check Steam and fixture prerequisites before live reads. Ask before live writes unless the user has already authorized the specific write test in this session or the task explicitly requests a Workshop round trip. A request to edit testing documentation or its harness does not itself request a live upload.
 - The local `sdk/` directory often contains an unpacked SDK. It is gitignored
   along with the SDK zip; never stage either, and never quote SDK header
   contents into committed files.

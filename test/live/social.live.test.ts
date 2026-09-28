@@ -1,28 +1,31 @@
 /**
  * Live acceptance test for the curated social and overlay layers against the
  * running Steam client, using Spacewar (appid 480). It never opens an overlay
- * dialog and leaves no state behind: the one rich presence key it sets is
- * cleared again.
+ * dialog. Writes use a unique presence key and attempt to remove it afterwards.
  *
- * Run: npx cross-env STEAM_LIVE=1 vitest run test/live/social.live.test.ts
+ * Run: pnpm test:live (reads), pnpm test:live:write (also writes).
  * (requires a running, logged-in Steam client)
  */
-import { afterAll, describe, expect, test } from 'vitest';
-import { init, type Steam } from '../../src';
-
-const live = !!process.env.STEAM_LIVE;
+import { randomUUID } from 'node:crypto';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import type { Steam } from '../../src';
+import { live, writes, openSteam } from './config';
 
 describe.skipIf(!live)('social and overlay layers (Spacewar, live)', () => {
   let steam: Steam;
-  const presenceKey = 'status';
+  const presenceKey = `steamwand-test-${randomUUID()}`;
+  let presenceTouched = false;
 
   afterAll(() => {
-    steam?.social.clearRichPresence();
-    steam?.close();
+    try {
+      if (presenceTouched) steam?.social.setRichPresence(presenceKey, '');
+    } finally {
+      steam?.close();
+    }
   });
 
-  test('init', () => {
-    steam = init({ appId: 480 });
+  beforeAll(() => {
+    steam = openSteam();
     expect(steam.steamId()).toBeGreaterThan(0xffffffffn);
   });
 
@@ -44,13 +47,15 @@ describe.skipIf(!live)('social and overlay layers (Spacewar, live)', () => {
     }
   });
 
-  test('social: rich presence write, read back, clear', () => {
+  test.skipIf(!writes)('social: rich presence write, read back, remove', () => {
     const me = steam.steamId();
+    expect(steam.social.getRichPresence(me, presenceKey)).toBe('');
+    presenceTouched = true;
     steam.social.setRichPresence(presenceKey, 'live-check');
     expect(steam.social.getRichPresence(me, presenceKey)).toBe('live-check');
     expect(Object.values(steam.social.listRichPresence(me))).toContain('live-check');
 
-    steam.social.clearRichPresence();
+    steam.social.setRichPresence(presenceKey, '');
     expect(steam.social.getRichPresence(me, presenceKey)).toBe('');
   });
 

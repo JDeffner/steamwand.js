@@ -491,6 +491,7 @@ export { SteamInitError, SteamResultError, eResultName } from './api/errors';
 export { Workshop } from './api/workshop';
 export type {
   AdditionalPreview,
+  AppDependenciesResult,
   QueryOptions,
   UpdateProgress,
   UserItemsPage,

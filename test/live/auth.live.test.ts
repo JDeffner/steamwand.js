@@ -1,15 +1,14 @@
 /**
  * Live acceptance test for the curated auth and system layers against the
- * running Steam client, using Spacewar (appid 480). Read-only: it issues two
- * auth tickets and cancels both again, and opens no UI.
+ * running Steam client, using Spacewar (appid 480). With write opt-in, it
+ * issues two auth tickets and attempts to cancel both. It opens no UI.
  *
- * Run: npx cross-env STEAM_LIVE=1 vitest run test/live/auth.live.test.ts
+ * Run: pnpm test:live (reads), pnpm test:live:write (also tickets).
  * (requires a running, logged-in Steam client)
  */
-import { afterAll, describe, expect, test } from 'vitest';
-import { init, type Steam } from '../../src';
-
-const live = !!process.env.STEAM_LIVE;
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import type { Steam } from '../../src';
+import { live, writes, openSteam } from './config';
 
 describe.skipIf(!live)('auth and system layers (Spacewar, live)', () => {
   let steam: Steam;
@@ -18,25 +17,31 @@ describe.skipIf(!live)('auth and system layers (Spacewar, live)', () => {
     steam?.close();
   });
 
-  test('init', () => {
-    steam = init({ appId: 480 });
+  beforeAll(() => {
+    steam = openSteam();
     expect(steam.steamId()).toBeGreaterThan(0xffffffffn);
   });
 
-  test('auth: session ticket round trip', async () => {
+  test.skipIf(!writes)('auth: session ticket round trip', async () => {
     const ticket = await steam.auth.getSessionTicket();
-    expect(ticket.handle).toBeGreaterThan(0);
-    expect(ticket.ticket.length).toBeGreaterThan(0);
-    expect(ticket.hex.length).toBe(ticket.ticket.length * 2);
-    steam.auth.cancelTicket(ticket.handle);
+    try {
+      expect(ticket.handle).toBeGreaterThan(0);
+      expect(ticket.ticket.length).toBeGreaterThan(0);
+      expect(ticket.hex.length).toBe(ticket.ticket.length * 2);
+    } finally {
+      steam.auth.cancelTicket(ticket.handle);
+    }
   }, 30_000);
 
-  test('auth: web api ticket round trip', async () => {
+  test.skipIf(!writes)('auth: web api ticket round trip', async () => {
     const ticket = await steam.auth.getWebApiTicket('steamwand-live');
-    expect(ticket.handle).toBeGreaterThan(0);
-    expect(ticket.ticket.length).toBeGreaterThan(0);
-    expect(ticket.hex.length).toBe(ticket.ticket.length * 2);
-    steam.auth.cancelTicket(ticket.handle);
+    try {
+      expect(ticket.handle).toBeGreaterThan(0);
+      expect(ticket.ticket.length).toBeGreaterThan(0);
+      expect(ticket.hex.length).toBe(ticket.ticket.length * 2);
+    } finally {
+      steam.auth.cancelTicket(ticket.handle);
+    }
   }, 30_000);
 
   test('auth: account facts', () => {

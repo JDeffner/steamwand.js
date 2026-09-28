@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Steam } from '../src';
+import type { AdditionalPreview, AppDependenciesResult, Steam } from '../src';
 import type * as flat from '../src/generated';
 
 /**
@@ -25,6 +25,18 @@ function typeContract(steam: Steam, friends: flat.ISteamFriends, ugc: flat.IStea
 
   const found: Promise<flat.LeaderboardFindResult_t> = steam.async.userStats.FindLeaderboard('scores');
   void found;
+
+  const requirements: Promise<AppDependenciesResult> = steam.workshop.getAppDependenciesResult(123n);
+  const legacyRequirements: Promise<number[]> = steam.workshop.getAppDependencies(123n);
+  // @ts-expect-error file IDs remain bigint-only in the new result method
+  steam.workshop.getAppDependenciesResult(123);
+  void requirements;
+  void legacyRequirements;
+  steam.workshop.getItem(123n, { additionalPreviews: true }).then((item) => {
+    const previews: AdditionalPreview[] = item?.additionalPreviews ?? [];
+    const indexes: number[] = previews.map((preview) => preview.index);
+    void indexes;
+  });
 }
 
 describe('type contract', () => {
